@@ -49,3 +49,4 @@ app.*.map.json
 .idea/libraries/Dart_Packages.xml
 .idea/misc.xml
 .idea/modules.xml
+.idea/libraries/Dart_Packages.xml
