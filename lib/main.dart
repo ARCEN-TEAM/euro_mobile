@@ -91,12 +91,14 @@ class MyApp extends StatelessWidget {
           hoverColor: Colors.transparent,
           splashColor: Colors.transparent,
           splashFactory: NoSplash.splashFactory,
+
           appBarTheme: AppBarTheme(
             color: Colors.transparent,
           ),
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.blue,
             brightness: Brightness.dark,
+
             //TODO color: Theme.of(context).colorScheme.{COLORHERE}
           ),
           textTheme: GoogleFonts.poppinsTextTheme(

@@ -21,7 +21,9 @@ class _ComingSoonState extends State<ComingSoon> {
           SizedBox(height:30),
           Icon(
               Icons.construction,
-            size:70
+            size:70,
+              color: Colors.white,
+
           )
         ],
       ),
