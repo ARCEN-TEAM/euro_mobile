@@ -77,15 +77,34 @@ class ApiConstants {
 
 class AppColors{
   static Color backgroundBlue = Color(0xFF0f1925);
+  static Color primaryBlue= Color(0xFF1d4d73);
+  static Color textBoxShadowBlue= Color(0xFF3ab1ff).withOpacity(0.7);
+  static Color transparent= Color(0x00000000);
+
+
   static List<Color> backgroundGradientColors = [
+                                        const Color(0xFF1d4d73),
+                                        const Color(0xFF0f1925),
+                                      ];
+  static List<Color> chartGradientColors = [
                                         const Color(0xFF1d4d73),
                                         const Color(0xFF0f1925),
                                       ];
   static Color selectedItemBackground = Colors.grey.withOpacity(0.1);
   static Color selectedItemTextShadowColor= Color(0xFF3ab1ff).withOpacity(0.5);
   static Color chartLineColorPrimary= Color(0xFF3ab1ff).withOpacity(0.5);
+  static Color buttonSecondaryColor= Color(0xFF3ab1ff);
   static Color selectedItemTextColor= Color(0xFF40a1f0);
   static Color cardBackgroundColor= Color(0xFF172842);
+
+
+  static Color buttonPrimaryColor= Color(0xFF3a9bea);
+
+
+  static Color navbarUnselectedItemColor= Color(0xFF7b93af);
+
+  static Color textColorLightBG= Color(0xFF1d4d73);
+  static Color textColorOnDarkBG= Colors.white;
 
 }
 

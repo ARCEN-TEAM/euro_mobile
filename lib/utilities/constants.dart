@@ -17,11 +17,11 @@ final kLabelStyle = TextStyle(
 );
 
 final kBoxDecorationStyle = BoxDecoration(
-  color: ApiConstants.mainColor,
+  color: AppColors.primaryBlue,
   borderRadius: BorderRadius.circular(10.0),
   boxShadow: [
     BoxShadow(
-      color: Color(0xFF3ab1ff).withOpacity(0.7),
+      color: AppColors.textBoxShadowBlue,
       spreadRadius: 2,
       blurRadius: 8,
     ),
