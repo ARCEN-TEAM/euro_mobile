@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import '../classes/constants.dart';
 import '../classes/utils.dart';
 import '../utilities/constants.dart';
 import 'widgets/my_arc.dart';
@@ -41,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SizedBox(height: 30),
         Center(
             child: Text("Profile",
-                style: TextStyle(color: Colors.white, fontSize: 20))),
+                style: TextStyle(color: AppColors.textColorOnDarkBG, fontSize: 20))),
         SizedBox(height: 30),
         Stack(
           children: [
@@ -70,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SizedBox(height: 30),
         Center(
             child: Text(widget.username,
-                style: TextStyle(color: Colors.white, fontSize: 20))),
+                style: TextStyle(color: AppColors.textColorOnDarkBG, fontSize: 20))),
         SizedBox(height: 15),
         Center(
           child: FractionallySizedBox(
@@ -78,10 +79,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
               height: 1.0,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: AppColors.textColorOnDarkBG.withOpacity(0.3),
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0xFF3ab1ff).withOpacity(0.2),
+                    color: AppColors.buttonSecondaryColor.withOpacity(0.2),
                     blurRadius: 4,
                     spreadRadius: 2,
                   ),
@@ -91,16 +92,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         SizedBox(height: 30),
-        buildCard(Icon(Icons.menu, color: Colors.white),  "Nome Completo", teste, Icon(Icons.chevron_right, color: Colors.white)),
-        buildCard(Icon(Icons.menu, color: Colors.white), "Grupo", "Programador", Icon(Icons.chevron_right, color: Colors.white)),
+        buildCard(Icon(Icons.menu, color: AppColors.textColorOnDarkBG),  "Nome Completo", teste, Icon(Icons.chevron_right, color: AppColors.textColorOnDarkBG)),
+        buildCard(Icon(Icons.menu, color: AppColors.textColorOnDarkBG), "Grupo", "Programador", Icon(Icons.chevron_right, color: AppColors.textColorOnDarkBG)),
         ListTile(
           leading: Text(
               'Contacto',
-              style: TextStyle(color: Colors.white, fontSize: 20)
+              style: TextStyle(color: AppColors.textColorOnDarkBG, fontSize: 20)
           ),
         ),
-        buildCard(Icon(Icons.phone_outlined), "Telemóvel", "91..", Icon(Icons.edit_outlined, color: Colors.white.withOpacity(0.2))),
-        buildCard(Icon(Icons.email_outlined),  "Email", "pe.prg@arcen.pt", Icon(Icons.edit_outlined, color: Colors.white.withOpacity(0.2))),
+        buildCard(Icon(Icons.phone_outlined,color: AppColors.textColorOnDarkBG), "Telemóvel", "91..", Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG.withOpacity(0.2))),
+        buildCard(Icon(Icons.email_outlined,color: AppColors.textColorOnDarkBG),  "Email", "pe.prg@arcen.pt", Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG.withOpacity(0.2))),
       ],
     );
   }
@@ -119,10 +120,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       margin: EdgeInsets.only(top: 15),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white,
+        color:AppColors.textColorOnDarkBG,
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF3ab1ff).withOpacity(0.5),
+            color: AppColors.selectedItemTextShadowColor,
             //spreadRadius: 3,
             blurRadius: 30,
           )
@@ -145,9 +146,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget buildEditIcon() {
     return buildCircle(
-        color: Color(0xFF0f1925),
+        color: AppColors.backgroundBlue,
         all: 8,
-        child: Icon(Icons.edit_outlined, color: Colors.white, size: 20));
+        child: Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG, size: 20));
   }
 
   Widget buildCircle(
@@ -166,9 +167,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(15.0),
           child: Material(
-            color: Color(0xFF172b49), //
+            color: AppColors.cardBackgroundColor/*Color(0xFF172b49)*/, //
             child: InkWell(
-              splashColor: Colors.white, // inkwell color
+              splashColor: AppColors.textColorOnDarkBG, // inkwell color
               child: SizedBox(
                   width: 56,
                   height: 56,
@@ -181,7 +182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         title: Text(
          titulo,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.textColorOnDarkBG, fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
           subtitulo,
@@ -192,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               InkWell(
-                splashColor: Colors.white, // inkwell color
+                splashColor: AppColors.textColorOnDarkBG, // inkwell color
                 child: Icon(Icons.content_copy , color: Colors.white.withOpacity(0.2)),
                 onTap: () {},
               ),
@@ -203,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(width:10),
               InkWell(
-                splashColor: Colors.white, // inkwell color
+                splashColor: AppColors.textColorOnDarkBG, // inkwell color
                 child: trailing,
                 onTap: () async {
                   String? teste2 = await Navigator.of(context).push(new MaterialPageRoute<String>(
@@ -232,17 +233,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            backgroundColor: Color(0xFF172b49),
+            backgroundColor:AppColors.cardBackgroundColor /*Color(0xFF172b49)*/,
 
-            title: Text('Fotografia', style: TextStyle(color: Colors.white)),
+            title: Text('Fotografia', style: TextStyle(color: AppColors.textColorOnDarkBG)),
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () { Navigator.pop(context, 'Camara'); },
-                child: Text('Camara', style: TextStyle(color: Colors.white)),
+                child: Text('Camara', style: TextStyle(color: AppColors.textColorOnDarkBG)),
               ),
               SimpleDialogOption(
                 onPressed: () { Navigator.pop(context, 'Galeria'); },
-                child: Text('Galeria', style: TextStyle(color: Colors.white)),
+                child: Text('Galeria', style: TextStyle(color: AppColors.textColorOnDarkBG)),
               ),
             ],
           );

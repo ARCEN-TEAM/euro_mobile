@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+
 //import 'package:login_test/screens/plant_screen_details.dart';
 import 'package:lottie/lottie.dart';
 
@@ -13,13 +14,11 @@ import '../classes/constants.dart';
 import '../classes/plant.dart';
 
 class PlantsList extends StatefulWidget {
-
   @override
   _PlantsListState createState() => _PlantsListState();
 }
 
 class _PlantsListState extends State<PlantsList> {
-
   List<Plant> centrais = [];
   var response2;
   List<String>? selectedZone = [];
@@ -29,11 +28,11 @@ class _PlantsListState extends State<PlantsList> {
   late PageController controller;
   final dayList = List<DateTime>.generate(
       11,
-          (i) => DateTime.utc(
-        DateTime.now().add(Duration(days: -5)).year,
-        DateTime.now().add(Duration(days: -5)).month,
-        DateTime.now().add(Duration(days: -5)).day,
-      ).add(Duration(days: i)));
+      (i) => DateTime.utc(
+            DateTime.now().add(Duration(days: -5)).year,
+            DateTime.now().add(Duration(days: -5)).month,
+            DateTime.now().add(Duration(days: -5)).day,
+          ).add(Duration(days: i)));
   var selected = 5;
 
   Future<dynamic> postRequest(var data) async {
@@ -79,16 +78,18 @@ class _PlantsListState extends State<PlantsList> {
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
-      child: CustomScrollView(slivers: <Widget>[
+    return Container(
+      child: CustomScrollView(
+          physics: BouncingScrollPhysics(),
+          slivers: <Widget>[
         _buildAppBar(context),
         SliverToBoxAdapter(
           child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  )),
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              )),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -96,78 +97,62 @@ class _PlantsListState extends State<PlantsList> {
                         height: 80,
                         child: Center(
                           child: ScrollablePositionedList.builder(
+                            physics: BouncingScrollPhysics(),
                               itemScrollController: _controller,
                               scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) =>
-                                  GestureDetector(
+                              itemBuilder: (context, index) => GestureDetector(
                                     onTap: () => setState(() {
                                       selected = index;
                                     }),
                                     child: Container(
                                         padding: EdgeInsets.all(10),
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 2),
+                                        margin:
+                                            EdgeInsets.symmetric(horizontal: 2),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(20),
+                                              BorderRadius.circular(20),
                                           color: selected == index
-                                              ? Colors.grey
-                                              .withOpacity(0.1)
+                                              ? Colors.grey.withOpacity(0.1)
                                               : null,
                                         ),
                                         child: Column(
                                           children: [
                                             Text(
                                               DateFormat('EEEE')
-                                                  .format(
-                                                  dayList[index])
+                                                  .format(dayList[index])
                                                   .substring(0, 3),
                                               style: TextStyle(
                                                   shadows: <Shadow>[
                                                     selected == index
                                                         ? Shadow(
-                                                      color: Color(
-                                                          0xFF3ab1ff)
-                                                          .withOpacity(
-                                                          0.5),
-                                                      //spreadRadius: 3,
-                                                      blurRadius:
-                                                      8,
-                                                    )
+                                                            color: AppColors.selectedItemTextShadowColor/*Color(0xFF3ab1ff).withOpacity(0.5)*/,
+                                                            //spreadRadius: 3,
+                                                            blurRadius: 8,
+                                                          )
                                                         : Shadow()
                                                   ],
-                                                  color: selected ==
-                                                      index
-                                                      ? Color(
-                                                      0xFF40a1f0)
+                                                  color: selected == index
+                                                      ? AppColors.selectedItemTextColor /*Color(0xFF40a1f0)*/
                                                       : Colors.grey),
                                             ),
                                             SizedBox(height: 5),
                                             Text(
                                                 DateFormat('dd-MM')
-                                                    .format(
-                                                    dayList[index]),
+                                                    .format(dayList[index]),
                                                 style: TextStyle(
                                                     shadows: <Shadow>[
                                                       selected == index
                                                           ? Shadow(
-                                                        color: Color(
-                                                            0xFF3ab1ff)
-                                                            .withOpacity(
-                                                            0.5),
-                                                        //spreadRadius: 3,
-                                                        blurRadius:
-                                                        8,
-                                                      )
+                                                              color:AppColors.selectedItemTextShadowColor /*Color(0xFF3ab1ff).withOpacity(0.5)*/,
+                                                              //spreadRadius: 3,
+                                                              blurRadius: 8,
+                                                            )
                                                           : Shadow()
                                                     ],
                                                     fontSize: 16,
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    color: selected ==
-                                                        index
-                                                        ? Color(
-                                                        0xFF40a1f0)
+                                                    fontWeight: FontWeight.bold,
+                                                    color: selected == index
+                                                        ? AppColors.selectedItemTextColor /*Color(0xFF40a1f0)*/
                                                         : Colors.grey))
                                           ],
                                         )),
@@ -179,7 +164,7 @@ class _PlantsListState extends State<PlantsList> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: ApiConstants.UserPlants.map(
-                              (zone) {
+                          (zone) {
                             bool isSelected = false;
                             if (selectedZone!.contains(zone)) {
                               isSelected = true;
@@ -194,7 +179,7 @@ class _PlantsListState extends State<PlantsList> {
                                   }
                                 } else {
                                   selectedZone!.removeWhere(
-                                          (element) => element == zone);
+                                      (element) => element == zone);
                                   setState(() {});
                                 }
                               },
@@ -208,8 +193,7 @@ class _PlantsListState extends State<PlantsList> {
                                         color: isSelected
                                             ? Color(0xFF73AEF5)
                                             : Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(18),
+                                        borderRadius: BorderRadius.circular(18),
                                         border: Border.all(
                                             color: isSelected
                                                 ? Color(0xFF73AEF5)
@@ -237,8 +221,7 @@ class _PlantsListState extends State<PlantsList> {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (centrais.length > 0) {
                   return SliverList(
-                    delegate:
-                    SliverChildBuilderDelegate((context, index) {
+                    delegate: SliverChildBuilderDelegate((context, index) {
                       return buildCard(centrais[index]);
                     }, childCount: centrais.length),
                   );
@@ -246,18 +229,18 @@ class _PlantsListState extends State<PlantsList> {
                   return SliverFillRemaining(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Color(0x00000000),
+                        color: AppColors.transparent,
                       ),
                       child: Center(
-                        //     child: CircularProgressIndicator(
-                        //   color: Color(0xFF73AEF5),
-                        // )
+                          //     child: CircularProgressIndicator(
+                          //   color: Color(0xFF73AEF5),
+                          // )
                           child: Opacity(
-                            opacity: 0.4,
-                            child: Lottie.asset(
-                                'assets/images/lotties/notfound.json',
-                                repeat: false),
-                          )),
+                        opacity: 0.4,
+                        child: Lottie.asset(
+                            'assets/images/lotties/notfound.json',
+                            repeat: false),
+                      )),
                     ),
                   );
                 }
@@ -265,14 +248,14 @@ class _PlantsListState extends State<PlantsList> {
                 return SliverFillRemaining(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Color(0x00000000),
+                      color: AppColors.transparent,
                     ),
                     child: Center(
-                      //     child: CircularProgressIndicator(
-                      //   color: Color(0xFF73AEF5),
-                      // )
-                        child: Lottie.asset(
-                            'assets/images/lotties/search.json')),
+                        //     child: CircularProgressIndicator(
+                        //   color: Color(0xFF73AEF5),
+                        // )
+                        child:
+                            Lottie.asset('assets/images/lotties/search.json')),
                   ),
                 );
               }
@@ -287,18 +270,18 @@ class _PlantsListState extends State<PlantsList> {
       automaticallyImplyLeading: false,
       snap: false,
       expandedHeight: 80,
-      backgroundColor: Color(0x00000000),
+      backgroundColor: AppColors.transparent,
       flexibleSpace: FlexibleSpaceBar(
           title: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Centrais',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ))
-            ],
-          )),
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Centrais',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ))
+        ],
+      )),
     );
   }
 
@@ -316,26 +299,25 @@ class _PlantsListState extends State<PlantsList> {
             width: MediaQuery.of(context).size.width,
             constraints: BoxConstraints(minHeight: 50),
             decoration: BoxDecoration(
-              color: Color(0x00000000),
+              color: AppColors.transparent,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
                   child: Card(
-                      color: Color(0xFF172842),
+                      color: AppColors.cardBackgroundColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                         side: BorderSide(
-                          color: Color(0xFF162a45),
+                          color: AppColors.cardBackgroundColor,
                           width: 1,
                         ),
                       ),
                       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       child: ExpansionTile(
-
-                        collapsedIconColor: Colors.white,
-                        iconColor: Color(0xFF40a1f0),
+                        collapsedIconColor: AppColors.textColorOnDarkBG,
+                        iconColor: AppColors.selectedItemTextColor,
                         title: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
@@ -348,15 +330,15 @@ class _PlantsListState extends State<PlantsList> {
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
-                                      MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       //crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: [
                                         Text(
                                           central.codigo + ' - ' + central.nome,
-                                          style: const TextStyle(
+                                          style:   TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.white),
+                                              color: AppColors.textColorOnDarkBG),
                                         ),
                                       ],
                                     ),
@@ -373,7 +355,7 @@ class _PlantsListState extends State<PlantsList> {
                                             ),
                                             child: Align(
                                               alignment:
-                                              AlignmentDirectional(0, 0),
+                                                  AlignmentDirectional(0, 0),
                                               child: Image.network(
                                                   'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
                                                       central.gps.longitude
@@ -395,13 +377,13 @@ class _PlantsListState extends State<PlantsList> {
                                         child: Container(
                                           child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
+                                                CrossAxisAlignment.stretch,
                                             children: [
                                               AspectRatio(
                                                 aspectRatio: 5,
                                                 child: Container(
                                                   padding:
-                                                  EdgeInsets.only(left: 20),
+                                                      EdgeInsets.only(left: 20),
                                                   child: LineChart(
                                                     mainData(),
                                                   ),
@@ -433,7 +415,7 @@ class _PlantsListState extends State<PlantsList> {
                             ),
                           ),
                           Text("Ver mais",
-                              style: TextStyle(color: Colors.white))
+                              style: TextStyle(color: AppColors.textColorOnDarkBG))
                         ],
                       )),
                 ),
@@ -483,7 +465,7 @@ class _PlantsListState extends State<PlantsList> {
       lineBarsData: [
         LineChartBarData(
           shadow: Shadow(
-            color: Color(0xFF3ab1ff).withOpacity(0.5),
+            color: AppColors.chartLineColorPrimary /*Color(0xFF3ab1ff).withOpacity(0.5)*/,
             //spreadRadius: 3,
             blurRadius: 8,
           ),
@@ -504,7 +486,7 @@ class _PlantsListState extends State<PlantsList> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: gradientColors
+              colors: AppColors.chartGradientColors
                   .map((color) => color.withOpacity(0.2))
                   .toList(),
               begin: Alignment.topCenter,
@@ -516,8 +498,4 @@ class _PlantsListState extends State<PlantsList> {
     );
   }
 
-  List<Color> gradientColors = [
-    const Color(0xff40a1f0),
-    const Color(0xff172842),
-  ];
 }
