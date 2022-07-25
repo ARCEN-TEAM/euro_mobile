@@ -90,15 +90,16 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: _tLogin,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
-              color: AppColors.textColorOnDarkBG,
+              color: Colors.white,
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
+
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.person,
-                color: AppColors.textColorOnDarkBG,
+                color: Colors.white,
               ),
               hintText: 'Enter your Username',
               hintStyle: kHintTextStyle,
@@ -126,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: _tSenha,
             obscureText: !_passwordVisible,
             style: TextStyle(
-              color: AppColors.textColorOnDarkBG,
+              color: Colors.white,
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
@@ -134,14 +135,14 @@ class _LoginScreenState extends State<LoginScreen> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.lock,
-                color: AppColors.textColorOnDarkBG,
+                color: Colors.white,
               ),
               hintText: 'Enter your Password',
               hintStyle: kHintTextStyle,
               suffixIcon: IconButton(
                 icon: Icon(
                   _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: AppColors.textColorOnDarkBG,
+                  color: Colors.white,
                 ),
                 onPressed: () {
                   setState(() {
@@ -178,11 +179,11 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Row(
         children: <Widget>[
           Theme(
-            data: ThemeData(unselectedWidgetColor: AppColors.buttonPrimaryColor),
+            data: ThemeData(unselectedWidgetColor: Color(0xFF3a9bea)),
             child: Checkbox(
               value: _rememberMe,
-              checkColor: AppColors.textColorOnDarkBG,
-              activeColor: AppColors.buttonPrimaryColor,
+              checkColor: Colors.white,
+              activeColor: Color(0xFF3a9bea),
               onChanged: (value) {
                 setState(() {
                   _rememberMe = value!;
@@ -199,6 +200,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void _showToast(BuildContext context, String texto) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(texto),
+        action: SnackBarAction(
+            label: 'OK', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
+  }
 
   final _tLogin = TextEditingController();
   final _tSenha = TextEditingController();
@@ -218,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
               title: Text("Erro"),
               content: Text("Username e/ou Senha inválido(s)"),
               actions: <Widget>[
-                TextButton(
+                FlatButton(
                     child: Text("OK"),
                     onPressed: () {
                       Navigator.pop(context);
@@ -271,7 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
               title: Text("Erro"),
               content: Text("Username e/ou Senha inválido(s)"),
               actions: <Widget>[
-                TextButton(
+                FlatButton(
                     child: Text("OK"),
                     onPressed: () {
                       Navigator.pop(context);
@@ -293,7 +304,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: TextButton(
         style:
-            TextButton.styleFrom(elevation: 10, backgroundColor: AppColors.buttonPrimaryColor),
+            TextButton.styleFrom(elevation: 10, backgroundColor: Color(0xFF3a9bea)),
         onPressed: () async {
           String loginController = _tLogin.text;
           String senhaController = _tSenha.text;
@@ -321,7 +332,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Text(
             'LOGIN',
             style: TextStyle(
-              color: AppColors.textColorOnDarkBG,
+              color: Colors.white,
               letterSpacing: 1.5,
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
@@ -340,7 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar:
-          AppBar(elevation: 0, backgroundColor: AppColors.transparent, actions: <
+          AppBar(elevation: 0, backgroundColor: Color(0x00000000), actions: <
               Widget>[
         Padding(
           padding: const EdgeInsets.only(right: 20),
@@ -348,7 +359,7 @@ class _LoginScreenState extends State<LoginScreen> {
             icon: Icon(
               Icons.settings,
               size: 35,
-              color: AppColors.textColorOnDarkBG /*Colors.white*/,
+              color: Colors.white,
             ),
             onPressed: () {
               showModalBottomSheet(
@@ -358,7 +369,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     top: Radius.circular(20),
                   ),
                 ),
-                backgroundColor: AppColors.cardBackgroundColor,//Color(0xFF182943),
+                backgroundColor: Color(0xFF182943),
                 context: context,
                 builder: (context) {
                   // Using Wrap makes the bottom sheet height the height of the content.
@@ -380,11 +391,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                     width: 50,
                                     height: 4,
                                     decoration: BoxDecoration(
-                                      color: AppColors.buttonSecondaryColor,
+                                      color: Color(0xFF3ab1ff),
                                       borderRadius: BorderRadius.circular(8),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColors.selectedItemTextShadowColor,//Color(0xFF3ab1ff).withOpacity(0.5),
+                                          color: Color(0xFF3ab1ff).withOpacity(0.5),
                                           spreadRadius: 3,
                                           blurRadius: 8,
                                           //offset: Offset(0, 3), // changes position of shadow
@@ -396,9 +407,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               ]),
                           StatefulBuilder(builder: (context, setStateSB) {
                             return SwitchListTile(
-                              title:   Text('HTTPS',
-                                  style: TextStyle(color:   AppColors.textColorOnDarkBG )),
-                              activeColor: AppColors.buttonPrimaryColor,//Color(0xFF3ab1ff),
+                              title: const Text('HTTPS',
+                                  style: TextStyle(color: Colors.white)),
+                              activeColor: Color(0xFF3ab1ff),
                               value: _https,
                               onChanged: (bool value) {
                                 setState(() {
@@ -409,43 +420,33 @@ class _LoginScreenState extends State<LoginScreen> {
                                 });
                               },
                               secondary:
-                                    Icon(Icons.https, color:  AppColors.textColorOnDarkBG),
+                                  const Icon(Icons.https, color: Colors.white),
                             );
                           }),
                           ListTile(
                             leading:
-                                Icon(Icons.insert_link, color:  AppColors.textColorOnDarkBG),
-                            title: Container(
-                              decoration: kBoxDecorationStyle,
-                              padding: EdgeInsets.only(left: 10),
-                              child: TextField(
-                                controller: _tUrl,
-                                keyboardType: TextInputType.text,
-                                style: TextStyle(
-                                  color: AppColors.textColorOnDarkBG,
-                                  fontFamily: 'OpenSans',
-                                ),
+                                Icon(Icons.insert_link, color: Colors.white),
+                            title: TextField(
+                              controller: _tUrl,
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'OpenSans',
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
                           ListTile(
                             leading: Icon(Icons.generating_tokens,
-                                color:  AppColors.textColorOnDarkBG),
-                            title: Container(
-                              decoration: kBoxDecorationStyle,
-                              padding: EdgeInsets.only(left: 10,top:0,bottom: 0),
-                              child: TextField(
-                                controller: _tToken,
-                                keyboardType: TextInputType.text,
-                                style: TextStyle(
-                                  color:  AppColors.textColorOnDarkBG,
-                                  fontFamily: 'OpenSans',
-                                ),
+                                color: Colors.white),
+                            title: TextField(
+                              controller: _tToken,
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'OpenSans',
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -504,11 +505,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 child: Text(
                                   "Test connection",
-                                  style: TextStyle(color:  AppColors.textColorOnDarkBG/*Color(0xFF1d4d73)*/),
+                                  style: TextStyle(color: Color(0xFF1d4d73)),
                                 ),
                                 style: TextButton.styleFrom(
                                   elevation: 10,
-                                  backgroundColor: AppColors.buttonPrimaryColor ,//Colors.white,
+                                  backgroundColor: Colors.white,
                                 ),
                               ),
                               TextButton(
@@ -543,17 +544,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 child: Text(
                                   "Save settings",
-                                  style: TextStyle(color:  AppColors.textColorOnDarkBG /*Color(0xFF1d4d73)*/),
+                                  style: TextStyle(color: Color(0xFF1d4d73)),
                                 ),
                                 style: TextButton.styleFrom(
                                   elevation: 10,
-                                  backgroundColor: AppColors.buttonPrimaryColor/*Colors.white*/,
+                                  backgroundColor: Colors.white,
                                 ),
                               ),
                             ],
-                          ),
-                          SizedBox(height: 10)
-
+                          )
                         ],
                       ),
                     ),
@@ -577,10 +576,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: Border.all(width: 0, color: Color(0x0073AEF5)),
                   gradient: RadialGradient(
                     center: Alignment(-1, -1),
-                    colors: AppColors.backgroundGradientColors /*[
+                    colors: [
                       Color(0xFF1d4d73),
                       Color(0xFF0e1623),
-                    ]*/,
+                    ],
                     radius: 1.2,
                   ),
                 ),
@@ -615,7 +614,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 10) /
                                             6,
                                     fit: BoxFit.cover,
-                                    color:  AppColors.textColorOnDarkBG),
+                                    color: Colors.white),
                                 SizedBox(height: 20.0),
                                 _buildEmailTF(context),
                                 SizedBox(

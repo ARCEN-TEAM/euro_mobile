@@ -51,7 +51,6 @@ Future<dynamic> postRequest(var data) async {
 class _MainScreenWidgetState extends State<MainScreen> {
   ItemScrollController _controller = ItemScrollController();
   int currentPageIndex = 0;
-  bool navTapped = false;
   late PageController controller;
   final dayList = List<DateTime>.generate(
       11,
@@ -71,7 +70,6 @@ class _MainScreenWidgetState extends State<MainScreen> {
       if (_controller.isAttached) {
         _controller.jumpTo(index: selected, alignment: 0.44);
       }
-
     });
 
     selectedZone?.add(ApiConstants.UserPlants[0].toString());
@@ -111,31 +109,18 @@ class _MainScreenWidgetState extends State<MainScreen> {
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
-          border: Border.all(width: 0, color: AppColors.backgroundBlue /*Color(0xFF0f1925)*/),
+          border: Border.all(width: 0, color: Color(0xFF0e1623)),
           gradient: RadialGradient(
             center: Alignment(-1.4, -1.4),
-            colors: AppColors.backgroundGradientColors /*[
+            colors: [
               Color(0xFF1d4d73),
               Color(0xFF0f1925),
-            ]*/,
+            ],
             radius: 1.2,
           ),
         ),
         child: PageView(
-          physics: BouncingScrollPhysics() /*NeverScrollableScrollPhysics()*/,
-          onPageChanged: (int pageIndex){
-            {
-              if(!navTapped){
-                setState(() {
-                  currentPageIndex = pageIndex;
-                });
-                controller.animateToPage(currentPageIndex,
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeOutQuad);
-              }
-
-            }
-          },
+          physics: NeverScrollableScrollPhysics(),
           controller: controller,
           children: [
             PlantsList(),
@@ -164,58 +149,53 @@ class _MainScreenWidgetState extends State<MainScreen> {
           ),
           child: Container(
             decoration: BoxDecoration(
-                border: Border.all(width: 0, color: AppColors.backgroundBlue)),
+                border: Border.all(width: 0, color: Color(0xFF0e1623))),
             child: BottomNavigationBar(
               currentIndex: currentPageIndex,
               onTap: (int index) {
                 setState(() {
                   currentPageIndex = index;
-                  navTapped = true;
                 });
                 controller.animateToPage(currentPageIndex,
                     duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeOutQuad)
-                    .then((value)
-                      {
-                        navTapped = false;
-                      });
+                    curve: Curves.easeOutQuad);
               },
               elevation: 0,
 
               type: BottomNavigationBarType.shifting,
-              unselectedItemColor: AppColors.navbarUnselectedItemColor /*Color(0xFF7b93af)*/,
-              selectedItemColor:  AppColors.textColorOnDarkBG,
-              backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
+              unselectedItemColor: Color(0xFF7b93af),
+              selectedItemColor: Colors.white,
+              backgroundColor: Color(0xFF0f1925),
               items: [
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.factory),
                   icon: Icon(Icons.factory_outlined),
                   label: 'Produção',
-                  backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
+                  backgroundColor: Color(0xFF0f1925),
                 ),
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.fact_check),
                   icon: Icon(Icons.fact_check_outlined),
                   label: 'Planeamento',
-                  backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
+                  backgroundColor: Color(0xFF0f1925),
                 ),
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.biotech),
                   icon: Icon(Icons.biotech_outlined),
                   label: 'Laboratório',
-                  backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
+                  backgroundColor: Color(0xFF0f1925),
                 ),
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.handyman),
                   icon: Icon(Icons.handyman_outlined),
                   label: 'Manutenção',
-                  backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
+                  backgroundColor: Color(0xFF0f1925),
                 ),
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.person),
                   icon: Icon(Icons.person_outline),
                   label: 'Perfil',
-                  backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
+                  backgroundColor: Color(0xFF0f1925),
                 ),
               ],
             ),
