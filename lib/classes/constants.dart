@@ -108,3 +108,22 @@ class AppColors{
 
 }
 
+class GlobalFunctions{
+  static void showToast(BuildContext context, String texto) {
+
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(texto),
+        action: SnackBarAction(
+          label: 'OK', onPressed: scaffold.hideCurrentSnackBar,textColor: Colors.black,),
+      ),
+    );
+  }
+  static void removeToast(BuildContext context) {
+
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.clearSnackBars();
+
+  }
+}

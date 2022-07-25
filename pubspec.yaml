@@ -27,6 +27,13 @@ dependencies:
   url_launcher: ^6.1.3
   image_picker: ^0.8.2
 
+  permission_handler: ^9.2.0
+  open_file: ^3.2.1
+  syncfusion_flutter_charts: ^20.1.59
+  syncfusion_flutter_datepicker: ^20.1.59
+  font_awesome_flutter: ^10.1.0
+  flutter_carousel_slider: ^1.0.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
