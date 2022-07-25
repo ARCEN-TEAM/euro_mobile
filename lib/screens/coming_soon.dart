@@ -1,3 +1,4 @@
+import 'package:euro_mobile/classes/constants.dart';
 import 'package:flutter/material.dart';
 
 class ComingSoon extends StatefulWidget {
@@ -16,13 +17,13 @@ class _ComingSoonState extends State<ComingSoon> {
         children: [
           Text(
             'Coming soon',
-            style: TextStyle(color:Colors.white, fontSize: 34),
+            style: TextStyle(color:AppColors.textColorOnDarkBG, fontSize: 34),
           ),
           SizedBox(height:30),
           Icon(
               Icons.construction,
             size:70,
-              color: Colors.white,
+              color: AppColors.textColorOnDarkBG,
 
           )
         ],
