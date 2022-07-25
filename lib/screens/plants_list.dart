@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-//import 'package:login_test/screens/plant_screen_details.dart';
+import 'plant_screen_details.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -179,7 +179,7 @@ class _PlantsListState extends State<PlantsList> {
                                   }
                                 } else {
                                   selectedZone!.removeWhere(
-                                      (element) => element == zone);
+                                          (element) => element == zone);
                                   setState(() {});
                                 }
                               },
@@ -191,21 +191,35 @@ class _PlantsListState extends State<PlantsList> {
                                         vertical: 5, horizontal: 12),
                                     decoration: BoxDecoration(
                                         color: isSelected
-                                            ? Color(0xFF73AEF5)
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.circular(18),
+                                            ? Colors.grey
+                                            .withOpacity(0.1)
+                                            : Colors.transparent,
+                                        borderRadius:
+                                        BorderRadius.circular(12),
                                         border: Border.all(
-                                            color: isSelected
-                                                ? Color(0xFF73AEF5)
-                                                : Colors.grey,
+                                            color: Colors.transparent,
                                             width: 2)),
                                     child: Text(
                                       zone,
                                       style: TextStyle(
+                                          shadows: <Shadow>[
+                                            isSelected
+                                                ? Shadow(
+                                              color: Color(
+                                                  0xFF3ab1ff)
+                                                  .withOpacity(
+                                                  0.5),
+                                              //spreadRadius: 3,
+                                              blurRadius:
+                                              8,
+                                            )
+                                                : Shadow()
+                                          ],
                                           color: isSelected
-                                              ? Colors.white
+                                              ? Color(0xFF40a1f0)
                                               : Colors.grey,
-                                          fontSize: 14),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   )),
                             );
@@ -288,12 +302,12 @@ class _PlantsListState extends State<PlantsList> {
   Widget buildCard(Plant central) {
     return GestureDetector(
         onTap: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //       builder: (context) =>
-          //           PlantScreen(central, dayList[selected].toString())),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    PlantScreen(central, dayList[selected].toString())),
+          );
         },
         child: Container(
             width: MediaQuery.of(context).size.width,
