@@ -543,27 +543,21 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
               SliverToBoxAdapter(
                 child: Container(
                       width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: Color(0x00000000),
-                          border: Border.all(color: Color(0x00000000), width: 0),
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(34))),
+
                       child: Container(
                         alignment: Alignment.topCenter,
                         child: Container(
-                          //padding: const EdgeInsets.only(right: 25, left: 25),
-                          height: 55,
+                          height: 40,
                           child: ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
                             itemCount: categories.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 4),
+
                                 child: Container(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 12),
+                                         horizontal: 12),
                                     decoration: BoxDecoration(
                                         color: currentIndex == index
                                             ? Colors.grey
@@ -641,368 +635,10 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
         onTap: () {
           Navigator.of(context).push(new MaterialPageRoute<String>(
               builder: (BuildContext context) {
-                return new InvoiceDetail(guia:guia);
+                return new InvoiceDetail(central:widget.central,guia:guia);
               },
               fullscreenDialog: true
           ));
-          // showModalBottomSheet(
-          //   shape: RoundedRectangleBorder(
-          //     borderRadius: BorderRadius.vertical(
-          //       top: Radius.circular(20),
-          //     ),
-          //   ),
-          //   isScrollControlled: true,
-          //   context: context,
-          //   builder: (context) {
-          //     // Using Wrap makes the bottom sheet height the height of the content.
-          //     // Otherwise, the height will be half the height of the screen.
-          //     return Wrap(
-          //       children: [
-          //         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //           Padding(
-          //             padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 0),
-          //             child: Container(
-          //               width: 50,
-          //               height: 4,
-          //               decoration: BoxDecoration(
-          //                 color: Color(0xFFDBE2E7),
-          //                 borderRadius: BorderRadius.circular(8),
-          //               ),
-          //             ),
-          //           ),
-          //         ]),
-          //         Container(
-          //             child: Column(
-          //           children: [
-          //             Card(
-          //               shape: RoundedRectangleBorder(
-          //                 borderRadius:
-          //                     BorderRadius.circular(10), // if you need this
-          //               ),
-          //               child: ListTile(
-          //                 leading: IconButton(
-          //                   icon: FaIcon(
-          //                     FontAwesomeIcons.solidFilePdf,
-          //                     size: 30,
-          //                   ),
-          //                   onPressed: () {
-          //                     GetInvoice(widget.central.codigo, guia.codigo,
-          //                         guia.inv_type);
-          //                   },
-          //                 ),
-          //                 //leading: Icon(Icons.work, color: Colors.black),
-          //                 title: Row(
-          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                   children: [
-          //                     Text(
-          //                       guia.codigo,
-          //                       style: TextStyle(fontWeight: FontWeight.bold),
-          //                     ),
-          //                     Text(guia.data_hora,
-          //                         style: TextStyle(fontSize: 12)),
-          //                   ],
-          //                 ),
-          //
-          //                 subtitle: Column(
-          //                   children: <Widget>[
-          //                     Align(
-          //                         alignment: AlignmentDirectional.centerStart,
-          //                         child: Row(
-          //                             mainAxisAlignment:
-          //                                 MainAxisAlignment.spaceBetween,
-          //                             children: [
-          //                               Text(
-          //                                 guia.ord_id + ' - ' + guia.ord_code,
-          //                                 overflow: TextOverflow.fade,
-          //                               ),
-          //                             ])),
-          //                     Align(
-          //                         alignment: AlignmentDirectional.centerStart,
-          //                         child: Row(
-          //                           mainAxisAlignment:
-          //                               MainAxisAlignment.spaceBetween,
-          //                           children: [
-          //                             Text(guia.operador,
-          //                                 overflow: TextOverflow.fade),
-          //                             Text(guia.prod_delivered.toString() +
-          //                                 '/' +
-          //                                 guia.prod_total.toString() +
-          //                                 ' m³')
-          //                           ],
-          //                         )),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ),
-          //             Card(
-          //               shape: RoundedRectangleBorder(
-          //                 borderRadius:
-          //                     BorderRadius.circular(10), // if you need this
-          //               ),
-          //               margin:
-          //                   EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          //               child: ListTile(
-          //                 contentPadding: EdgeInsets.symmetric(
-          //                     horizontal: 20.0, vertical: 10.0),
-          //                 leading: FaIcon(
-          //                   FontAwesomeIcons.userTie,
-          //                   size: 30,
-          //                 ),
-          //                 subtitle: Column(
-          //                   children: <Widget>[
-          //                     Align(
-          //                         alignment: AlignmentDirectional.centerStart,
-          //                         child: Row(
-          //                             mainAxisAlignment:
-          //                                 MainAxisAlignment.spaceBetween,
-          //                             children: [
-          //                               Flexible(child: Text(guia.obra.cliente.codigo)),
-          //                             ])),
-          //                     Align(
-          //                         alignment: AlignmentDirectional.centerStart,
-          //                         child: Row(
-          //                           mainAxisAlignment:
-          //                               MainAxisAlignment.spaceBetween,
-          //                           children: [
-          //                             Flexible(
-          //                               child: Text(guia.obra.cliente.nome,
-          //                                   style: TextStyle(
-          //                                       fontWeight: FontWeight.bold)),
-          //                             )
-          //                           ],
-          //                         )),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ),
-          //             GestureDetector(
-          //               onTap: () {
-          //                 Navigator.push(
-          //                   context,
-          //                   MaterialPageRoute(
-          //                       builder: (context) =>
-          //                           WorkplaceScreen(guia.obra)),
-          //                 );
-          //               },
-          //               child: Card(
-          //                 shape: RoundedRectangleBorder(
-          //                   borderRadius:
-          //                       BorderRadius.circular(10), // if you need this
-          //                 ),
-          //                 margin:
-          //                     EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          //                 child: ListTile(
-          //                   contentPadding: EdgeInsets.symmetric(
-          //                       horizontal: 20.0, vertical: 10.0),
-          //                   leading: FaIcon(
-          //                     FontAwesomeIcons.personDigging,
-          //                     size: 30,
-          //                   ),
-          //                   subtitle: Column(
-          //                     children: <Widget>[
-          //                       Align(
-          //                           alignment: AlignmentDirectional.centerStart,
-          //                           child: Row(
-          //                               mainAxisAlignment:
-          //                                   MainAxisAlignment.spaceBetween,
-          //                               children: [
-          //                                 Flexible(child: Text(guia.obra.codigo)),
-          //                               ])),
-          //                       Align(
-          //                           alignment: AlignmentDirectional.centerStart,
-          //                           child: Row(
-          //                             mainAxisAlignment:
-          //                                 MainAxisAlignment.spaceBetween,
-          //                             children: [
-          //                               Flexible(
-          //                                 child: Text(guia.obra.nome,
-          //                                     style: TextStyle(
-          //                                         fontWeight: FontWeight.bold)),
-          //                               )
-          //                             ],
-          //                           )),
-          //                     ],
-          //                   ),
-          //                   trailing: IconButton(
-          //                     icon: Icon(Icons.directions),
-          //                     onPressed: () {
-          //                       MapUtils.openMap(guia.obra.gps.latitude,
-          //                           guia.obra.gps.longitude);
-          //                     },
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //             Card(
-          //               shape: RoundedRectangleBorder(
-          //                 borderRadius:
-          //                     BorderRadius.circular(10), // if you need this
-          //               ),
-          //               margin:
-          //                   EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          //               child: ListTile(
-          //                 contentPadding: EdgeInsets.symmetric(
-          //                     horizontal: 20.0, vertical: 10.0),
-          //                 leading: Opacity(
-          //                   opacity: 0.65,
-          //                   child: Image.asset(
-          //                     'assets/images/pile-concrete.png',
-          //                     width: 35,
-          //                     height: 30,
-          //                   ),
-          //                 ),
-          //                 subtitle: Column(
-          //                   children: <Widget>[
-          //                     Align(
-          //                         alignment: AlignmentDirectional.centerStart,
-          //                         child: Row(
-          //                             mainAxisAlignment:
-          //                                 MainAxisAlignment.spaceBetween,
-          //                             children: [
-          //                               Flexible(child: Text(guia.cod_receita)),
-          //                             ])),
-          //                     Align(
-          //                         alignment: AlignmentDirectional.centerStart,
-          //                         child: Row(
-          //                           mainAxisAlignment:
-          //                               MainAxisAlignment.spaceBetween,
-          //                           children: [
-          //                             Flexible(
-          //                               child: Text(guia.receita,
-          //                                   style: TextStyle(
-          //                                       fontWeight: FontWeight.bold)),
-          //                             )
-          //                           ],
-          //                         )),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ),
-          //             Card(
-          //               shape: RoundedRectangleBorder(
-          //                 borderRadius:
-          //                     BorderRadius.circular(10), // if you need this
-          //               ),
-          //               margin:
-          //                   EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          //               child: ListTile(
-          //                 contentPadding: EdgeInsets.symmetric(
-          //                     horizontal: 20.0, vertical: 10.0),
-          //                 leading: Opacity(
-          //                   opacity: 0.8,
-          //                   child: Image.asset(
-          //                     'assets/images/concrete-truck.png',
-          //                     width: 35,
-          //                     height: 30,
-          //                   ),
-          //                 ),
-          //                 subtitle: Column(
-          //                   children: <Widget>[
-          //                     Align(
-          //                         alignment: AlignmentDirectional.centerStart,
-          //                         child: Row(
-          //                             mainAxisAlignment:
-          //                                 MainAxisAlignment.spaceBetween,
-          //                             children: [
-          //                               Flexible(child: Text(guia.camiao)),
-          //                             ])),
-          //                     Align(
-          //                         alignment: AlignmentDirectional.centerStart,
-          //                         child: Row(
-          //                           mainAxisAlignment:
-          //                               MainAxisAlignment.spaceBetween,
-          //                           children: [
-          //                             Flexible(
-          //                               child: Text(guia.motorista,
-          //                                   style: TextStyle(
-          //                                       fontWeight: FontWeight.bold)),
-          //                             )
-          //                           ],
-          //                         )),
-          //                   ],
-          //                 ),
-          //               ),
-          //             ),
-          //           ],
-          //         )),
-          //         Container(
-          //           margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          //           height: 70.0,
-          //           child: ListView(
-          //             // This next line does the trick.
-          //             scrollDirection: Axis.horizontal,
-          //             children: <Widget>[
-          //               Container(
-          //                   width: (MediaQuery.of(context).size.width - 10) / 4,
-          //                   child: Card(
-          //                     shape: RoundedRectangleBorder(
-          //                       borderRadius: BorderRadius.circular(
-          //                           10), // if you need this
-          //                     ),
-          //                     child: Column(
-          //                       crossAxisAlignment: CrossAxisAlignment.center,
-          //                       mainAxisAlignment: MainAxisAlignment.center,
-          //                       children: <Widget>[
-          //                         Text('Início'),
-          //                         Text(guia.saidacentral)
-          //                       ],
-          //                     ),
-          //                   )),
-          //               Container(
-          //                   width: (MediaQuery.of(context).size.width - 10) / 4,
-          //                   child: Card(
-          //                     shape: RoundedRectangleBorder(
-          //                       borderRadius: BorderRadius.circular(
-          //                           10), // if you need this
-          //                     ),
-          //                     child: Column(
-          //                       crossAxisAlignment: CrossAxisAlignment.center,
-          //                       mainAxisAlignment: MainAxisAlignment.center,
-          //                       children: <Widget>[
-          //                         Text('Obra'),
-          //                         Text(guia.chegadaobra)
-          //                       ],
-          //                     ),
-          //                   )),
-          //               Container(
-          //                   width: (MediaQuery.of(context).size.width - 10) / 4,
-          //                   child: Card(
-          //                     shape: RoundedRectangleBorder(
-          //                       borderRadius: BorderRadius.circular(
-          //                           10), // if you need this
-          //                     ),
-          //                     child: Column(
-          //                       crossAxisAlignment: CrossAxisAlignment.center,
-          //                       mainAxisAlignment: MainAxisAlignment.center,
-          //                       children: <Widget>[
-          //                         Text('Retorno'),
-          //                         Text(guia.saidaobra)
-          //                       ],
-          //                     ),
-          //                   )),
-          //               Container(
-          //                   width: (MediaQuery.of(context).size.width - 10) / 4,
-          //                   child: Card(
-          //                     shape: RoundedRectangleBorder(
-          //                       borderRadius: BorderRadius.circular(
-          //                           10), // if you need this
-          //                     ),
-          //                     child: Column(
-          //                       crossAxisAlignment: CrossAxisAlignment.center,
-          //                       mainAxisAlignment: MainAxisAlignment.center,
-          //                       children: <Widget>[
-          //                         Text('Chegada'),
-          //                         Text(guia.chegadacentral)
-          //                       ],
-          //                     ),
-          //                   )),
-          //             ],
-          //           ),
-          //         ),
-          //       ],
-          //     );
-          //   },
-          // );
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -1037,7 +673,21 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                 children: [
                   Text(
                     guia.codigo,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF40a1f0),
+                      shadows: <Shadow>[
+                        Shadow(
+                          color: Color(
+                              0xFF3ab1ff)
+                              .withOpacity(
+                              0.5),
+                          //spreadRadius: 3,
+                          blurRadius:
+                          8,
+                        )
+                      ],
+                      ),
                   ),
                   Text(guia.data_hora, style: TextStyle(fontSize: 12, color: Colors.white)),
                 ],

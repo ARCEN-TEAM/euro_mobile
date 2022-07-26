@@ -188,7 +188,7 @@ class _PlantsListState extends State<PlantsList> {
                                       horizontal: 5, vertical: 4),
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 12),
+                                        vertical: 1, horizontal: 12),
                                     decoration: BoxDecoration(
                                         color: isSelected
                                             ? Colors.grey

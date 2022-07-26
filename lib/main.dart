@@ -94,6 +94,9 @@ class MyApp extends StatelessWidget {
 
           appBarTheme: AppBarTheme(
             color: Colors.transparent,
+            iconTheme: IconThemeData(
+              color: AppColors.textColorOnDarkBG
+            )
           ),
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.blue,
