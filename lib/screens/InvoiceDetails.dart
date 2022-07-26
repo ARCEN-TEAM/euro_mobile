@@ -243,7 +243,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                                   Text(
                                     widget.guia.prod_delivered.toString(),
                                     style: TextStyle(
-                                        color: Colors.white, fontSize: 35),
+                                        color: Colors.white, fontSize: 28),
                                   ),
                                  Text(
 
