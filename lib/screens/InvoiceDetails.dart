@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'timelineTest.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
@@ -15,12 +16,7 @@ import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 import 'package:flutter/services.dart';
 import 'widgets/my_arc.dart';
 
-
-enum ButtonState {
-  idle,
-  loading,
-  sucess
-}
+enum ButtonState { idle, loading, sucess }
 
 class InvoiceDetail extends StatefulWidget {
   const InvoiceDetail({required this.central, required this.guia});
@@ -45,7 +41,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
   var response;
 
   @override
-  void initState() {
+  void initState()   {
     super.initState();
     _sliderController = CarouselSliderController();
 
@@ -57,8 +53,25 @@ class InvoiceDetailState extends State<InvoiceDetail> {
     clipboard.add(widget.guia.obra.nome);
     clipboard.add(widget.guia.receita);
     clipboard.add(widget.guia.motorista);
-  }
+    getDir(widget.guia.codigo);
 
+  }
+  getDir(String inv) async{
+    String localdir = (await getApplicationDocumentsDirectory()).path;
+    var fileNamedir = inv.replaceAll('/', '-') + '.pdf';
+
+    bool exists = await File("$localdir/$fileNamedir").exists();
+
+    setState(() {
+      dir = localdir;
+      fileName = fileNamedir;
+
+      if(exists){
+        currentState = 2;
+      }
+
+    });
+  }
   Future<void> GetInvoice(
       String plantCode, String invoice, String tipoguia) async {
     var status = await Permission.storage.status;
@@ -115,6 +128,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       height: double.infinity,
       width: double.infinity,
@@ -132,14 +146,13 @@ class InvoiceDetailState extends State<InvoiceDetail> {
       child: Scaffold(
         //extendBodyBehindAppBar: true,
         appBar: new AppBar(
-          iconTheme: IconThemeData(
-              color: AppColors.textColorOnDarkBG
-          ),
+          iconTheme: IconThemeData(color: AppColors.textColorOnDarkBG),
           elevation: 0.0,
           backgroundColor: Colors.transparent,
           centerTitle: true,
           title: Text(
-            widget.guia.codigo,
+
+            (widget.guia.inv_type == "1" ? "Guia de Remessa" : "Guia de Bombagem"),
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.textColorOnDarkBG),
           ),
@@ -150,7 +163,8 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                   setState(() {
                     switch (currentState) {
                       case 0: //idle
-                        GetInvoice(widget.central.codigo, widget.guia.codigo, widget.guia.inv_type);
+                        GetInvoice(widget.central.codigo, widget.guia.codigo,
+                            widget.guia.inv_type);
                         currentState = 1;
                         break;
 
@@ -160,79 +174,124 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                       case 2:
                         OpenFile.open("$dir/$fileName");
                         break;
-
                     }
                   });
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(right:20.0),
+                  padding: const EdgeInsets.only(right: 20.0),
                   child: downloadProgress(currentState),
                 ),
-                ),
+              ),
             )
-
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: [
-                  Center(
-                      child: CustomPaint(
-                        painter: MyPainter(),
-                        size: Size(80, 80),
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.only(top:35),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment:  MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 70.0, left: 35),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.guia.prod_delivered.toString(),
-                            style: TextStyle(color:Colors.white, fontSize: 35),),
+                            widget.guia.codigo,
+                            style: TextStyle(
+                                color: AppColors.textColorOnDarkBG,
+                                fontSize: 20),
+                          ),
                           Text(
-                            ' m³',
-                            style: TextStyle(color:Colors.white, fontSize: 20),)
+                            widget.guia.data_hora.substring(0, 10),
+                            style: TextStyle(
+                                color: AppColors.textColorOnDarkBG,
+                                fontSize: 15),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            widget.guia.ord_code,
+                            style: TextStyle(
+                                color: AppColors.textColorOnDarkBG,
+                                fontSize: 15),
+                          ),
                         ],
-                      )
-                    ),
+                      ),
+                      Stack(
+                        children: [
+                          Center(
+                              child: CustomPaint(
+                            painter: MyPainter(),
+                            size: Size(80, 80),
+                          )),
+                          Container(
+                              width: 80,
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Wrap(
+                                spacing: 0,
+                                runSpacing: -10,
+                                alignment: WrapAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Text(
+                                    widget.guia.prod_delivered.toString(),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 35),
+                                  ),
+                                 Text(
+
+                                      ' m³',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+
+                                ],
+                              )),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              buildCard(
-                  0,
-                  "Cliente",
-                  [
-                    widget.guia.obra.cliente.codigo,
-                    widget.guia.obra.cliente.nome
-                  ],
-                  null,
-                  null),
-              buildCard(
-                  1,
-                  "Obra",
-                  [widget.guia.obra.codigo, widget.guia.obra.nome],
-                  Icon(Icons.chevron_right, color: Colors.white),
-                  WorkplaceScreen(widget.guia.obra)),
-              buildCard(
-                  2,
-                  "Composição",
-                  [widget.guia.cod_receita, widget.guia.receita],
-                  null,
-                  null),
-              buildCard(
-                  3,
-                  "Camião",
-                  [widget.guia.camiao, widget.guia.motorista],
-                  null,
-                  null),
-            ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                buildCard(
+                    0,
+                    "Cliente",
+                    [
+                      widget.guia.obra.cliente.codigo,
+                      widget.guia.obra.cliente.nome
+                    ],
+                    null,
+                    null),
+                buildCard(
+                    1,
+                    "Obra",
+                    [widget.guia.obra.codigo, widget.guia.obra.nome],
+                    Icon(Icons.chevron_right, color: Colors.white),
+                    WorkplaceScreen(widget.guia.obra)),
+                buildCard(2, "Composição",
+                    [widget.guia.cod_receita, widget.guia.receita], null, null),
+                buildCard(3, "Camião",
+                    [widget.guia.camiao, widget.guia.motorista], null, null),
+                DeliveryTimeline(timeList: [
+                  '10:30',
+                  "10:45",
+                  "11:30",
+                  '10:30',
+                  "10:45",
+                  "11:30",
+                  "11:30"
+                ], lastTimestmp: 5)
+              ],
+            ),
           ),
         ),
       ),
@@ -244,12 +303,15 @@ class InvoiceDetailState extends State<InvoiceDetail> {
   Widget downloadProgress(int state) {
     switch (state) {
       case 0: //idle
-        return Icon(Icons.file_download, color: AppColors.textColorOnDarkBG,);
+        return Icon(
+          Icons.file_download,
+          color: AppColors.textColorOnDarkBG,
+        );
 
       case 1: //loading
         return SizedBox(
-          height:20,
-          width:20,
+          height: 20,
+          width: 20,
           child: CircularProgressIndicator(
             strokeWidth: 2,
             color: Colors.white,
@@ -258,18 +320,21 @@ class InvoiceDetailState extends State<InvoiceDetail> {
         );
 
       case 2: //sucess
-        return Icon(Icons.file_download_done, color: AppColors.textColorOnDarkBG,);
+        return Icon(
+          Icons.file_download_done,
+          color: AppColors.textColorOnDarkBG,
+        );
 
       default:
         return Container();
     }
   }
 
-  Widget buildCard(int indexCard, String titulo,
-      List<String> subtitulo, Icon? trailing, dynamic? screenRoute) {
+  Widget buildCard(int indexCard, String titulo, List<String> subtitulo,
+      Icon? trailing, dynamic? screenRoute) {
     return Container(
       height: 90,
-      padding: EdgeInsets.only(left:20),
+      padding: EdgeInsets.only(left: 20),
       child: ListTile(
           title: Flex(direction: Axis.horizontal, children: [
             Flexible(
@@ -370,8 +435,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        screenRoute),
+                                    builder: (context) => screenRoute),
                               );
                             },
                           ),
