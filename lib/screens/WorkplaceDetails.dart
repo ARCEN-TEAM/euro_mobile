@@ -64,6 +64,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
         ),
       ),
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.transparent,
@@ -79,116 +80,192 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
           child: CustomScrollView(slivers: <Widget>[
             SliverAppBar(
               forceElevated: true,
-              floating: true,
+              floating: false,
               automaticallyImplyLeading: false,
               snap: false,
               pinned: false,
-              expandedHeight: 140,
 
               flexibleSpace: FlexibleSpaceBar(
                   titlePadding: EdgeInsetsDirectional.only(start: 20, bottom: 16),
                   title: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                                padding: const EdgeInsets.only(left: 7.0),
-                                child: new GestureDetector(
-                                  onTap: () {
-                                    MapUtils.openMap(obralocal.gps.latitude,
-                                        obralocal.gps.longitude);
-                                  },
-                                  child: Container(
-                                    width: 80,
-                                    height: 80,
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.blue,
+                    child: ListTile(
+                      leading:  Padding(
+                                  padding: const EdgeInsets.only(left: 7.0),
+                                  child: new GestureDetector(
+                                    onTap: () {
+                                      MapUtils.openMap(obralocal.gps.latitude,
+                                          obralocal.gps.longitude);
+                                    },
+                                    child: Container(
+                                      width: 80,
+                                      height: 80,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.blue,
+                                      ),
+                                      child: Align(
+                                        alignment: AlignmentDirectional(0, 0),
+                                        child: Image.network(
+                                            'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
+                                                obralocal.gps.longitude.toString() +
+                                                ',' +
+                                                obralocal.gps.latitude.toString() +
+                                                ')/' +
+                                                obralocal.gps.longitude.toString() +
+                                                ',' +
+                                                obralocal.gps.latitude.toString() +
+                                                ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
+                                      ),
                                     ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional(0, 0),
-                                      child: Image.network(
-                                          'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
-                                              obralocal.gps.longitude.toString() +
-                                              ',' +
-                                              obralocal.gps.latitude.toString() +
-                                              ')/' +
-                                              obralocal.gps.longitude.toString() +
-                                              ',' +
-                                              obralocal.gps.latitude.toString() +
-                                              ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
-                                    ),
-                                  ),
-                                )),
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                        child: Text(
-                                      obralocal.codigo,
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.white),
-                                    )),
-                                    Container(
-                                        child: Text(
-                                      obralocal.nome,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          color: Colors.white),
-                                    )),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(Icons.phone_android_rounded,
-                                                color: Colors.white, size: 17),
-                                            Flexible(
-                                              child: Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 8.0),
-                                                  child: InkWell(
-                                                    child: Text(
-                                                        obralocal.telefone
-                                                            .replaceAll(
-                                                                '+351', ''),
-                                                        overflow:
-                                                            TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            wordSpacing: 2,
-                                                            fontSize: 10,
-                                                            letterSpacing: 4)),
-                                                    onTap: () {
-                                                      Utils.launchCaller(
-                                                          util_call,
+                                  )),
+                      title:  Flexible(
+                        child: Container(
+                                            child: Text(
+                                              overflow:
+                                              TextOverflow.ellipsis,
+                                          obralocal.nome,
+                                          style: TextStyle(fontWeight: FontWeight.bold,
+                                              fontSize: 18, color: Colors.white),
+                                        )),
+                      ),
+                      subtitle: Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(Icons.phone_android_rounded,
+                                                  color: Colors.white, size: 17),
+                                              Flexible(
+                                                child: Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        left: 8.0),
+                                                    child: InkWell(
+                                                      child: Text(
                                                           obralocal.telefone
                                                               .replaceAll(
-                                                                  '+351', ''));
-                                                    },
-                                                  )),
-                                            )
-                                          ]),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                                                                  '+351', ''),
+                                                          overflow:
+                                                              TextOverflow.ellipsis,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              wordSpacing: 2,
+                                                              fontSize: 12,
+                                                              letterSpacing: 4)),
+                                                      onTap: () {
+                                                        Utils.launchCaller(
+                                                            util_call,
+                                                            obralocal.telefone
+                                                                .replaceAll(
+                                                                    '+351', ''));
+                                                      },
+                                                    )),
+                                              )
+                                            ]),
+                                      ),
+                    )
+                    // child: Column(
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     Row(
+                    //       mainAxisAlignment: MainAxisAlignment.start,
+                    //       children: <Widget>[
+                    //         Padding(
+                    //             padding: const EdgeInsets.only(left: 7.0),
+                    //             child: new GestureDetector(
+                    //               onTap: () {
+                    //                 MapUtils.openMap(obralocal.gps.latitude,
+                    //                     obralocal.gps.longitude);
+                    //               },
+                    //               child: Container(
+                    //                 width: 80,
+                    //                 height: 80,
+                    //                 clipBehavior: Clip.antiAlias,
+                    //                 decoration: BoxDecoration(
+                    //                   shape: BoxShape.circle,
+                    //                   color: Colors.blue,
+                    //                 ),
+                    //                 child: Align(
+                    //                   alignment: AlignmentDirectional(0, 0),
+                    //                   child: Image.network(
+                    //                       'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
+                    //                           obralocal.gps.longitude.toString() +
+                    //                           ',' +
+                    //                           obralocal.gps.latitude.toString() +
+                    //                           ')/' +
+                    //                           obralocal.gps.longitude.toString() +
+                    //                           ',' +
+                    //                           obralocal.gps.latitude.toString() +
+                    //                           ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
+                    //                 ),
+                    //               ),
+                    //             )),
+                    //         Flexible(
+                    //           child: Padding(
+                    //             padding: const EdgeInsets.only(left: 20.0),
+                    //             child: Column(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: <Widget>[
+                    //                 Container(
+                    //                     child: Text(
+                    //                   obralocal.codigo,
+                    //                   style: TextStyle(
+                    //                       fontSize: 10, color: Colors.white),
+                    //                 )),
+                    //                 Container(
+                    //                     child: Text(
+                    //                   obralocal.nome,
+                    //                   overflow: TextOverflow.ellipsis,
+                    //                   style: TextStyle(
+                    //                       fontWeight: FontWeight.bold,
+                    //                       fontSize: 15,
+                    //                       color: Colors.white),
+                    //                 )),
+                    //                 Padding(
+                    //                   padding: const EdgeInsets.only(top: 8.0),
+                    //                   child: Row(
+                    //                       crossAxisAlignment:
+                    //                           CrossAxisAlignment.center,
+                    //                       children: <Widget>[
+                    //                         Icon(Icons.phone_android_rounded,
+                    //                             color: Colors.white, size: 17),
+                    //                         Flexible(
+                    //                           child: Padding(
+                    //                               padding: const EdgeInsets.only(
+                    //                                   left: 8.0),
+                    //                               child: InkWell(
+                    //                                 child: Text(
+                    //                                     obralocal.telefone
+                    //                                         .replaceAll(
+                    //                                             '+351', ''),
+                    //                                     overflow:
+                    //                                         TextOverflow.ellipsis,
+                    //                                     style: TextStyle(
+                    //                                         color: Colors.white,
+                    //                                         wordSpacing: 2,
+                    //                                         fontSize: 10,
+                    //                                         letterSpacing: 4)),
+                    //                                 onTap: () {
+                    //                                   Utils.launchCaller(
+                    //                                       util_call,
+                    //                                       obralocal.telefone
+                    //                                           .replaceAll(
+                    //                                               '+351', ''));
+                    //                                 },
+                    //                               )),
+                    //                         )
+                    //                       ]),
+                    //                 )
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ],
+                    // ),
                   )),
             ),
             SliverToBoxAdapter(
@@ -271,227 +348,61 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                     return Container(
                         margin: new EdgeInsets.only(top: 5.0),
                         width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(width: 0, color: Colors.white),
-                        ),
                         child: Column(children: [
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // if you need this
-                            ),
-                            margin:
-                                EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                            child: TextFormField(
-                              enabled: false,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(
-                                  Icons.person,
-                                ),
-                                labelText: obralocal.cliente.nome,
-                                labelStyle:
-                                    TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // if you need this
-                            ),
-                            margin:
-                                EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                            child: TextFormField(
-                              enabled: false,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(
-                                  Icons.home,
-                                  color: Colors.grey.withOpacity(0.9),
-                                ),
-                                labelText: obralocal.cliente.morada,
-                                labelStyle: TextStyle(
-                                    color: Colors.grey.withOpacity(0.9),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // if you need this
-                            ),
-                            margin:
-                                EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                            child: TextFormField(
-                              enabled: false,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(
-                                  Icons.foundation,
-                                  color: Colors.grey.withOpacity(0.9),
-                                ),
-                                labelText: obralocal.nome,
-                                labelStyle: TextStyle(
-                                    color: Colors.grey.withOpacity(0.9),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // if you need this
-                            ),
-                            margin:
-                                EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                            child: TextFormField(
-                              enabled: false,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(
-                                  Icons.work,
-                                  color: Colors.grey.withOpacity(0.9),
-                                ),
-                                labelText: obralocal.morada,
-                                labelStyle: TextStyle(
-                                    color: Colors.grey.withOpacity(0.9),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // if you need this
-                            ),
-                            margin:
-                                EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                            child: TextFormField(
-                              enabled: false,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(
-                                  Icons.location_pin,
-                                  color: Colors.grey.withOpacity(0.9),
-                                ),
-                                labelText: obralocal.codpostal + ' ' + obralocal.cidade,
-                                labelStyle: TextStyle(
-                                    color: Colors.grey.withOpacity(0.9),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // if you need this
-                            ),
-                            margin:
-                                EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                            child: TextFormField(
-                              enabled: false,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(
-                                  Icons.phone,
-                                  color: Colors.grey.withOpacity(0.9),
-                                ),
-                                labelText: obralocal.telefone,
-                                labelStyle: TextStyle(
-                                    color: Colors.grey.withOpacity(0.9),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // if you need this
-                            ),
-                            margin:
-                                EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                            child: TextFormField(
-                              enabled: false,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                prefixIcon: Icon(
-                                  Icons.email,
-                                  color: Colors.grey.withOpacity(0.9),
-                                ),
-                                labelText: obralocal.email,
-                                labelStyle: TextStyle(
-                                    color: Colors.grey.withOpacity(0.9),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
+
+                          buildCard(
+                              0,
+                              1,
+                              "Cliente",
+                              [
+                                obralocal.cliente.codigo,
+                                obralocal.cliente.nome
+                              ],
+                              null,
+                              null),
+                          buildCard(
+                              1,
+                              0,
+                              "Sede cliente",
+                              [
+                                obralocal.cliente.morada
+                              ],
+                              null,
+                              null),
+                          buildCard(
+                              2,
+                              1,
+                              "Obra",
+                              [
+                                obralocal.codigo,
+                                obralocal.nome
+                              ],
+                              null,
+                              null),
+                          buildCard(
+                              3,
+                              0,
+                              "Morada",
+                              [
+                                obralocal.morada,
+                                obralocal.codpostal + ' ' + obralocal.cidade
+                              ],
+                              null,
+                              null),
+                          buildCard(
+                              4,
+                              1,
+                              "Contactos",
+                              [
+                                obralocal.email,
+                                obralocal.telefone
+                              ],
+                              null,
+                              null),
+
                         ]));
 
                   case 1:
-                    return  Column(
-                      children: [
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(10), // if you need this
-                          ),
-                          margin:
-                          EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                          child: Container(
-                              margin: new EdgeInsets.only(top: 5.0),
-                              child: Column(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Volume total fornecido:",
-                                      style: TextStyle(fontWeight:FontWeight.bold),
-                                    ),
-                                  ),
-                                  FAProgressBar(
-                                    currentValue: 200,
-                                    maxValue: 200,
-                                    displayText: " / 200 m³",
-                                    progressColor: Color(0xFFFFC000),
-                                    changeColorValue: 200,
-                                    changeProgressColor: Color(0xFF58cc28),
-                                    backgroundColor: Color(0xFFe1e1e1),
-                                    displayTextStyle: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 14
-                                    ),
-                                    animatedDuration: Duration(seconds: 2),
-                                  ),
-                                  SizedBox(height:10),
-                                  Row(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "Volume total bombado: ",
-                                          style: TextStyle(fontWeight:FontWeight.bold),
-                                        ),
-                                      ),
-                                      Text(
-                                        "123.00 m³",
-                                        style: TextStyle(fontWeight:FontWeight.bold, fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )),
-                        ),
-                      ],
-                    );
                   case 2:
                   case 3:
                 }
@@ -503,7 +414,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
     );
   }
 
-  Widget buildCard(int indexCard, String titulo, List<String> subtitulo,
+  Widget buildCard(int indexCard, int titulinicial, String titulo, List<String> subtitulo,
       Icon? trailing, dynamic? screenRoute) {
     return Container(
       height: 90,
@@ -569,7 +480,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                           indicatorBackgroundColor: Color(0x5D494a4b),
                           currentIndicatorColor: AppColors.buttonPrimaryColor),
                       itemCount: subtitulo.length,
-                      initialPage: 1,
+                      initialPage: titulinicial,
                     ),
                   );
                 }
