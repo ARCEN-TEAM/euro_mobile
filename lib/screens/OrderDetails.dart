@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../classes/constants.dart';
 import '../classes/order.dart';
+import '../classes/enterExitPage.dart';
 
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 
 import 'WorkplaceDetails.dart';
-import 'widgets/my_arc.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class OrderDetails extends StatefulWidget {
@@ -135,7 +135,24 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                   width: 0.1,
                                                   color: AppColors.buttonPrimaryColor,
                                                   sizeUnit: GaugeSizeUnit.factor,
-                                                  cornerStyle: CornerStyle.bothCurve)
+                                                  cornerStyle: CornerStyle.bothCurve
+                                              ),
+
+                                              MarkerPointer(
+                                                  value: widget.pedido.prod_delivered,
+                                                  markerOffset: -5,
+                                                  color: Colors.white
+                                              ),
+                                              WidgetPointer(
+                                                offset: -24,
+                                                value:widget.pedido.prod_delivered,
+                                                child: Text(
+                                                  widget.pedido.prod_delivered.toString(),
+                                                  style: TextStyle(
+                                                      color:Colors.white,
+                                                      fontWeight: FontWeight.bold
+                                                  ),),
+                                              ),
                                             ],
                                           )
                                         ]),
@@ -295,10 +312,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                             splashColor: Colors.white, // inkwell color
                             child: trailing,
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => screenRoute),
+                              Navigator.push(context, SlideInPageRoute(exitPage: widget, enterPage:screenRoute),
                               );
                             },
                           ),

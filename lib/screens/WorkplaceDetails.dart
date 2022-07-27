@@ -1,5 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
+import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
+import '../classes/constants.dart';
+import '../classes/enterExitPage.dart';
 import '../classes/workplace.dart';
 import '../classes/utils.dart';
 import '../classes/MapUtils.dart';
@@ -15,7 +20,7 @@ class WorkplaceScreen extends StatefulWidget {
   State<WorkplaceScreen> createState() => _WorkplaceScreenWidgetState();
 }
 
-List<String> categories = ['Detalhes', 'Dash', 'Planeados', 'Fornecidos'];
+List<String> categories = ['Detalhes'];
 var currentIndex = 0;
 var pageIndex = 0;
 var response;
@@ -25,9 +30,15 @@ bool postRequestLoading = false;
 var lengthsliver = 1;
 
 class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
+
+  late CarouselSliderController _sliderController;
+  List<String> clipboard = [];
+
   @override
   void initState() {
     super.initState();
+
+    _sliderController = CarouselSliderController();
   }
 
   @override
@@ -479,44 +490,6 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                                 ],
                               )),
                         ),
-
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(10), // if you need this
-                          ),
-                          margin:
-                          EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                          child: Container(
-                              margin: new EdgeInsets.only(top: 5.0),
-                              child: Column(
-                                children: [
-                                  Text("Pedidos para hoje",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 16)),
-                                  SizedBox(height:10),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                        "P501-38014",
-                                        style: TextStyle(fontWeight:FontWeight.bold),
-                                    ),
-                                  ),
-                                  FAProgressBar(
-                                    currentValue: 200,
-                                    maxValue: 200,
-                                    displayText: " / 200 m³",
-                                    progressColor: Color(0xFFFFC000),
-                                    changeColorValue: 200,
-                                    changeProgressColor: Color(0xFF58cc28),
-                                    backgroundColor: Color(0xFFe1e1e1),
-                                    displayTextStyle: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 14
-                                    ),
-                                    animatedDuration: Duration(seconds: 2),
-                                  ),
-
-                                ],
-                              )),
-                        ),
                       ],
                     );
                   case 2:
@@ -527,6 +500,122 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
           ]),
         ),
       ),
+    );
+  }
+
+  Widget buildCard(int indexCard, String titulo, List<String> subtitulo,
+      Icon? trailing, dynamic? screenRoute) {
+    return Container(
+      height: 90,
+      padding: EdgeInsets.only(left: 20),
+      child: ListTile(
+          title: Flex(direction: Axis.horizontal, children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  titulo,
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ]),
+          subtitle: new LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                if (subtitulo.length == 1) {
+                  return Flex(direction: Axis.horizontal, children: [
+                    Flexible(
+                      child: Text(
+                        overflow: TextOverflow.ellipsis,
+                        subtitulo[0],
+                        style: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ]);
+                } else {
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 55),
+                    child: CarouselSlider.builder(
+                      onSlideChanged: (index) {
+                        setState(() {
+                          clipboard[indexCard] = subtitulo[index];
+                        });
+                      },
+                      controller: _sliderController,
+                      slideBuilder: (index) {
+                        return Flex(direction: Axis.horizontal, children: [
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                overflow: TextOverflow.ellipsis,
+                                subtitulo[index],
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ]);
+                      },
+                      slideIndicator: CircularSlideIndicator(
+                          itemSpacing: 10,
+                          indicatorRadius: 4,
+                          alignment: AlignmentDirectional.bottomStart,
+                          indicatorBorderColor: Color(0x5D494a4b),
+                          indicatorBackgroundColor: Color(0x5D494a4b),
+                          currentIndicatorColor: AppColors.buttonPrimaryColor),
+                      itemCount: subtitulo.length,
+                      initialPage: 1,
+                    ),
+                  );
+                }
+              }),
+          trailing: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: IntrinsicHeight(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    splashColor: Colors.white, // inkwell color
+                    child: Icon(Icons.content_copy,
+                        color: Colors.white.withOpacity(0.2)),
+                    onTap: () {
+                      GlobalFunctions.removeToast(context);
+                      Clipboard.setData(
+                          ClipboardData(text: clipboard[indexCard]))
+                          .then((_) {
+                        GlobalFunctions.showToast(context,
+                            " '" + clipboard[indexCard] + "' copiado!");
+                      });
+                    },
+                  ),
+                  (trailing == null
+                      ? Container()
+                      : Row(children: [
+                    SizedBox(width: 10),
+                    VerticalDivider(
+                      color: Colors.white.withOpacity(0.2),
+                      thickness: 2,
+                    ),
+                    SizedBox(width: 10),
+                    InkWell(
+                      splashColor: Colors.white, // inkwell color
+                      child: trailing,
+                      onTap: () {
+                        Navigator.push(context, SlideInPageRoute(exitPage: widget, enterPage:screenRoute),
+                        );
+                      },
+                    ),
+                  ])),
+                ],
+              ),
+            ),
+          )),
     );
   }
 }
