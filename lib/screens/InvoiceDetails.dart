@@ -7,7 +7,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'workplace_screen_details.dart';
+import 'WorkplaceDetails.dart';
 import '../classes/constants.dart';
 import '../classes/invoice.dart';
 import '../classes/plant.dart';
@@ -31,10 +31,6 @@ class InvoiceDetail extends StatefulWidget {
 class InvoiceDetailState extends State<InvoiceDetail> {
   late CarouselSliderController _sliderController;
   List<String> clipboard = [];
-  String copyCliente = '';
-  String copyObra = '';
-  String copyRecipe = '';
-  String copyTruck = '';
 
   String dir = "";
   var fileName = "";
@@ -45,10 +41,6 @@ class InvoiceDetailState extends State<InvoiceDetail> {
     super.initState();
     _sliderController = CarouselSliderController();
 
-    copyCliente = widget.guia.obra.cliente.nome;
-    copyObra = widget.guia.obra.nome;
-    copyRecipe = widget.guia.receita;
-    copyTruck = widget.guia.motorista;
     clipboard.add(widget.guia.obra.cliente.nome);
     clipboard.add(widget.guia.obra.nome);
     clipboard.add(widget.guia.receita);
@@ -234,22 +226,21 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                           Container(
                               width: 80,
                               padding: const EdgeInsets.only(top: 20),
-                              child: Wrap(
-                                spacing: 0,
-                                runSpacing: -10,
-                                alignment: WrapAlignment.center,
-                                crossAxisAlignment: WrapCrossAlignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     widget.guia.prod_delivered.toString(),
                                     style: TextStyle(
-                                        color: Colors.white, fontSize: 28),
+                                        color: Colors.white, fontSize: 28, height:1.5),
                                   ),
+
                                  Text(
 
-                                      ' m³',
+                                      'm³',
                                       style: TextStyle(
-                                          color: Colors.white, fontSize: 20),
+                                          color: Colors.white, fontSize: 20, height:0.8),
                                     ),
 
                                 ],
@@ -260,7 +251,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                   ),
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 20,
                 ),
                 buildCard(
                     0,
@@ -364,7 +355,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
               ]);
             } else {
               return Container(
-                margin: EdgeInsets.only(bottom: 40),
+                margin: EdgeInsets.only(bottom: 55),
                 child: CarouselSlider.builder(
                   onSlideChanged: (index) {
                     setState(() {
@@ -376,7 +367,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                     return Flex(direction: Axis.horizontal, children: [
                       Flexible(
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 15),
+                          padding: const EdgeInsets.only(bottom: 10),
                           child: Text(
                             overflow: TextOverflow.ellipsis,
                             subtitulo[index],
@@ -389,10 +380,12 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                     ]);
                   },
                   slideIndicator: CircularSlideIndicator(
+                      itemSpacing: 10,
+                      indicatorRadius: 4,
                       alignment: AlignmentDirectional.bottomStart,
                       indicatorBorderColor: Color(0x5D494a4b),
                       indicatorBackgroundColor: Color(0x5D494a4b),
-                      currentIndicatorColor: Colors.white),
+                      currentIndicatorColor: AppColors.buttonPrimaryColor),
                   itemCount: subtitulo.length,
                   initialPage: 1,
                 ),

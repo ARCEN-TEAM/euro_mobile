@@ -4,7 +4,7 @@ import '../classes/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
-//import 'package:login_test/screens/plant_screen_details.dart';
+//import 'package:login_test/screens/PlantDetails.dart';
 import 'package:intl/intl.dart';
 import 'plants_list.dart';
 import 'profile_screen.dart';

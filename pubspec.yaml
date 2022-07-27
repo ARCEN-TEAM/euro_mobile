@@ -30,10 +30,12 @@ dependencies:
   open_file: ^3.2.1
   syncfusion_flutter_charts: ^20.1.59
   syncfusion_flutter_datepicker: ^20.1.59
+  syncfusion_flutter_gauges: ^20.1.59
   font_awesome_flutter: ^10.1.0
   flutter_carousel_slider: ^1.0.9
   flutter_animation_progress_bar: ^2.2.1
   timeline_tile: ^2.0.0
+
 
 dev_dependencies:
   flutter_test:

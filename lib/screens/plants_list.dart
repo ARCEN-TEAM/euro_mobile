@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-import 'plant_screen_details.dart';
+import 'PlantDetails.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';

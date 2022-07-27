@@ -1,5 +1,5 @@
 import 'package:euro_mobile/classes/constants.dart';
-import 'package:euro_mobile/screens/plant_screen_details.dart';
+import 'package:euro_mobile/screens/PlantDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timeline_tile/timeline_tile.dart';

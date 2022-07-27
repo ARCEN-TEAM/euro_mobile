@@ -9,7 +9,7 @@ import '../classes/order.dart';
 import '../classes/utils.dart';
 import '../classes/MapUtils.dart';
 import '../classes/constants.dart';
-//import 'workplace_screen_details.dart';
+//import 'WorkplaceDetails.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -22,6 +22,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../utilities/constants.dart';
 import 'package:open_file/open_file.dart';
 import 'InvoiceDetails.dart';
+import 'OrderDetails.dart';
 
 class PlantScreen extends StatefulWidget {
   const PlantScreen(this.central, this.data);
@@ -741,235 +742,12 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
   Widget buildCardOrder(Order pedido) {
     return GestureDetector(
         onTap: () {
-          showModalBottomSheet(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
-            ),
-            isScrollControlled: true,
-            context: context,
-            builder: (context) {
-              // Using Wrap makes the bottom sheet height the height of the content.
-              // Otherwise, the height will be half the height of the screen.
-              return Wrap(
-                children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 12, 0, 0),
-                      child: Container(
-                        width: 50,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFDBE2E7),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ]),
-                  Container(
-                      child: Column(
-                    children: [
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(10), // if you need this
-                        ),
-                        child: ListTile(
-                          //leading: Icon(Icons.work, color: Colors.black),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                pedido.cod,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(pedido.date, style: TextStyle(fontSize: 12)),
-                            ],
-                          ),
-
-                          subtitle: Column(
-                            children: <Widget>[
-                              Align(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          pedido.cod + ' - ' + pedido.codref,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                      ])),
-                              Align(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(pedido.prod_delivered.toString() +
-                                          '/' +
-                                          pedido.prod_desired.toString() +
-                                          ' m³')
-                                    ],
-                                  )),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(10), // if you need this
-                        ),
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10.0),
-                          leading: FaIcon(
-                            FontAwesomeIcons.userTie,
-                            size: 30,
-                          ),
-                          subtitle: Column(
-                            children: <Widget>[
-                              Align(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                            child: Text(pedido.obra.cliente.codigo)),
-                                      ])),
-                              Align(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Flexible(
-                                        child: Text(pedido.obra.cliente.nome,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                      )
-                                    ],
-                                  )),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           WorkplaceScreen(pedido.obra)),
-                          // );
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(10), // if you need this
-                          ),
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10.0),
-                            leading: FaIcon(
-                              FontAwesomeIcons.personDigging,
-                              size: 30,
-                            ),
-                            subtitle: Column(
-                              children: <Widget>[
-                                Align(
-                                    alignment: AlignmentDirectional.centerStart,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Flexible(child: Text(pedido.obra.codigo)),
-                                        ])),
-                                Align(
-                                    alignment: AlignmentDirectional.centerStart,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Text(pedido.obra.nome,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                        )
-                                      ],
-                                    )),
-                              ],
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.directions),
-                              onPressed: () {
-                                MapUtils.openMap(pedido.obra.gps.latitude,
-                                    pedido.obra.gps.longitude);
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(10), // if you need this
-                        ),
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10.0),
-                          leading: Opacity(
-                            opacity: 0.65,
-                            child: Image.asset(
-                              'assets/images/pile-concrete.png',
-                              width: 35,
-                              height: 30,
-                            ),
-                          ),
-                          subtitle: Column(
-                            children: <Widget>[
-                              Align(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                            child: Text(pedido.cod_receita)),
-                                      ])),
-                              Align(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Flexible(
-                                        child: Text(pedido.receita,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                      )
-                                    ],
-                                  )),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-
-                ],
-              );
-            },
-          );
+          Navigator.of(context).push(new MaterialPageRoute<String>(
+              builder: (BuildContext context) {
+                return new OrderDetails(pedido: pedido);
+              },
+              fullscreenDialog: true
+          ));
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
