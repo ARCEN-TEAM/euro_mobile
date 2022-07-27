@@ -112,18 +112,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           RadialAxis(
 
                                             canScaleToFit: true,
-                                            showLabels: false,
-                                            showTicks: false,
+                                            showLastLabel: true,
+                                            maximumLabels: widget.pedido.prod_desired.toInt(),
+                                            showLabels: true,
+                                            showTicks: true,
                                             startAngle: 180,
                                             endAngle: 0,
+                                            interval: widget.pedido.prod_desired / 5,
                                             radiusFactor: 3,
-                                            axisLineStyle: AxisLineStyle(
-                                              thickness: 0.1,
-                                              color: Color.fromARGB(
-                                                  30, 0, 169, 181),
-                                              thicknessUnit: GaugeSizeUnit.factor,
-                                              cornerStyle: CornerStyle.startCurve,
-                                            ),
+                                            maximum: widget.pedido.prod_desired,
                                             pointers: <GaugePointer>[
                                               RangePointer(
                                                   gradient: SweepGradient(
@@ -134,10 +131,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                       ].reversed.toList(),
                                                       stops: <double>[0.2, 0.5, 0.8]
                                                   ),
-                                                  value: widget.pedido.prod_delivered / widget.pedido.prod_desired * 100,
+                                                  value: widget.pedido.prod_delivered,
                                                   width: 0.1,
                                                   color: AppColors.buttonPrimaryColor,
-
                                                   sizeUnit: GaugeSizeUnit.factor,
                                                   cornerStyle: CornerStyle.bothCurve)
                                             ],
@@ -146,18 +142,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       ),
                                         Center(
                                             child: Padding(
-                                              padding: const EdgeInsets.only(top:20),
+                                              padding: const EdgeInsets.only(top:70),
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    widget.pedido.prod_delivered.toString() + '/' + widget.pedido.prod_desired.toString(),
+                                                    (widget.pedido.prod_delivered / widget.pedido.prod_desired * 100).round().toString() + '%',
                                                     style: TextStyle(color:Colors.white, fontSize: 25),
                                                   ),
-                                                  Text(
-                                                    'm³',
-                                                    style: TextStyle(color:Colors.white, fontSize: 20),
-                                                  ),
+
                                                 ],
                                               ),
                                             )

@@ -662,14 +662,9 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
   }
 
   Widget buildCardInvoice(Invoice guia) {
+
     return GestureDetector(
         onTap: () {
-          /*Navigator.of(context).push(  MaterialPageRoute<String>(
-
-              builder: (BuildContext context) {
-                return   InvoiceDetail(central: widget.central, guia: guia);
-              },
-              fullscreenDialog: true));*/
           Navigator.of(context).push(
             PageRouteBuilder(
                 fullscreenDialog: true,
@@ -805,12 +800,34 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
   Widget buildCardOrder(Order pedido) {
     return GestureDetector(
         onTap: () {
-          Navigator.of(context).push(new MaterialPageRoute<String>(
-              builder: (BuildContext context) {
-                return new OrderDetails(pedido: pedido);
-              },
-              fullscreenDialog: true
-          ));
+          Navigator.of(context).push(
+              PageRouteBuilder(
+                  fullscreenDialog: true,
+                  pageBuilder: (BuildContext context, Animation<double> animation,Animation<double> secondaryAnimation) {
+                    return   OrderDetails(pedido: pedido);
+                  },
+                  transitionDuration: Duration(milliseconds: 300),
+                  transitionsBuilder: (
+                      BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                      Widget child,
+                      ) {
+                    return SlideTransition(
+
+                      position: Tween<Offset>(
+                        begin: const Offset(0.0, 1.0),
+                        end: Offset.zero,
+                      ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.fastOutSlowIn,
+                          )),
+                      child: child, // child is the value returned by pageBuilder
+                    );
+                  }
+              )
+          );
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -884,8 +901,8 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                                   ],
                                   xValueMapper: (ChartData data, _) => data.x,
                                   yValueMapper: (ChartData data, _) => data.y,
-                                  pointColorMapper: (ChartData data, _) => Colors.white,
-                                  cornerStyle: CornerStyle.bothCurve,
+                                  pointColorMapper: (ChartData data, _) => (pedido.statusColor == "0x00ffffff" ? AppColors.buttonPrimaryColor : Color(int.parse(pedido.statusColor))) ,
+                                  cornerStyle: (pedido.prod_delivered == pedido.prod_desired ? CornerStyle.bothFlat : CornerStyle.bothCurve),
                                   maximumValue: pedido.prod_desired,
                                   radius: '100%',
                                   innerRadius: '80%',
@@ -895,12 +912,23 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                       ],
                     ),
                   ),
+
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         pedido.cod,
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF40a1f0),
+                          shadows: <Shadow>[
+                            Shadow(
+                              color: Color(0xFF3ab1ff).withOpacity(0.5),
+                              //spreadRadius: 3,
+                              blurRadius: 3,
+                            )
+                          ],
+                        ),
                       ),
                       Text(pedido.date, style: TextStyle(fontSize: 12, color: Colors.white)),
                     ],
@@ -937,8 +965,15 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                               )),
                               Padding(
                                 padding: const EdgeInsets.only(left: 15),
-                                child: Text(pedido.rownr + '/' + pedido.totalrows, style: TextStyle(color: Colors.white)),
+                                child: Container(
+                                    padding: EdgeInsets.only(left: 10,right: 10,top: 3,bottom: 3),
+                                    decoration: BoxDecoration(color: AppColors.backgroundBlue,borderRadius: BorderRadius.circular(10)),
+                                    child: Text(
+                                      pedido.rownr + '/' + pedido.totalrows,
+                                      style: TextStyle(color: Colors.white),
+                                    )),
                               )
+
                             ],
                           )),
                     ],
