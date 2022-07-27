@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../classes/plant.dart';
 import '../classes/invoice.dart';
 import '../classes/order.dart';
@@ -16,7 +17,6 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../utilities/constants.dart';
@@ -43,6 +43,8 @@ var response;
 var limit = 10;
 bool hasMore = true;
 bool postRequestLoading = false;
+bool firstLoad = true;
+bool noResults = false;
 var lengthsliver = 0;
 
 class _PlantScreenWidgetState extends State<PlantScreen> {
@@ -97,12 +99,16 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
 
   Future postRequest(int index, String plantCode, String dataInicio,
       String DataFim, int page) async {
-    postRequestLoading = true;
+    bool localNoResults = false;
+    bool localFirstLoad = false;
+    setState(() {
+      noResults = false;
+      postRequestLoading = true;
+    });
     if (page == 1) {
       guias = [];
       pedidos = [];
     }
-
     switch (index) {
       case 0:
         //TODO resumo
@@ -129,23 +135,32 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
 
           response =
               await http.post(Uri.parse(url), headers: ApiConstants.headers);
-          final List parsedJson = await json.decode(response.body);
+          var tempResp = await json.decode(response.body);
+          if (tempResp != null) {
+            final List parsedJson = await json.decode(response.body);
 
-          if (page == 1) {
-            pedidos = [];
-          }
-
-          parsedJson.forEach((dynamic data) {
-            pedidos.add(Order.fromJson(data));
-            if (Order.fromJson(data).totalrows == Order.fromJson(data).rownr) {
-              hasMore = false;
+            if (page == 1) {
+              pedidos = [];
             }
-          });
 
-          setState(() {
-            lengthsliver = pedidos.length;
-            pageIndex += 1;
-          });
+            parsedJson.forEach((dynamic data) {
+              pedidos.add(Order.fromJson(data));
+              if (Order.fromJson(data).totalrows ==
+                  Order.fromJson(data).rownr) {
+                hasMore = false;
+              }
+            });
+
+            setState(() {
+              lengthsliver = pedidos.length;
+              pageIndex += 1;
+            });
+          } else {
+            setState(() {
+              localFirstLoad = true;
+              localNoResults = true;
+            });
+          }
         }
         break;
       case 2:
@@ -172,30 +187,43 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
               '&dateEnd='
               '${DataFim.replaceAll("/", "-")}';
 
-          response = await http.post(Uri.parse(url), headers: ApiConstants.headers);
-          final List parsedJson = await json.decode(response.body);
+          response =
+              await http.post(Uri.parse(url), headers: ApiConstants.headers);
+          var tempResp = await json.decode(response.body);
 
-          if (page == 1) {
-            guias = [];
-          }
-
-          parsedJson.forEach((dynamic data) {
-            guias.add(Invoice.fromJson(data));
-            if (Invoice.fromJson(data).totalrows ==
-                Invoice.fromJson(data).rownr) {
-              hasMore = false;
+          if (tempResp != false && tempResp != null) {
+            final List parsedJson = tempResp;
+            if (page == 1) {
+              guias = [];
             }
-          });
 
-          setState(() {
-            lengthsliver = guias.length;
-            pageIndex += 1;
-          });
+            parsedJson.forEach((dynamic data) {
+              guias.add(Invoice.fromJson(data));
+              if (Invoice.fromJson(data).totalrows ==
+                  Invoice.fromJson(data).rownr) {
+                hasMore = false;
+              }
+            });
+            setState(() {
+              lengthsliver = guias.length;
+              pageIndex += 1;
+            });
+          } else {
+            setState(() {
+              localFirstLoad = true;
+              localNoResults = true;
+            });
+          }
+        } else {
+          localFirstLoad = true;
         }
         break;
     }
-
-    postRequestLoading = false;
+    setState(() {
+      firstLoad = localFirstLoad;
+      noResults = localNoResults;
+      postRequestLoading = false;
+    });
   }
 
   late PickerDateRange _valuesDate;
@@ -216,6 +244,8 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
 
     setState(() {
       {
+        firstLoad = true;
+        lengthsliver = 0;
         pageIndex = 1;
         hasMore = true;
         postRequest(currentIndex, widget.central.codigo, datainicio, datafim,
@@ -395,224 +425,203 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
             if (scrollInfo.metrics.pixels ==
                 scrollInfo.metrics.maxScrollExtent) {
               // here you update your data or load your data from network
-              setState(() {});
+              setState(() {
+                if (!postRequestLoading && hasMore && !noResults) {
+                  postRequest(currentIndex, centrallocal.codigo, datainicio,
+                      datafim, pageIndex);
+                }
+              });
             }
             return true;
           },
-          // if you used network it would good to use the stream or future builder
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo.metrics.pixels ==
-                  scrollInfo.metrics.maxScrollExtent) {
-                // here you update your data or load your data from network
-                setState(() {
-                  if (!postRequestLoading && hasMore) {
-                    postRequest(currentIndex, centrallocal.codigo, datainicio,
-                        datafim, pageIndex);
-                  }
-                });
-              }
-              return true;
-            },
-            child: CustomScrollView(slivers: <Widget>[
-              SliverAppBar(
-                forceElevated: true,
-                floating: true,
-                automaticallyImplyLeading: false,
-                snap: false,
-                pinned: false,
-                expandedHeight: 140,
-                backgroundColor: Color(0x00000000),
-                flexibleSpace: FlexibleSpaceBar(
-                    titlePadding:
-                        EdgeInsetsDirectional.only(start: 20, bottom: 16),
-                    title: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.only(left: 7.0),
-                                  child: new GestureDetector(
-                                      onTap: () {
-                                        MapUtils.openMap(
-                                            centrallocal.gps.latitude,
-                                            centrallocal.gps.longitude);
-                                      },
-                                      child: Hero(
-                                        tag: 'plant-' + centrallocal.codigo,
-                                        child: Container(
-                                          width: 80,
-                                          height: 80,
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.blue,
-                                          ),
-                                          child: Align(
-                                            alignment:
-                                                AlignmentDirectional(0, 0),
-                                            child: Image.network(
-                                                'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
-                                                    centrallocal.gps.longitude
-                                                        .toString() +
-                                                    ',' +
-                                                    centrallocal.gps.latitude
-                                                        .toString() +
-                                                    ')/' +
-                                                    centrallocal.gps.longitude
-                                                        .toString() +
-                                                    ',' +
-                                                    centrallocal.gps.latitude
-                                                        .toString() +
-                                                    ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
-                                          ),
+          child: CustomScrollView(slivers: <Widget>[
+            SliverAppBar(
+              forceElevated: true,
+              floating: false,
+              automaticallyImplyLeading: false,
+              snap: false,
+              pinned: false,
+              expandedHeight: 140,
+              backgroundColor: Color(0x00000000),
+              flexibleSpace: FlexibleSpaceBar(
+                  titlePadding:
+                      EdgeInsetsDirectional.only(start: 20, bottom: 16),
+                  title: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                                padding: const EdgeInsets.only(left: 7.0),
+                                child: new GestureDetector(
+                                    onTap: () {
+                                      MapUtils.openMap(
+                                          centrallocal.gps.latitude,
+                                          centrallocal.gps.longitude);
+                                    },
+                                    child: Hero(
+                                      tag: 'plant-' + centrallocal.codigo,
+                                      child: Container(
+                                        width: 80,
+                                        height: 80,
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.blue,
                                         ),
-                                      ))),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                        child: Text(
-                                      centrallocal.nome,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          color: Colors.white),
-                                    )),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(Icons.location_on,
-                                                color: Colors.white, size: 17),
-                                            Padding(
+                                        child: Align(
+                                          alignment: AlignmentDirectional(0, 0),
+                                          child: Image.network(
+                                              'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
+                                                  centrallocal.gps.longitude
+                                                      .toString() +
+                                                  ',' +
+                                                  centrallocal.gps.latitude
+                                                      .toString() +
+                                                  ')/' +
+                                                  centrallocal.gps.longitude
+                                                      .toString() +
+                                                  ',' +
+                                                  centrallocal.gps.latitude
+                                                      .toString() +
+                                                  ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
+                                        ),
+                                      ),
+                                    ))),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                      child: Text(
+                                    centrallocal.nome,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Colors.white),
+                                  )),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.location_on,
+                                              color: Colors.white, size: 17),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
+                                            child: Text(centrallocal.zona,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    wordSpacing: 2,
+                                                    fontSize: 10,
+                                                    letterSpacing: 4)),
+                                          )
+                                        ]),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.phone_android_rounded,
+                                              color: Colors.white, size: 17),
+                                          Padding(
                                               padding: const EdgeInsets.only(
                                                   left: 8.0),
-                                              child: Text(centrallocal.zona,
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      wordSpacing: 2,
-                                                      fontSize: 10,
-                                                      letterSpacing: 4)),
-                                            )
-                                          ]),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(Icons.phone_android_rounded,
-                                                color: Colors.white, size: 17),
-                                            Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0),
-                                                child: InkWell(
-                                                  child: Text(
-                                                      centrallocal.telefone,
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          wordSpacing: 2,
-                                                          fontSize: 10,
-                                                          letterSpacing: 4)),
-                                                  onTap: () {
-                                                    Utils.launchCaller(
-                                                        util_call,
-                                                        centrallocal.telefone);
-                                                  },
-                                                ))
-                                          ]),
-                                    )
-                                  ],
-                                ),
+                                              child: InkWell(
+                                                child: Text(
+                                                    centrallocal.telefone,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        wordSpacing: 2,
+                                                        fontSize: 10,
+                                                        letterSpacing: 4)),
+                                                onTap: () {
+                                                  Utils.launchCaller(util_call,
+                                                      centrallocal.telefone);
+                                                },
+                                              ))
+                                        ]),
+                                  )
+                                ],
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                      width: double.infinity,
-
-                      child: Container(
-                        alignment: Alignment.topCenter,
-                        child: Container(
-                          height: 40,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: categories.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-
-                                child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                         horizontal: 12),
-                                    decoration: BoxDecoration(
-                                        color: currentIndex == index
-                                            ? Colors.grey
-                                            .withOpacity(0.1)
-                                            : Colors.transparent,
-                                        borderRadius:
-                                        BorderRadius.circular(12),
-                                        border: Border.all(
-                                            color: Colors.transparent,
-                                            width: 2)),
-                                  child: TextButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  if (currentIndex != index){
-                                                    pageIndex = 1;
-                                                    hasMore = true;
-                                                    currentIndex = index;
-                                                    lengthsliver = 0;
-                                                    postRequest(
-                                                        currentIndex,
-                                                        centrallocal.codigo,
-                                                        datainicio,
-                                                        datafim,
-                                                        pageIndex);
-                                                  }
-
-                                                });
-                                              },
-                                              child: new Text(categories[index],
-                                                  style: TextStyle(
-                                                      shadows: <Shadow>[
-                                                        index == currentIndex
-                                                            ? Shadow(
-                                                          color: Color(
-                                                              0xFF3ab1ff)
-                                                              .withOpacity(
-                                                              0.5),
-                                                          //spreadRadius: 3,
-                                                          blurRadius:
-                                                          8,
-                                                        )
-                                                            : Shadow()
-                                                      ],
-                                                      color: index == currentIndex ? Color(0xFF73AEF5) : Colors.grey
-                                                          .withOpacity(0.9),
-                                                      fontSize: 14)),
-                                            )
-
-                                      ));
-                            },
-                          ),
+                            ),
+                          ],
                         ),
-                      )),
-              ),
+                      ],
+                    ),
+                  )),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                  width: double.infinity,
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      height: 40,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: (categories == null ? 0 : categories.length),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12),
+                                  decoration: BoxDecoration(
+                                      color: currentIndex == index
+                                          ? Colors.grey.withOpacity(0.1)
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: Colors.transparent, width: 2)),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        if (currentIndex != index) {
+                                          pageIndex = 1;
+                                          hasMore = true;
+                                          currentIndex = index;
+                                          firstLoad = true;
+                                          lengthsliver = 0;
+                                          postRequest(
+                                              currentIndex,
+                                              centrallocal.codigo,
+                                              datainicio,
+                                              datafim,
+                                              pageIndex);
+                                        }
+                                      });
+                                    },
+                                    child: new Text(categories[index],
+                                        style: TextStyle(
+                                            shadows: <Shadow>[
+                                              index == currentIndex
+                                                  ? Shadow(
+                                                      color: Color(0xFF3ab1ff)
+                                                          .withOpacity(0.5),
+                                                      //spreadRadius: 3,
+                                                      blurRadius: 8,
+                                                    )
+                                                  : Shadow()
+                                            ],
+                                            color: index == currentIndex
+                                                ? Color(0xFF73AEF5)
+                                                : Colors.grey.withOpacity(0.9),
+                                            fontSize: 14)),
+                                  )));
+                        },
+                      ),
+                    ),
+                  )),
+            ),
+            if ((!postRequestLoading && !noResults) || !firstLoad) ...[
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   switch (currentIndex) {
@@ -624,8 +633,29 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                   }
                 }, childCount: lengthsliver),
               ),
-            ]),
-          ),
+            ] else ...[
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.transparent,
+                  ),
+                  child: Center(
+                      //     child: CircularProgressIndicator(
+                      //   color: Color(0xFF73AEF5),
+                      // )
+                      child: (!noResults)
+                          ? Lottie.asset('assets/images/lotties/search.json')
+                          : Opacity(
+                              opacity: 0.2,
+                              child: Lottie.asset(
+                                  'assets/images/lotties/notfound.json',
+                                  repeat: false),
+                            )),
+                ),
+              )
+            ]
+          ]),
         ),
       ),
     );
@@ -634,12 +664,41 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
   Widget buildCardInvoice(Invoice guia) {
     return GestureDetector(
         onTap: () {
-          Navigator.of(context).push(new MaterialPageRoute<String>(
+          /*Navigator.of(context).push(  MaterialPageRoute<String>(
+
               builder: (BuildContext context) {
-                return new InvoiceDetail(central:widget.central,guia:guia);
+                return   InvoiceDetail(central: widget.central, guia: guia);
               },
-              fullscreenDialog: true
-          ));
+              fullscreenDialog: true));*/
+          Navigator.of(context).push(
+            PageRouteBuilder(
+                fullscreenDialog: true,
+                pageBuilder: (BuildContext context, Animation<double> animation,Animation<double> secondaryAnimation) {
+              return   InvoiceDetail(central: widget.central, guia: guia);
+            },
+                transitionDuration: Duration(milliseconds: 300),
+                transitionsBuilder: (
+                    BuildContext context,
+                    Animation<double> animation,
+                    Animation<double> secondaryAnimation,
+                    Widget child,
+                    ) {
+                  return SlideTransition(
+
+                    position: Tween<Offset>(
+                      begin: const Offset(0.0, 1.0),
+                      end: Offset.zero,
+                    ).animate(
+                        CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.fastOutSlowIn,
+                        )),
+                    child: child, // child is the value returned by pageBuilder
+                  );
+                }
+            )
+          );
+
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -675,22 +734,19 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                   Text(
                     guia.codigo,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF40a1f0),
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF40a1f0),
                       shadows: <Shadow>[
                         Shadow(
-                          color: Color(
-                              0xFF3ab1ff)
-                              .withOpacity(
-                              0.5),
+                          color: Color(0xFF3ab1ff).withOpacity(0.5),
                           //spreadRadius: 3,
-                          blurRadius:
-                          8,
+                          blurRadius: 3,
                         )
                       ],
-                      ),
+                    ),
                   ),
-                  Text(guia.data_hora, style: TextStyle(fontSize: 12, color: Colors.white)),
+                  Text(guia.data_hora,
+                      style: TextStyle(fontSize: 12, color: Colors.white)),
                 ],
               ),
 
@@ -709,8 +765,8 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                               overflow: TextOverflow.fade,
                               maxLines: 1,
                               softWrap: false,
-
-                                  style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8)),
                             )),
                           ])),
                   Align(
@@ -724,11 +780,18 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                             overflow: TextOverflow.fade,
                             maxLines: 1,
                             softWrap: false,
-                                style: TextStyle(color: Colors.white),
+                            style:
+                                TextStyle(color: Colors.white.withOpacity(0.8)),
                           )),
                           Padding(
                             padding: const EdgeInsets.only(left: 15),
-                            child: Text(guia.rownr + '/' + guia.totalrows,style: TextStyle(color: Colors.white),),
+                            child: Container(
+                              padding: EdgeInsets.only(left: 10,right: 10,top: 3,bottom: 3),
+                              decoration: BoxDecoration(color: AppColors.backgroundBlue,borderRadius: BorderRadius.circular(10)),
+                                child: Text(
+                              guia.rownr + '/' + guia.totalrows,
+                              style: TextStyle(color: Colors.white),
+                            )),
                           )
                         ],
                       )),

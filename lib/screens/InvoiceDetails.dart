@@ -6,11 +6,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'WorkplaceDetails.dart';
 import '../classes/constants.dart';
 import '../classes/invoice.dart';
 import '../classes/plant.dart';
+import '../classes/enterExitPage.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 import 'package:flutter/services.dart';
@@ -425,10 +425,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                             splashColor: Colors.white, // inkwell color
                             child: trailing,
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => screenRoute),
+                              Navigator.push(context, SlideInPageRoute(exitPage: widget, enterPage:screenRoute),
                               );
                             },
                           ),
