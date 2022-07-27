@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
           ),
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.blue,
-            brightness: Brightness.light,
+            brightness: Brightness.dark,
             //TODO color: Theme.of(context).colorScheme.{COLORHERE}
           ),
           textTheme: GoogleFonts.poppinsTextTheme(

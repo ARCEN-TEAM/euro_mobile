@@ -10,6 +10,7 @@ import '../classes/order.dart';
 import '../classes/utils.dart';
 import '../classes/MapUtils.dart';
 import '../classes/constants.dart';
+
 //import 'WorkplaceDetails.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -111,10 +112,10 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
     }
     switch (index) {
       case 0:
-        //TODO resumo
+      //TODO resumo
         break;
       case 1:
-        //TODO pedidos
+
         if (hasMore) {
           var url = '${ApiConstants.baseUrl}'
               '${ApiConstants.plantEndpoint}'
@@ -134,7 +135,7 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
               '${DataFim.replaceAll("/", "-")}';
 
           response =
-              await http.post(Uri.parse(url), headers: ApiConstants.headers);
+          await http.post(Uri.parse(url), headers: ApiConstants.headers);
           var tempResp = await json.decode(response.body);
           if (tempResp != null) {
             final List parsedJson = await json.decode(response.body);
@@ -145,8 +146,12 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
 
             parsedJson.forEach((dynamic data) {
               pedidos.add(Order.fromJson(data));
-              if (Order.fromJson(data).totalrows ==
-                  Order.fromJson(data).rownr) {
+              if (Order
+                  .fromJson(data)
+                  .totalrows ==
+                  Order
+                      .fromJson(data)
+                      .rownr) {
                 hasMore = false;
               }
             });
@@ -188,7 +193,7 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
               '${DataFim.replaceAll("/", "-")}';
 
           response =
-              await http.post(Uri.parse(url), headers: ApiConstants.headers);
+          await http.post(Uri.parse(url), headers: ApiConstants.headers);
           var tempResp = await json.decode(response.body);
 
           if (tempResp != false && tempResp != null) {
@@ -199,8 +204,12 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
 
             parsedJson.forEach((dynamic data) {
               guias.add(Invoice.fromJson(data));
-              if (Invoice.fromJson(data).totalrows ==
-                  Invoice.fromJson(data).rownr) {
+              if (Invoice
+                  .fromJson(data)
+                  .totalrows ==
+                  Invoice
+                      .fromJson(data)
+                      .rownr) {
                 hasMore = false;
               }
             });
@@ -323,14 +332,14 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                                     SfDateRangePicker(
                                       view: DateRangePickerView.month,
                                       monthViewSettings:
-                                          DateRangePickerMonthViewSettings(
-                                              showTrailingAndLeadingDates:
-                                                  true),
+                                      DateRangePickerMonthViewSettings(
+                                          showTrailingAndLeadingDates:
+                                          true),
                                       selectionColor: ApiConstants.mainColor,
                                       startRangeSelectionColor:
-                                          ApiConstants.mainColor,
+                                      ApiConstants.mainColor,
                                       endRangeSelectionColor:
-                                          ApiConstants.mainColor,
+                                      ApiConstants.mainColor,
                                       rangeSelectionColor: ApiConstants
                                           .mainColor
                                           .withOpacity(0.4),
@@ -338,18 +347,18 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                                           color: Colors.white, fontSize: 15),
                                       onSelectionChanged:
                                           (DateRangePickerSelectionChangedArgs
-                                              args) {
+                                      args) {
                                         if (args.value is PickerDateRange) {
                                           setStateSB(() {
                                             exemplo = DateFormat('dd/MM/yyyy')
-                                                    .format(
-                                                        args.value.startDate)
-                                                    .toString() +
+                                                .format(
+                                                args.value.startDate)
+                                                .toString() +
                                                 ' - ' +
                                                 DateFormat('dd/MM/yyyy')
                                                     .format(args
-                                                            .value.endDate ??
-                                                        args.value.startDate)
+                                                    .value.endDate ??
+                                                    args.value.startDate)
                                                     .toString();
                                           });
 
@@ -362,19 +371,19 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
 
                                           _valuesDate = PickerDateRange(
                                               DateTime.parse(DateFormat(
-                                                      'yyyy-MM-dd')
+                                                  'yyyy-MM-dd')
                                                   .format(args.value.startDate)
                                                   .toString()),
                                               DateTime.parse(
                                                   DateFormat('yyyy-MM-dd')
                                                       .format(args
-                                                              .value.endDate ??
-                                                          args.value.startDate)
+                                                      .value.endDate ??
+                                                      args.value.startDate)
                                                       .toString()));
                                         }
                                       },
                                       selectionMode:
-                                          DateRangePickerSelectionMode.range,
+                                      DateRangePickerSelectionMode.range,
                                       initialSelectedRange: _valuesDate,
                                     ),
                                     TextButton(
@@ -441,13 +450,90 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
               automaticallyImplyLeading: false,
               snap: false,
               pinned: false,
-              expandedHeight: 140,
+
               backgroundColor: Color(0x00000000),
               flexibleSpace: FlexibleSpaceBar(
-                  titlePadding:
-                      EdgeInsetsDirectional.only(start: 20, bottom: 16),
+                  titlePadding: EdgeInsetsDirectional.only(start: 20, bottom: 16),
                   title: SingleChildScrollView(
-                    child: Column(
+                    child: ListTile(
+                            leading: Padding(
+                        padding: const EdgeInsets.only(left: 7.0),
+                        child: new GestureDetector(
+                            onTap: () {
+                              MapUtils.openMap(
+                                  centrallocal.gps.latitude,
+                                  centrallocal.gps.longitude);
+                            },
+                            child: Hero(
+                              tag: 'plant-' + centrallocal.codigo,
+                              child: Container(
+                                width: 80,
+                                height: 80,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.blue,
+                                ),
+                                child: Align(
+                                  alignment: AlignmentDirectional(0, 0),
+                                  child: Image.network(
+                                      'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
+                                          centrallocal.gps.longitude
+                                              .toString() +
+                                          ',' +
+                                          centrallocal.gps.latitude
+                                              .toString() +
+                                          ')/' +
+                                          centrallocal.gps.longitude
+                                              .toString() +
+                                          ',' +
+                                          centrallocal.gps.latitude
+                                              .toString() +
+                                          ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
+                                ),
+                              ),
+                            ))),
+                            title: Container(
+                                  child: Text(
+                            centrallocal.nome,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white,),
+                          )),
+                            subtitle:Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(Icons.phone_android_rounded,
+                                      color: Colors.white, size: 17),
+                                  Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0),
+                                      child: InkWell(
+                                        child: Text(
+                                            centrallocal.telefone,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                wordSpacing: 2,
+                                                fontSize: 12,
+                                                letterSpacing: 4)),
+                                        onTap: () {
+                                          Utils.launchCaller(util_call,
+                                              centrallocal.telefone);
+                                        },
+                                      ))
+                                ]),
+                          )
+                        ],
+                      ))
+                    /*Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -556,7 +642,7 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                           ],
                         ),
                       ],
-                    ),
+                    )*/,
                   )),
             ),
             SliverToBoxAdapter(
@@ -604,11 +690,11 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                                             shadows: <Shadow>[
                                               index == currentIndex
                                                   ? Shadow(
-                                                      color: Color(0xFF3ab1ff)
-                                                          .withOpacity(0.5),
-                                                      //spreadRadius: 3,
-                                                      blurRadius: 8,
-                                                    )
+                                                color: Color(0xFF3ab1ff)
+                                                    .withOpacity(0.5),
+                                                //spreadRadius: 3,
+                                                blurRadius: 8,
+                                              )
                                                   : Shadow()
                                             ],
                                             color: index == currentIndex
@@ -626,35 +712,43 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                 delegate: SliverChildBuilderDelegate((context, index) {
                   switch (currentIndex) {
                     case 1:
-                      return buildCardOrder(pedidos[index]);
+                      if (pedidos.isNotEmpty) {
+                        return buildCardOrder(pedidos[index]);
+                      }
+                      break;
+
                     case 2:
                     case 3:
-                      return buildCardInvoice(guias[index]);
+                      if (guias.isNotEmpty) {
+                        return buildCardInvoice(guias[index]);
+                      }
+                      break;
                   }
                 }, childCount: lengthsliver),
               ),
-            ] else ...[
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.transparent,
-                  ),
-                  child: Center(
+            ] else
+              ...[
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.transparent,
+                    ),
+                    child: Center(
                       //     child: CircularProgressIndicator(
                       //   color: Color(0xFF73AEF5),
                       // )
-                      child: (!noResults)
-                          ? Lottie.asset('assets/images/lotties/search.json')
-                          : Opacity(
-                              opacity: 0.2,
-                              child: Lottie.asset(
-                                  'assets/images/lotties/notfound.json',
-                                  repeat: false),
-                            )),
-                ),
-              )
-            ]
+                        child: (!noResults)
+                            ? Lottie.asset('assets/images/lotties/search.json')
+                            : Opacity(
+                          opacity: 0.2,
+                          child: Lottie.asset(
+                              'assets/images/lotties/notfound.json',
+                              repeat: false),
+                        )),
+                  ),
+                )
+              ]
           ]),
         ),
       ),
@@ -662,41 +756,42 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
   }
 
   Widget buildCardInvoice(Invoice guia) {
-
     return GestureDetector(
         onTap: () {
           Navigator.of(context).push(
-            PageRouteBuilder(
-                fullscreenDialog: true,
-                pageBuilder: (BuildContext context, Animation<double> animation,Animation<double> secondaryAnimation) {
-              return   InvoiceDetail(central: widget.central, guia: guia);
-            },
-                transitionDuration: Duration(milliseconds: 300),
-                transitionsBuilder: (
-                    BuildContext context,
-                    Animation<double> animation,
-                    Animation<double> secondaryAnimation,
-                    Widget child,
-                    ) {
-                  return SlideTransition(
+              PageRouteBuilder(
+                  fullscreenDialog: true,
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation) {
+                    return InvoiceDetail(central: widget.central, guia: guia);
+                  },
+                  transitionDuration: Duration(milliseconds: 300),
+                  transitionsBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                      Widget child,) {
+                    return SlideTransition(
 
-                    position: Tween<Offset>(
-                      begin: const Offset(0.0, 1.0),
-                      end: Offset.zero,
-                    ).animate(
-                        CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.fastOutSlowIn,
-                        )),
-                    child: child, // child is the value returned by pageBuilder
-                  );
-                }
-            )
+                      position: Tween<Offset>(
+                        begin: const Offset(0.0, 1.0),
+                        end: Offset.zero,
+                      ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.fastOutSlowIn,
+                          )),
+                      child: child, // child is the value returned by pageBuilder
+                    );
+                  }
+              )
           );
-
         },
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
           decoration: BoxDecoration(
             color: Color(0x00000000),
             border: Border.all(width: 0, color: Color(0x00000000)),
@@ -710,7 +805,7 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
             child: ListTile(
               dense: true,
               contentPadding:
-                  EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               leading: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -756,13 +851,13 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                           children: [
                             Expanded(
                                 child: Text(
-                              guia.obra.cliente.nome,
-                              overflow: TextOverflow.fade,
-                              maxLines: 1,
-                              softWrap: false,
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.8)),
-                            )),
+                                  guia.obra.cliente.nome,
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  style: TextStyle(
+                                      color: Colors.white.withOpacity(0.8)),
+                                )),
                           ])),
                   Align(
                       alignment: AlignmentDirectional.centerStart,
@@ -771,22 +866,27 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                         children: [
                           Expanded(
                               child: Text(
-                            guia.obra.nome,
-                            overflow: TextOverflow.fade,
-                            maxLines: 1,
-                            softWrap: false,
-                            style:
+                                guia.obra.nome,
+                                overflow: TextOverflow.fade,
+                                maxLines: 1,
+                                softWrap: false,
+                                style:
                                 TextStyle(color: Colors.white.withOpacity(0.8)),
-                          )),
+                              )),
                           Padding(
                             padding: const EdgeInsets.only(left: 15),
                             child: Container(
-                              padding: EdgeInsets.only(left: 10,right: 10,top: 3,bottom: 3),
-                              decoration: BoxDecoration(color: AppColors.backgroundBlue,borderRadius: BorderRadius.circular(10)),
+                                padding: EdgeInsets.only(left: 10,
+                                    right: 10,
+                                    top: 3,
+                                    bottom: 3),
+                                decoration: BoxDecoration(color: AppColors
+                                    .backgroundBlue,
+                                    borderRadius: BorderRadius.circular(10)),
                                 child: Text(
-                              guia.rownr + '/' + guia.totalrows,
-                              style: TextStyle(color: Colors.white),
-                            )),
+                                  guia.rownr + '/' + guia.totalrows,
+                                  style: TextStyle(color: Colors.white),
+                                )),
                           )
                         ],
                       )),
@@ -803,16 +903,16 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
           Navigator.of(context).push(
               PageRouteBuilder(
                   fullscreenDialog: true,
-                  pageBuilder: (BuildContext context, Animation<double> animation,Animation<double> secondaryAnimation) {
-                    return   OrderDetails(pedido: pedido);
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation) {
+                    return OrderDetails(pedido: pedido);
                   },
                   transitionDuration: Duration(milliseconds: 300),
-                  transitionsBuilder: (
-                      BuildContext context,
+                  transitionsBuilder: (BuildContext context,
                       Animation<double> animation,
                       Animation<double> secondaryAnimation,
-                      Widget child,
-                      ) {
+                      Widget child,) {
                     return SlideTransition(
 
                       position: Tween<Offset>(
@@ -830,7 +930,10 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
           );
         },
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
           decoration: BoxDecoration(
             color: Color(0x00000000),
             border: Border.all(width: 0, color: Color(0x00000000)),
@@ -859,7 +962,7 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                   dense: true,
                   visualDensity: VisualDensity(vertical: 4),
                   contentPadding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   leading: Container(
                     //decoration: BoxDecoration(border: Border.all(color: Colors.red)),
                     constraints: BoxConstraints(maxWidth: 60),
@@ -875,7 +978,9 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                                     '/' +
                                     pedido.prod_desired.toString(),
                                 style: TextStyle(
-                                    fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white))),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white))),
                         Flexible(
                           flex: 4,
                           fit: FlexFit.loose,
@@ -885,11 +990,12 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                                   widget: Container(
                                       child: Text(
                                           (pedido.prod_delivered /
-                                                      pedido.prod_desired *
-                                                      100)
-                                                  .toStringAsFixed(0) +
+                                              pedido.prod_desired *
+                                              100)
+                                              .toStringAsFixed(0) +
                                               '%',
-                                          style: TextStyle(fontSize: 11, color: Colors.white))),
+                                          style: TextStyle(fontSize: 11,
+                                              color: Colors.white))),
                                 )
                               ],
                               margin: EdgeInsets.all(5),
@@ -901,8 +1007,14 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                                   ],
                                   xValueMapper: (ChartData data, _) => data.x,
                                   yValueMapper: (ChartData data, _) => data.y,
-                                  pointColorMapper: (ChartData data, _) => (pedido.statusColor == "0x00ffffff" ? AppColors.buttonPrimaryColor : Color(int.parse(pedido.statusColor))) ,
-                                  cornerStyle: (pedido.prod_delivered == pedido.prod_desired ? CornerStyle.bothFlat : CornerStyle.bothCurve),
+                                  pointColorMapper: (ChartData data, _) =>
+                                  (pedido.statusColor == "0x00ffffff"
+                                      ? AppColors.buttonPrimaryColor
+                                      : Color(int.parse(pedido.statusColor))),
+                                  cornerStyle: (pedido.prod_delivered ==
+                                      pedido.prod_desired
+                                      ? CornerStyle.bothFlat
+                                      : CornerStyle.bothCurve),
                                   maximumValue: pedido.prod_desired,
                                   radius: '100%',
                                   innerRadius: '80%',
@@ -930,7 +1042,8 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                           ],
                         ),
                       ),
-                      Text(pedido.date, style: TextStyle(fontSize: 12, color: Colors.white)),
+                      Text(pedido.date,
+                          style: TextStyle(fontSize: 12, color: Colors.white)),
                     ],
                   ),
 
@@ -943,12 +1056,12 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                               children: [
                                 Expanded(
                                     child: Text(
-                                  pedido.obra.cliente.nome,
-                                  overflow: TextOverflow.fade,
-                                  maxLines: 1,
-                                  softWrap: false,
+                                        pedido.obra.cliente.nome,
+                                        overflow: TextOverflow.fade,
+                                        maxLines: 1,
+                                        softWrap: false,
                                         style: TextStyle(color: Colors.white)
-                                )),
+                                    )),
                               ])),
                       Align(
                           alignment: AlignmentDirectional.centerStart,
@@ -957,17 +1070,21 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                             children: [
                               Expanded(
                                   child: Text(
-                                pedido.obra.nome,
-                                overflow: TextOverflow.fade,
-                                maxLines: 1,
-                                softWrap: false,
-                                style: TextStyle(color: Colors.white)
-                              )),
+                                      pedido.obra.nome,
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 1,
+                                      softWrap: false,
+                                      style: TextStyle(color: Colors.white)
+                                  )),
                               Padding(
                                 padding: const EdgeInsets.only(left: 15),
                                 child: Container(
-                                    padding: EdgeInsets.only(left: 10,right: 10,top: 3,bottom: 3),
-                                    decoration: BoxDecoration(color: AppColors.backgroundBlue,borderRadius: BorderRadius.circular(10)),
+                                    padding: EdgeInsets.only(
+                                        left: 10, right: 10, top: 3, bottom: 3),
+                                    decoration: BoxDecoration(
+                                        color: AppColors.backgroundBlue,
+                                        borderRadius: BorderRadius.circular(
+                                            10)),
                                     child: Text(
                                       pedido.rownr + '/' + pedido.totalrows,
                                       style: TextStyle(color: Colors.white),

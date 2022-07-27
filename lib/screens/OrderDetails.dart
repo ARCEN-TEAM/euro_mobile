@@ -66,17 +66,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          height:110,
+                          height: 110,
                           child: Padding(
                               padding: const EdgeInsets.only(left: 35),
                               child: Row(
-
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
-
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         widget.pedido.cod,
@@ -105,81 +105,116 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     child: Stack(
                                       children: [
                                         Container(
+                                          margin: EdgeInsets.only(top: 55),
+                                          child:
+                                              SfRadialGauge(
+                                                enableLoadingAnimation: true,
+                                                  animationDuration: 2000,
 
-                                        margin:  EdgeInsets.only(top:55),
-                                        child: SfRadialGauge(
-                                            axes: <RadialAxis>[
-                                          RadialAxis(
+                                                  axes: <RadialAxis>[
+                                            RadialAxis(
 
-                                            canScaleToFit: true,
-                                            showLastLabel: true,
-                                            maximumLabels: widget.pedido.prod_desired.toInt(),
-                                            showLabels: true,
-                                            showTicks: true,
-                                            startAngle: 180,
-                                            endAngle: 0,
-                                            interval: widget.pedido.prod_desired / 5,
-                                            radiusFactor: 3,
-                                            maximum: widget.pedido.prod_desired,
-                                            pointers: <GaugePointer>[
-                                              RangePointer(
-                                                  gradient: SweepGradient(
-                                                      colors: [
-                                                        const Color(0xFF3a9bea),
-                                                        const Color(0xFF2E4E7C),
-                                                        const Color(0xFF132642),
-                                                      ].reversed.toList(),
-                                                      stops: <double>[0.2, 0.5, 0.8]
-                                                  ),
-                                                  value: widget.pedido.prod_delivered,
-                                                  width: 0.1,
-                                                  color: AppColors.buttonPrimaryColor,
-                                                  sizeUnit: GaugeSizeUnit.factor,
-                                                  cornerStyle: CornerStyle.bothCurve
-                                              ),
+                                              canScaleToFit: true,
+                                              showLastLabel: true,
+                                              maximumLabels: widget
+                                                  .pedido.prod_desired
+                                                  .toInt(),
+                                              showLabels: true,
+                                              showTicks: true,
+                                              startAngle: 180,
+                                              endAngle: 0,
+                                              interval:
+                                                  widget.pedido.prod_desired /
+                                                      5,
+                                              radiusFactor: 2.5,
+                                              maximum:
+                                                  widget.pedido.prod_desired,
+                                              canRotateLabels: true,
+                                              pointers: <GaugePointer>[
 
-                                              MarkerPointer(
-                                                  value: widget.pedido.prod_delivered,
-                                                  markerOffset: -5,
-                                                  color: Colors.white
-                                              ),
-                                              WidgetPointer(
-                                                offset: -24,
-                                                value:widget.pedido.prod_delivered,
-                                                child: Text(
-                                                  widget.pedido.prod_delivered.toString(),
-                                                  style: TextStyle(
-                                                      color:Colors.white,
-                                                      fontWeight: FontWeight.bold
-                                                  ),),
-                                              ),
-                                            ],
-                                          )
-                                        ]),
-                                      ),
+                                                RangePointer(
+                                                    gradient: SweepGradient(
+                                                        colors: [
+                                                          const Color(
+                                                              0xFF3a9bea),
+                                                          const Color(
+                                                              0xFF2E4E7C),
+                                                          const Color(
+                                                              0xFF132642),
+                                                        ].reversed.toList(),
+                                                        stops: <double>[
+                                                          0.2,
+                                                          0.5,
+                                                          0.8
+                                                        ]),
+                                                    value: widget
+                                                        .pedido.prod_delivered,
+                                                    width: 0.1,
+                                                    color: AppColors
+                                                        .buttonPrimaryColor,
+                                                    sizeUnit:
+                                                        GaugeSizeUnit.factor,
+                                                    cornerStyle:
+                                                        CornerStyle.bothCurve),
+                                                 if(widget
+                                                     .pedido.prod_delivered>0 && widget
+                                                     .pedido.prod_delivered<widget
+                                                     .pedido.prod_desired)...[
+                                                   MarkerPointer(
+                                                       value: widget
+                                                           .pedido.prod_delivered,
+                                                       markerOffset: -5,
+                                                       color: Colors.white),
+                                                   WidgetPointer(
+                                                     offset: -25,
+                                                     value: widget
+                                                         .pedido.prod_delivered,
+                                                     child: Text(
+                                                       widget.pedido.prod_delivered
+                                                           .toString(),
+                                                       style: TextStyle(
+                                                           color: Colors.white,
+                                                           fontSize: 12,
+                                                           fontWeight:
+                                                           FontWeight.bold),
+                                                     ),
+                                                   ),
+                                                 ]
+
+                                              ],
+                                            )
+                                          ]),
+                                        ),
                                         Center(
                                             child: Padding(
-                                              padding: const EdgeInsets.only(top:70),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    (widget.pedido.prod_delivered / widget.pedido.prod_desired * 100).round().toString() + '%',
-                                                    style: TextStyle(color:Colors.white, fontSize: 25),
-                                                  ),
-
-                                                ],
+                                          padding:
+                                              const EdgeInsets.only(top: 70),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                (widget.pedido.prod_delivered /
+                                                            widget.pedido
+                                                                .prod_desired *
+                                                            100)
+                                                        .round()
+                                                        .toString() +
+                                                    '%',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18,fontWeight: FontWeight.bold),
                                               ),
-                                            )
-
-                                        )
+                                            ],
+                                          ),
+                                        ))
                                       ],
                                     ),
                                   ),
                                 ],
                               )),
                         ),
-
+                        SizedBox(height: 25,),
                         buildCard(
                             0,
                             "Cliente",
@@ -312,7 +347,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                             splashColor: Colors.white, // inkwell color
                             child: trailing,
                             onTap: () {
-                              Navigator.push(context, SlideInPageRoute(exitPage: widget, enterPage:screenRoute),
+                              Navigator.push(
+                                context,
+                                SlideInPageRoute(
+                                    exitPage: widget, enterPage: screenRoute),
                               );
                             },
                           ),
