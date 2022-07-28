@@ -113,8 +113,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 onPressed: () {
                   showExitPopup(context, "Deseja terminar sessão?",() {
-                      Navigator.pushReplacement(
-                          context,MaterialPageRoute(builder: (context) => LoginScreen()) );
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                          (Route<dynamic> route) => false,
+                    );
 
                 });},
                 child: Text("Terminar sessão",style: TextStyle(color: AppColors.textColorOnDarkBG,),),
