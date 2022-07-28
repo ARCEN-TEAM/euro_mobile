@@ -39,97 +39,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 30),
-        Center(
-            child: Text(widget.username,
-                style: TextStyle(color: AppColors.textColorOnDarkBG, fontSize: 20))),
-        SizedBox(height: 30),
-        Stack(
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+          title: Text(widget.username),
+          iconTheme: IconThemeData(color: Colors.white) ),
+      body: Container(
+        decoration:BoxDecoration(
+          border: Border.all(width: 0, color: AppColors.backgroundBlue /*Color(0xFF0f1925)*/),
+          gradient: RadialGradient(
+            center: Alignment(-1.4, -1.4),
+            colors: AppColors.backgroundGradientColors /*[
+                Color(0xFF1d4d73),
+                Color(0xFF0f1925),
+              ]*/,
+            radius: 1.2,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-                child: CustomPaint(
-              painter: MyPainter(),
-              size: Size(80, 80),
-            )),
-            Center(
-              child: Stack(
-                children: [
-                  buildProfileImage(),
-                  Positioned(
-                      bottom: 0,
-                      right: 4,
-                      child: InkWell(
-                        onTap: _askedToLead,
-                          child: buildEditIcon()
+            SizedBox(height:  120),
+            Stack(
+              children: [
+                Center(
+                    child: CustomPaint(
+                  painter: MyPainter(),
+                  size: Size(80, 80),
+                )),
+                Center(
+                  child: Stack(
+                    children: [
+                      buildProfileImage(),
+                      Positioned(
+                          bottom: 0,
+                          right: 4,
+                          child: InkWell(
+                            onTap: _askedToLead,
+                              child: buildEditIcon()
+                          )
                       )
-                  )
-                ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 30),
+
+            SizedBox(height: 15),
+            Center(
+              child: FractionallySizedBox(
+                widthFactor: 0.85,
+                child: Container(
+                  height: 1.0,
+                  decoration: BoxDecoration(
+                    color: AppColors.textColorOnDarkBG.withOpacity(0.3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.buttonSecondaryColor.withOpacity(0.2),
+                        blurRadius: 4,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
+            SizedBox(height: 30),
+            buildCard(Icon(Icons.menu, color: AppColors.textColorOnDarkBG),  "Nome Completo", teste, Icon(Icons.chevron_right, color: AppColors.textColorOnDarkBG)),
+            buildCard(Icon(Icons.menu, color: AppColors.textColorOnDarkBG), "Grupo", "Programador", Icon(Icons.chevron_right, color: AppColors.textColorOnDarkBG)),
+            ListTile(
+              leading: Text(
+                  'Contacto',
+                  style: TextStyle(color: AppColors.textColorOnDarkBG, fontSize: 20)
+              ),
+            ),
+            buildCard(Icon(Icons.phone_outlined,color: AppColors.textColorOnDarkBG), "Telemóvel", "91..", Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG.withOpacity(0.2))),
+            buildCard(Icon(Icons.email_outlined,color: AppColors.textColorOnDarkBG),  "Email", "pe.prg@arcen.pt", Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG.withOpacity(0.2))),
+
+            Row(children: [
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+
+                    onPressed: () {
+                      showExitPopup(context, "Deseja terminar sessão?",() {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                              (Route<dynamic> route) => false,
+                        );
+
+                    });},
+                    child: Text("Terminar sessão",style: TextStyle(color: AppColors.textColorOnDarkBG,),),
+                    style: ElevatedButton.styleFrom(
+
+                        primary: AppColors.buttonPrimaryColor),
+                  ),
+                ),
+              )
+            ],)
+
           ],
         ),
-        SizedBox(height: 30),
-
-        SizedBox(height: 15),
-        Center(
-          child: FractionallySizedBox(
-            widthFactor: 0.85,
-            child: Container(
-              height: 1.0,
-              decoration: BoxDecoration(
-                color: AppColors.textColorOnDarkBG.withOpacity(0.3),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.buttonSecondaryColor.withOpacity(0.2),
-                    blurRadius: 4,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 30),
-        buildCard(Icon(Icons.menu, color: AppColors.textColorOnDarkBG),  "Nome Completo", teste, Icon(Icons.chevron_right, color: AppColors.textColorOnDarkBG)),
-        buildCard(Icon(Icons.menu, color: AppColors.textColorOnDarkBG), "Grupo", "Programador", Icon(Icons.chevron_right, color: AppColors.textColorOnDarkBG)),
-        ListTile(
-          leading: Text(
-              'Contacto',
-              style: TextStyle(color: AppColors.textColorOnDarkBG, fontSize: 20)
-          ),
-        ),
-        buildCard(Icon(Icons.phone_outlined,color: AppColors.textColorOnDarkBG), "Telemóvel", "91..", Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG.withOpacity(0.2))),
-        buildCard(Icon(Icons.email_outlined,color: AppColors.textColorOnDarkBG),  "Email", "pe.prg@arcen.pt", Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG.withOpacity(0.2))),
-
-        Row(children: [
-           
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-
-                onPressed: () {
-                  showExitPopup(context, "Deseja terminar sessão?",() {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                          (Route<dynamic> route) => false,
-                    );
-
-                });},
-                child: Text("Terminar sessão",style: TextStyle(color: AppColors.textColorOnDarkBG,),),
-                style: ElevatedButton.styleFrom(
-
-                    primary: AppColors.buttonPrimaryColor),
-              ),
-            ),
-          )
-        ],)
-
-      ],
+      ),
     );
   }
 

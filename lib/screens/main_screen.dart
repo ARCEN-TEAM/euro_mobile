@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:euro_mobile/screens/SideDrawer.dart';
+
 import './widgets/DialogExitPopup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -95,6 +97,14 @@ class _MainScreenWidgetState extends State<MainScreen> {
       onWillPop: () => showExitPopup(context,"Deseja sair da aplicação",
               () {exit(0);}),
       child: Scaffold(
+        drawerEdgeDragWidth: (currentPageIndex==0 ? MediaQuery.of(context).size.width/3: 0 ),
+
+    drawer:Drawer(
+
+      width:  MediaQuery.of(context).size.width/2,
+      backgroundColor: AppColors.transparent,
+      child: SideDrawer(username: widget.username),
+    ) ,
         body: Container(
           height: double.infinity,
           width: double.infinity,
@@ -136,12 +146,8 @@ class _MainScreenWidgetState extends State<MainScreen> {
               // ),
               ComingSoon(),
               ComingSoon(),
-              ListView(
-                physics: BouncingScrollPhysics(),
-                children: [
-                  ProfileScreen(username: widget.username)
-                ],
-              )
+              
+
             ],
           ),
         ),
@@ -198,12 +204,6 @@ class _MainScreenWidgetState extends State<MainScreen> {
                   activeIcon: Icon(Icons.handyman),
                   icon: Icon(Icons.handyman_outlined),
                   label: translate('manutencao'),
-                  backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
-                ),
-                BottomNavigationBarItem(
-                  activeIcon: Icon(Icons.person),
-                  icon: Icon(Icons.person_outline),
-                  label:  translate('perfil'),
                   backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
                 ),
               ],

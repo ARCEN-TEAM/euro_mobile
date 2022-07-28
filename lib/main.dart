@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
       child: MaterialApp(
+
         title: 'EURO Mobile',
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
         home: LoginScreen(),
 
         theme: ThemeData(
+          scrollbarTheme: ScrollbarThemeData(thumbColor: MaterialStateProperty.all(AppColors.buttonPrimaryColor.withOpacity(0.4))),
           scaffoldBackgroundColor: Colors.transparent,
           primaryColor: Colors.transparent,
           highlightColor: Colors.transparent,
@@ -86,6 +88,7 @@ class MyApp extends StatelessWidget {
 
         ),
         darkTheme: ThemeData(
+          scrollbarTheme: ScrollbarThemeData(thumbColor: MaterialStateProperty.all(AppColors.buttonPrimaryColor.withOpacity(0.4))),
           scaffoldBackgroundColor: Colors.transparent,
           dividerColor: Colors.transparent,
           highlightColor: Colors.transparent,

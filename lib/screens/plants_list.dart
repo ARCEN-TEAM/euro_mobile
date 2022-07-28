@@ -281,10 +281,16 @@ class _PlantsListState extends State<PlantsList> {
 
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
+      leading: IconButton(
+        icon: Icon(Icons.menu),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
       floating: false,
       automaticallyImplyLeading: false,
       snap: false,
-      expandedHeight: 80,
+      expandedHeight: 65,
       backgroundColor: AppColors.transparent,
       flexibleSpace: FlexibleSpaceBar(
           title: Column(
