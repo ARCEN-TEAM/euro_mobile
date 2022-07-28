@@ -31,8 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     init();
-  }
 
+  }
+  late var localizationDelegate = LocalizedApp.of(context).delegate;
   Future init() async {
     final https = await StorageService.readSecureData('https');
     final url = await StorageService.readSecureData('url');
@@ -67,17 +68,19 @@ class _LoginScreenState extends State<LoginScreen> {
       case "en":
       case "en_US": return Keys.Language_Name_En;
       case "es": return Keys.Language_Name_Es;
+      case "fr": return Keys.Language_Name_Fr;
+      case "pt": return Keys.Language_Name_Pt;
       default: return null;
     }
   }
 
   Widget _buildEmailTF(BuildContext context) {
-    var localizationDelegate = LocalizedApp.of(context).delegate;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          translate(translate(Keys.Language_Selected_Message, args: {'language': translate(getCurrentLanguageLocalizationKey(localizationDelegate.currentLocale.languageCode))})),
+          translate('utilizador'),
           style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
@@ -100,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.person,
                 color: AppColors.textColorOnDarkBG,
               ),
-              hintText: 'Enter your Username',
+              hintText: translate('inserir_utilizador'),
               hintStyle: kHintTextStyle,
             ),
           ),
@@ -114,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Password',
+          translate('password'),
           style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
@@ -136,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.lock,
                 color: AppColors.textColorOnDarkBG,
               ),
-              hintText: 'Enter your Password',
+              hintText: translate('inserir_pass'),
               hintStyle: kHintTextStyle,
               suffixIcon: IconButton(
                 icon: Icon(
@@ -191,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Text(
-            'Remember me',
+            translate('lembrar'),
             style: kLabelStyle,
           ),
         ],
@@ -215,8 +218,8 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              title: Text("Erro"),
-              content: Text("Username e/ou Senha inválido(s)"),
+              title: Text(translate('erro')),
+              content: Text(translate('credenciais_erradas')),
               actions: <Widget>[
                 TextButton(
                     child: Text("OK"),
@@ -268,8 +271,8 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              title: Text("Erro"),
-              content: Text("Username e/ou Senha inválido(s)"),
+              title: Text(translate('erro')),
+              content: Text(translate('credenciais_erradas')),
               actions: <Widget>[
                 TextButton(
                     child: Text("OK"),
@@ -319,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            'LOGIN',
+            translate('login'),
             style: TextStyle(
               color: AppColors.textColorOnDarkBG,
               letterSpacing: 1.5,
@@ -335,8 +338,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    var localizationDelegate = LocalizedApp.of(context).delegate;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar:
@@ -451,7 +452,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               TextButton(
                                 onPressed: () async {
-                                  //TODO testa ligaçao
                                   final urlController = _tUrl.text;
                                   final tokenController = _tToken.text;
                                   var url = 'http' +
@@ -477,10 +477,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                   final snackBar = SnackBar(
                                     content: Text((result.toString() == '200'
-                                        ? 'Conexão com sucesso'
+                                        ?  translate('conexao.sucesso')
                                         : (result.toString() == '408'
-                                            ? 'Sem ligação'
-                                            : 'Conexão não autorizada'))),
+                                            ? translate('conexao.falhada')
+                                            : translate('conexao.recusada')))),
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(24),
@@ -503,7 +503,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       .showSnackBar(snackBar);
                                 },
                                 child: Text(
-                                  "Test connection",
+                                  translate('testar_ligacao'),
                                   style: TextStyle(color:  AppColors.textColorOnDarkBG/*Color(0xFF1d4d73)*/),
                                 ),
                                 style: TextButton.styleFrom(
@@ -542,7 +542,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Navigator.of(context).pop();
                                 },
                                 child: Text(
-                                  "Save settings",
+                                  translate('gravar_definicoes'),
                                   style: TextStyle(color:  AppColors.textColorOnDarkBG /*Color(0xFF1d4d73)*/),
                                 ),
                                 style: TextButton.styleFrom(
@@ -598,14 +598,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: Column(
                               children: [
-                                // Padding(
-                                //     padding: EdgeInsets.only(top: 25, bottom: 160),
-                                //     child: CupertinoButton.filled(
-                                //       child: Text(translate('button.change_language')),
-                                //       padding: const EdgeInsets.symmetric(
-                                //           vertical: 10.0, horizontal: 36.0),
-                                //       onPressed: () => _onActionSheetPress(context),
-                                //     )),
+                                Padding(
+                                    padding: EdgeInsets.only(top: 25, bottom: 160),
+                                    child: CupertinoButton.filled(
+                                      child: Text('trocar lingua'),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 36.0),
+                                      onPressed: () => _onActionSheetPress(context),
+                                    )),
                                 SvgPicture.asset('assets/images/logo_arcen.svg',
                                     width: (MediaQuery.of(context).size.height -
                                             10) /
@@ -666,9 +666,17 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Text(translate('language.name.es')),
             onPressed: () => Navigator.pop(context, 'es'),
           ),
+          CupertinoActionSheetAction(
+            child: Text(translate('language.name.fr')),
+            onPressed: () => Navigator.pop(context, 'fr'),
+          ),
+          CupertinoActionSheetAction(
+            child: Text(translate('language.name.pt')),
+            onPressed: () => Navigator.pop(context, 'pt'),
+          ),
         ],
         cancelButton: CupertinoActionSheetAction(
-          child: Text(translate('button.cancel')),
+          child: Text('Cancelar'),
           isDefaultAction: true,
           onPressed: () => Navigator.pop(context, null),
         ),

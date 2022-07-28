@@ -17,11 +17,9 @@ class Keys {
 
   static const String Language_Name_Es = 'language.name.es';
 
-  static const String Language_Name_Fa = 'language.name.fa';
+  static const String Language_Name_Fr = 'language.name.fr';
 
-  static const String Language_Name_Ar = 'language.name.ar';
-
-  static const String Language_Name_Ru = 'language.name.ru';
+  static const String Language_Name_Pt = 'language.name.pt';
 
   static const String Language_Selected_Message = 'language.selected_message';
 

@@ -36,7 +36,6 @@ dependencies:
   flutter_animation_progress_bar: ^2.2.1
   timeline_tile: ^2.0.0
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

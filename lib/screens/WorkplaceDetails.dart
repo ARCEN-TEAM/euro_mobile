@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import '../classes/constants.dart';
 import '../classes/enterExitPage.dart';
 import '../classes/workplace.dart';
@@ -39,6 +40,13 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
     super.initState();
 
     _sliderController = CarouselSliderController();
+
+    clipboard.add(widget.obra.cliente.nome);
+    clipboard.add(widget.obra.cliente.morada);
+    clipboard.add(widget.obra.nome);
+    clipboard.add(widget.obra.morada);
+    clipboard.add(widget.obra.telefone);
+
   }
 
   @override
@@ -119,15 +127,20 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                                       ),
                                     ),
                                   )),
-                      title:  Flexible(
-                        child: Container(
-                                            child: Text(
-                                              overflow:
-                                              TextOverflow.ellipsis,
-                                          obralocal.nome,
-                                          style: TextStyle(fontWeight: FontWeight.bold,
-                                              fontSize: 18, color: Colors.white),
-                                        )),
+                      title:  Flex(
+                        direction: Axis.horizontal,
+                        children: [
+                          Flexible(
+                            child: Container(
+                                                child: Text(
+                                                  overflow:
+                                                  TextOverflow.ellipsis,
+                                              obralocal.nome,
+                                              style: TextStyle(fontWeight: FontWeight.bold,
+                                                  fontSize: 18, color: Colors.white),
+                                            )),
+                          ),
+                        ],
                       ),
                       subtitle: Padding(
                                         padding: const EdgeInsets.only(top: 8.0),
@@ -353,7 +366,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                           buildCard(
                               0,
                               1,
-                              "Cliente",
+                              translate('cliente'),
                               [
                                 obralocal.cliente.codigo,
                                 obralocal.cliente.nome
@@ -372,7 +385,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                           buildCard(
                               2,
                               1,
-                              "Obra",
+                              translate('obra'),
                               [
                                 obralocal.codigo,
                                 obralocal.nome
@@ -382,7 +395,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                           buildCard(
                               3,
                               0,
-                              "Morada",
+                              translate('morada'),
                               [
                                 obralocal.morada,
                                 obralocal.codpostal + ' ' + obralocal.cidade
@@ -392,7 +405,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                           buildCard(
                               4,
                               1,
-                              "Contactos",
+                              translate('contactos'),
                               [
                                 obralocal.email,
                                 obralocal.telefone
@@ -501,7 +514,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                           ClipboardData(text: clipboard[indexCard]))
                           .then((_) {
                         GlobalFunctions.showToast(context,
-                            " '" + clipboard[indexCard] + "' copiado!");
+                            " '" + clipboard[indexCard] + "' " + translate('copiado') + "!");
                       });
                     },
                   ),

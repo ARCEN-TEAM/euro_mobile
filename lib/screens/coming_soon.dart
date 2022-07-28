@@ -1,5 +1,6 @@
 import 'package:euro_mobile/classes/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class ComingSoon extends StatefulWidget {
 
@@ -16,7 +17,7 @@ class _ComingSoonState extends State<ComingSoon> {
         
         children: [
           Text(
-            'Coming soon',
+            translate('em_breve'),
             style: TextStyle(color:AppColors.textColorOnDarkBG, fontSize: 34),
           ),
           SizedBox(height:30),

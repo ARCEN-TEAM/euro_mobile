@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import '../classes/plant.dart';
 import '../classes/constants.dart';
 import 'package:http/http.dart' as http;
@@ -191,31 +192,31 @@ class _MainScreenWidgetState extends State<MainScreen> {
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.factory),
                   icon: Icon(Icons.factory_outlined),
-                  label: 'Produção',
+                  label:  translate('producao'),
                   backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.fact_check),
                   icon: Icon(Icons.fact_check_outlined),
-                  label: 'Planeamento',
+                  label:  translate('planeamento'),
                   backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.biotech),
                   icon: Icon(Icons.biotech_outlined),
-                  label: 'Laboratório',
+                  label:  translate('laboratorio'),
                   backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.handyman),
                   icon: Icon(Icons.handyman_outlined),
-                  label: 'Manutenção',
+                  label: translate('manutencao'),
                   backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
                 ),
                 BottomNavigationBarItem(
                   activeIcon: Icon(Icons.person),
                   icon: Icon(Icons.person_outline),
-                  label: 'Perfil',
+                  label:  translate('perfil'),
                   backgroundColor: AppColors.backgroundBlue /*Color(0xFF0f1925)*/,
                 ),
               ],

@@ -1,38 +1,54 @@
 {
-  "app_bar":
-  {
-    "title": "Bienvenido a la página de inicio"
-  },
-  "button":
-  {
-    "cancel": "Cancelar",
-    "change_language": "Cambiar idioma"
-  },
-  "language":
-  {
-    "name":
-    {
+  "language": {
+    "name": {
       "en": "Inglés",
       "es": "Español",
-      "fa": "Persa",
-      "ar": "Arábica",
-      "ru": "Ruso"
+      "pt": "Portugués",
+      "fr": "Francés"
     },
     "selected_message": "El idioma seleccionado actualmente es {language}",
-    "selection":
-    {
+    "selection": {
       "message": "Por favor seleccione un idioma de la lista",
       "title": "Selección de idioma"
     }
   },
-  "plural":
-  {
-    "demo":
-    {
-      "zero": "Por favor, comience a presionar el botón 'más'.",
-      "one": "Has pulsado el botón una vez.",
-      "two": "Has pulsado el botón dos veces.",
-      "other": "Ha pulsado el botón {{value}} veces."
-    }
-  }
+  "utilizador": "Usuario",
+  "password": "Contrasêna",
+  "login": "Iniciar sesión",
+  "lembrar": "Recuerdame",
+  "testar_ligacao": "Conexión de prueba",
+  "gravar_definicoes": "Registrar",
+  "conexao": {
+    "sucesso": "Conexión exitosa",
+    "falhada": "Sin conexión",
+    "recusada": "Conexión no autorizada"
+  },
+  "erro": "Error",
+  "credenciais_erradas": "Nombre de usuario y/o contraseña no válido(s)",
+  "inserir_pass": "Ingresa tu contraseña",
+  "inserir_utilizador": "Ingrese su nombre de usuario",
+  "ver_mais": "Ver más",
+  "producao": "Producción",
+  "perfil": "Perfil",
+  "planeamento": "Planificación",
+  "laboratorio": "Laboratorio",
+  "manutencao": "Mantenimiento",
+  "em_breve": "Brevemente",
+  "cliente": "Cliente",
+  "obra": "Obra",
+  "composicao": "Receta",
+  "camiao": "Camión",
+  "pedido": "Pedido",
+  "guia_remessa": "Albarán",
+  "guia_bombagem": "Alb. de Bombeo",
+  "inicio_carga": "Inicio de carga",
+  "saida_central": "Salida de planta",
+  "chegada_obra": "Llegada a obra",
+  "inicio_descarga": "Inicio de Descarga",
+  "chegada_central": "Llegada a Planta",
+  "fim_descarga": "Fin descarga",
+  "saida_obra": "Salida de obra",
+  "contactos": "Contactos",
+  "copiado": "copiado",
+  "morada": "Dirección"
 }

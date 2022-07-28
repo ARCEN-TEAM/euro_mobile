@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter_translate/flutter_translate.dart';
+
 import 'timelineTest.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
@@ -144,7 +146,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
           centerTitle: true,
           title: Text(
 
-            (widget.guia.inv_type == "1" ? "Guia de Remessa" : "Guia de Bombagem"),
+            (widget.guia.inv_type == "1" ? translate('guia_remessa'): translate('guia_bombagem')),
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.textColorOnDarkBG),
           ),
@@ -255,7 +257,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                 ),
                 buildCard(
                     0,
-                    "Cliente",
+                    translate('cliente'),
                     [
                       widget.guia.obra.cliente.codigo,
                       widget.guia.obra.cliente.nome
@@ -264,13 +266,13 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                     null),
                 buildCard(
                     1,
-                    "Obra",
+                    translate('obra'),
                     [widget.guia.obra.codigo, widget.guia.obra.nome],
                     Icon(Icons.chevron_right, color: Colors.white),
                     WorkplaceScreen(widget.guia.obra)),
-                buildCard(2, "Composição",
+                buildCard(2, translate('composicao'),
                     [widget.guia.cod_receita, widget.guia.receita], null, null),
-                buildCard(3, "Camião",
+                buildCard(3, translate('camiao'),
                     [widget.guia.camiao, widget.guia.motorista], null, null),
                 DeliveryTimeline(timeList: [
                   '10:30',
@@ -280,7 +282,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                   "10:45",
                   "11:30",
                   "11:30"
-                ], lastTimestmp: 5)
+                ], lastTimestmp: 5, inv_type: widget.guia.inv_type,)
               ],
             ),
           ),
@@ -408,7 +410,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                               ClipboardData(text: clipboard[indexCard]))
                           .then((_) {
                         GlobalFunctions.showToast(context,
-                            " '" + clipboard[indexCard] + "' copiado!");
+                            " '" + clipboard[indexCard] + "' " + translate('copiado') + "!");
                       });
                     },
                   ),

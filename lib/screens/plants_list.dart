@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -428,7 +429,7 @@ class _PlantsListState extends State<PlantsList> {
                               ),
                             ),
                           ),
-                          Text("Ver mais",
+                          Text(translate('ver_mais'),
                               style: TextStyle(color: AppColors.textColorOnDarkBG))
                         ],
                       )),

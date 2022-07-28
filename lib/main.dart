@@ -16,8 +16,8 @@ void main() async {
   ));
 
   var delegate = await LocalizationDelegate.create(
-      fallbackLocale: 'en_US',
-      supportedLocales: ['en_US', 'es']);
+      fallbackLocale: 'pt',
+      supportedLocales: ['en_US', 'es', 'fr', 'pt']);
 
   runApp(LocalizedApp(delegate, MyApp()));
 }
@@ -56,6 +56,7 @@ class MyApp extends StatelessWidget {
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
           localizationDelegate
         ],
         supportedLocales: localizationDelegate.supportedLocales,

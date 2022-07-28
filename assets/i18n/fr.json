@@ -1,0 +1,54 @@
+{
+  "language": {
+    "name": {
+      "en": "Anglais",
+      "es": "Espagnol",
+      "pt": "Portugais",
+      "fr": "Français"
+    },
+    "selected_message": "La langue actuellement sélectionnée est {language}",
+    "selection": {
+      "message": "Veuillez sélectionner une langue dans la liste",
+      "title": "Sélection de la langue"
+    }
+  },
+  "utilizador": "Utilisateur",
+  "password": "Mot de passe",
+  "login": "Identifiez-vous",
+  "lembrar": "Rappelle moi",
+  "testar_ligacao": "Tester la connexion",
+  "gravar_definicoes": "Enregistrer",
+  "conexao": {
+    "sucesso": "Connexion réussie",
+    "falhada": "Pas de connection",
+    "recusada": "Connexion non autorisée"
+  },
+  "erro": "Erreur",
+  "credenciais_erradas": "Nom d'utilisateur et/ou mot de passe invalide(s)",
+  "inserir_pass": "Tapez votre mot de passe",
+  "inserir_utilizador": "Entrez votre nom d'utilisateur",
+  "ver_mais": "Voir plus",
+  "producao": "Production",
+  "perfil": "Profil",
+  "planeamento": "Planification",
+  "laboratorio": "Laboratoire",
+  "manutencao": "Entretien",
+  "em_breve": "Brièvement",
+  "cliente": "Client",
+  "obra": "Chantier",
+  "composicao": "Formule",
+  "camiao": "Camion",
+  "pedido": "Demande",
+  "guia_remessa": "Bon de livraison",
+  "guia_bombagem": "Bon de pompage",
+  "inicio_carga": "Début de chargement",
+  "saida_central": "Sortie de la central",
+  "chegada_obra": "Arrivée au chantier",
+  "inicio_descarga": "Début de vindange",
+  "chegada_central": "Arrivée a la Centrale",
+  "fim_descarga": "Fin vidange",
+  "saida_obra": "Sortie du chantier",
+  "contactos": "Contacts",
+  "copiado": "copié",
+  "morada": "Adresse"
+}

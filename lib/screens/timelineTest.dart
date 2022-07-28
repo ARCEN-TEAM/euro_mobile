@@ -1,38 +1,42 @@
 import 'package:euro_mobile/classes/constants.dart';
 import 'package:euro_mobile/screens/PlantDetails.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 
-const deliverySteps = [
-  'Inicio de carga',
-  'Saida da central',
-  'chegada a obra',
-  'inicio de descarga',
-  'Fim de descarga',
-  'saida da obra',
-  'chegada a central',
+var deliverySteps = [
+  translate('inicio_carga'),
+  translate('saida_central'),
+  translate('chegada_obra'),
+  translate('inicio_descarga'),
+  translate('fim_descarga'),
+  translate('saida_obra'),
+  translate('chegada_central'),
 ];
 
 class DeliveryTimeline extends StatelessWidget {
   late final List<String> timeList;
+  late String inv_type;
   late int lastTimestmp;
   late int currentStep;
   late ScrollController _scrollController;
 
 
-    DeliveryTimeline ( {required this.timeList,required this.lastTimestmp})  {
-
+    DeliveryTimeline ( {required this.timeList,required this.lastTimestmp, required this.inv_type})  {
          _scrollController = ScrollController();
           currentStep = lastTimestmp;
 
-
+         if(inv_type!="1"){
+           deliverySteps = [
+             translate('chegada_obra'),
+             translate('inicio_descarga'),
+             translate('fim_descarga'),
+             translate('saida_obra'),
+           ];
+         }
        }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import '../classes/constants.dart';
 import '../classes/order.dart';
 import '../classes/enterExitPage.dart';
@@ -53,7 +54,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               backgroundColor: Colors.transparent,
               centerTitle: true,
               title: Text(
-                "Pedido",
+                translate('pedido'),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.textColorOnDarkBG),
               ),
@@ -217,7 +218,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         SizedBox(height: 25,),
                         buildCard(
                             0,
-                            "Cliente",
+                            translate('cliente'),
                             [
                               widget.pedido.obra.cliente.codigo,
                               widget.pedido.obra.cliente.nome
@@ -226,7 +227,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                             null),
                         buildCard(
                             1,
-                            "Obra",
+                            translate('obra'),
                             [
                               widget.pedido.obra.codigo,
                               widget.pedido.obra.nome
@@ -235,7 +236,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                             WorkplaceScreen(widget.pedido.obra)),
                         buildCard(
                             2,
-                            "Composição",
+                            translate('composicao'),
                             [widget.pedido.cod_receita, widget.pedido.receita],
                             null,
                             null),
@@ -330,7 +331,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                               ClipboardData(text: clipboard[indexCard]))
                           .then((_) {
                         GlobalFunctions.showToast(context,
-                            " '" + clipboard[indexCard] + "' copiado!");
+                            " '" + clipboard[indexCard] + "' " + translate('copiado') + "!");
                       });
                     },
                   ),
