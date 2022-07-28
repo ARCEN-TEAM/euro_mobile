@@ -38,6 +38,12 @@ class PlantScreen extends StatefulWidget {
 List<Invoice> guias = [];
 List<Order> pedidos = [];
 List<String> categories = ['Resumo', 'Pedidos', 'Guias', 'Bombagens'];
+List<Tab> tabs = [
+  Tab(text: 'Resumo'),
+  Tab(text: 'Pedidos'),
+  Tab(text: 'Guias'),
+  Tab(text: 'Bombagens'),
+];
 var currentIndex = 0;
 var pageIndex = 1;
 var response;
@@ -48,7 +54,8 @@ bool firstLoad = true;
 bool noResults = false;
 var lengthsliver = 0;
 
-class _PlantScreenWidgetState extends State<PlantScreen> {
+class _PlantScreenWidgetState extends State<PlantScreen>
+    with SingleTickerProviderStateMixin {
   TextEditingController textController = TextEditingController();
 
   GetInvoice(String plantCode, String invoice, String tipoguia) async {
@@ -100,139 +107,138 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
 
   Future postRequest(int index, String plantCode, String dataInicio,
       String DataFim, int page) async {
-    bool localNoResults = false;
-    bool localFirstLoad = false;
-    setState(() {
-      noResults = false;
-      postRequestLoading = true;
-    });
-    if (page == 1) {
-      guias = [];
-      pedidos = [];
-    }
-    switch (index) {
-      case 0:
-      //TODO resumo
-        break;
-      case 1:
+    if(!postRequestLoading)
+    {
 
-        if (hasMore) {
-          var url = '${ApiConstants.baseUrl}'
-              '${ApiConstants.plantEndpoint}'
-              '/orders/?user='
-              '${ApiConstants.UserLogged}'
-              '&token='
-              '${ApiConstants.ApiKey}'
-              '&plant='
-              '$plantCode'
-              '&limit='
-              '$limit'
-              '&page='
-              '$page'
-              '&dateBegin='
-              '${dataInicio.replaceAll("/", "-")}'
-              '&dateEnd='
-              '${DataFim.replaceAll("/", "-")}';
+      var tempResp;
+      bool localNoResults = false;
+      bool localFirstLoad = false;
+      setState(() {
+        noResults = false;
+        postRequestLoading = true;
+      });
+      if (page == 1) {
+        guias = [];
+        pedidos = [];
+      }
+     // print(index);
+      switch (index) {
+        case 0:
+          //TODO resumo
+          break;
+        case 1:
+          if (hasMore) {
+            var url = '${ApiConstants.baseUrl}'
+                '${ApiConstants.plantEndpoint}'
+                '/orders/?user='
+                '${ApiConstants.UserLogged}'
+                '&token='
+                '${ApiConstants.ApiKey}'
+                '&plant='
+                '$plantCode'
+                '&limit='
+                '$limit'
+                '&page='
+                '$page'
+                '&dateBegin='
+                '${dataInicio.replaceAll("/", "-")}'
+                '&dateEnd='
+                '${DataFim.replaceAll("/", "-")}';
 
-          response =
-          await http.post(Uri.parse(url), headers: ApiConstants.headers);
-          var tempResp = await json.decode(response.body);
-          if (tempResp != null) {
-            final List parsedJson = await json.decode(response.body);
+            response =
+                await http.post(Uri.parse(url), headers: ApiConstants.headers);
+            var tempResp = await json.decode(response.body);
+            if (tempResp != false && tempResp != null) {
 
-            if (page == 1) {
-              pedidos = [];
-            }
 
-            parsedJson.forEach((dynamic data) {
-              pedidos.add(Order.fromJson(data));
-              if (Order
-                  .fromJson(data)
-                  .totalrows ==
-                  Order
-                      .fromJson(data)
-                      .rownr) {
-                hasMore = false;
+              final List parsedJson = await json.decode(response.body);
+
+              if (page == 1) {
+                pedidos = [];
               }
-            });
 
-            setState(() {
-              lengthsliver = pedidos.length;
-              pageIndex += 1;
-            });
-          } else {
-            setState(() {
-              localFirstLoad = true;
-              localNoResults = true;
-            });
-          }
-        }
-        break;
-      case 2:
-      case 3:
-        if (hasMore) {
-          var funcao = 'invoices';
-          if (index == 3) {
-            funcao = 'invoicespumping';
-          }
-          var url = '${ApiConstants.baseUrl}'
-              '${ApiConstants.plantEndpoint}'
-              '/$funcao/?user='
-              '${ApiConstants.UserLogged}'
-              '&token='
-              '${ApiConstants.ApiKey}'
-              '&plant='
-              '$plantCode'
-              '&limit='
-              '$limit'
-              '&page='
-              '$page'
-              '&dateBegin='
-              '${dataInicio.replaceAll("/", "-")}'
-              '&dateEnd='
-              '${DataFim.replaceAll("/", "-")}';
+              parsedJson.forEach((dynamic data) {
+                pedidos.add(Order.fromJson(data));
+                if (Order.fromJson(data).totalrows ==
+                    Order.fromJson(data).rownr) {
+                  hasMore = false;
+                }
+              });
 
-          response =
-          await http.post(Uri.parse(url), headers: ApiConstants.headers);
-          var tempResp = await json.decode(response.body);
-
-          if (tempResp != false && tempResp != null) {
-            final List parsedJson = tempResp;
-            if (page == 1) {
-              guias = [];
+              setState(() {
+                lengthsliver = pedidos.length;
+                pageIndex += 1;
+              });
+            } else {
+              setState(() {
+                localFirstLoad = true;
+                localNoResults = true;
+              });
             }
-
-            parsedJson.forEach((dynamic data) {
-              guias.add(Invoice.fromJson(data));
-              if (Invoice
-                  .fromJson(data)
-                  .totalrows ==
-                  Invoice
-                      .fromJson(data)
-                      .rownr) {
-                hasMore = false;
-              }
-            });
-            setState(() {
-              lengthsliver = guias.length;
-              pageIndex += 1;
-            });
-          } else {
-            setState(() {
-              localFirstLoad = true;
-              localNoResults = true;
-            });
           }
-        } else {
-          localFirstLoad = true;
-        }
-        break;
+          break;
+        case 2:
+        case 3:
+          if (hasMore) {
+            var funcao = 'invoices';
+            if (index == 3) {
+              funcao = 'invoicespumping';
+            }
+            var url = '${ApiConstants.baseUrl}'
+                '${ApiConstants.plantEndpoint}'
+                '/$funcao/?user='
+                '${ApiConstants.UserLogged}'
+                '&token='
+                '${ApiConstants.ApiKey}'
+                '&plant='
+                '$plantCode'
+                '&limit='
+                '$limit'
+                '&page='
+                '$page'
+                '&dateBegin='
+                '${dataInicio.replaceAll("/", "-")}'
+                '&dateEnd='
+                '${DataFim.replaceAll("/", "-")}';
+
+            response =
+                await http.post(Uri.parse(url), headers: ApiConstants.headers);
+            var tempResp = await json.decode(response.body);
+
+            if (tempResp != false && tempResp != null) {
+              final List parsedJson = tempResp;
+              if (page == 1) {
+                guias = [];
+              }
+
+              parsedJson.forEach((dynamic data) {
+                guias.add(Invoice.fromJson(data));
+                if (Invoice.fromJson(data).totalrows ==
+                    Invoice.fromJson(data).rownr) {
+                  hasMore = false;
+                }
+              });
+              setState(() {
+                lengthsliver = guias.length;
+                pageIndex += 1;
+              });
+            } else {
+              setState(() {
+                localFirstLoad = true;
+                localNoResults = true;
+              });
+            }
+          } else {
+            localFirstLoad = true;
+          }
+          break;
+      }
+      setState(() {
+        firstLoad = localFirstLoad;
+        noResults = localNoResults;
+        postRequestLoading = false;
+      });
     }
-    setState(() {
-      firstLoad = localFirstLoad;
-      noResults = localNoResults;
-      postRequestLoading = false;
-    });
   }
 
   late PickerDateRange _valuesDate;
@@ -240,9 +246,13 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
   String datainicio = '01/05/2022';
   String datafim = '31/05/2022';
   String exemplo = '01/05/2022 - 31/05/2022';
+  var _scrollController;
+      late TabController _tabController;
 
   @override
   void initState() {
+    _scrollController = ScrollController();
+    _tabController = TabController(vsync: this, length: tabs.length);
     super.initState();
     datainicio = DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.data));
     datafim = DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.data));
@@ -265,13 +275,35 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
 
   @override
   void dispose() {
+    _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final Plant centrallocal = widget.central;
+    _tabController.addListener(() {
+      if(  !_tabController.indexIsChanging){
+        setState(() {
+          //print(_tabController.index);
 
+          currentIndex = _tabController.index;
+          pageIndex = 1;
+          hasMore = true;
+          firstLoad = true;
+          lengthsliver = 0;
+          postRequest(
+              _tabController.index,
+              centrallocal.codigo,
+              datainicio,
+              datafim,
+              pageIndex);
+        });
+      }
+
+
+    });
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -430,9 +462,11 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
           ),
         ),
         child: NotificationListener<ScrollNotification>(
+
           onNotification: (ScrollNotification scrollInfo) {
+
             if (scrollInfo.metrics.pixels ==
-                scrollInfo.metrics.maxScrollExtent) {
+                scrollInfo.metrics.maxScrollExtent && (scrollInfo.metrics.axisDirection == AxisDirection.down)) {
               // here you update your data or load your data from network
               setState(() {
                 if (!postRequestLoading && hasMore && !noResults) {
@@ -443,7 +477,156 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
             }
             return true;
           },
-          child: CustomScrollView(slivers: <Widget>[
+          child: NestedScrollView(
+            controller: _scrollController,
+            physics: BouncingScrollPhysics(),
+
+            headerSliverBuilder: (BuildContext context,
+                bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+
+                  forceElevated: true,
+                  floating: false,
+                  automaticallyImplyLeading: false,
+                  snap: false,
+                  pinned: false,
+
+                  backgroundColor: Color(0x00000000),
+                  flexibleSpace: FlexibleSpaceBar(
+                      titlePadding: EdgeInsetsDirectional.only(
+                          start: 30, bottom: 70),
+                      title: SingleChildScrollView(
+                          child: ListTile(
+                              leading: Padding(
+                                  padding: const EdgeInsets.only(left: 7.0),
+                                  child: new GestureDetector(
+                                      onTap: () {
+                                        MapUtils.openMap(
+                                            centrallocal.gps.latitude,
+                                            centrallocal.gps.longitude);
+                                      },
+                                      child: Hero(
+                                        tag: 'plant-' + centrallocal.codigo,
+                                        child: Container(
+                                          width: 80,
+                                          height: 80,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.blue,
+                                          ),
+                                          child: Align(
+                                            alignment: AlignmentDirectional(
+                                                0, 0),
+                                            child: Image.network(
+                                                'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
+                                                    centrallocal.gps.longitude
+                                                        .toString() +
+                                                    ',' +
+                                                    centrallocal.gps.latitude
+                                                        .toString() +
+                                                    ')/' +
+                                                    centrallocal.gps.longitude
+                                                        .toString() +
+                                                    ',' +
+                                                    centrallocal.gps.latitude
+                                                        .toString() +
+                                                    ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
+                                          ),
+                                        ),
+                                      ))),
+                              title: Container(
+                                  child: Text(
+                                    centrallocal.nome,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.white,),
+                                  )),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.phone_android_rounded,
+                                              color: Colors.white, size: 17),
+                                          Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: InkWell(
+                                                child: Text(
+                                                    centrallocal.telefone,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        wordSpacing: 2,
+                                                        fontSize: 12,
+                                                        letterSpacing: 4)),
+                                                onTap: () {
+                                                  Utils.launchCaller(util_call,
+                                                      centrallocal.telefone);
+                                                },
+                                              ))
+                                        ]),
+                                  )
+                                ],
+                              ))
+
+                      )),
+                  bottom: TabBar(
+
+                    indicator: BoxDecoration(
+                        color:   Colors.grey.withOpacity(0.1),
+
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: Colors.transparent, width: 2)
+                    ),
+                     labelStyle: TextStyle(
+                         shadows: <Shadow>[
+                           Shadow(
+                             color: Color(0xFF3ab1ff)
+                                 .withOpacity(0.5),
+                             //spreadRadius: 3,
+                             blurRadius: 8,
+                           )
+
+                         ],
+                         color:  Color(0xFF73AEF5),
+                         fontSize: 16),
+                    unselectedLabelColor: Colors.grey.withOpacity(0.9),
+                    labelColor: Color(0xFF73AEF5),
+                    unselectedLabelStyle: TextStyle(
+                        color:  Colors.grey.withOpacity(0.9),
+                        fontSize: 16),
+                    isScrollable: true,
+                    physics: BouncingScrollPhysics(),
+                    enableFeedback: true,
+
+                    tabs: tabs,
+                    controller: _tabController,
+                  ),
+                ),
+              ];
+            }, body: TabBarView(
+
+            controller: _tabController,
+            children:  [
+              buildTabViews(0==currentIndex),
+              buildTabViews(1==currentIndex),
+              buildTabViews(2==currentIndex),
+              buildTabViews(3==currentIndex)
+            ]
+
+
+          ),)
+
+          /*CustomScrollView(slivers: <Widget>[
             SliverAppBar(
               forceElevated: true,
               floating: false,
@@ -533,116 +716,7 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                           )
                         ],
                       ))
-                    /*Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                                padding: const EdgeInsets.only(left: 7.0),
-                                child: new GestureDetector(
-                                    onTap: () {
-                                      MapUtils.openMap(
-                                          centrallocal.gps.latitude,
-                                          centrallocal.gps.longitude);
-                                    },
-                                    child: Hero(
-                                      tag: 'plant-' + centrallocal.codigo,
-                                      child: Container(
-                                        width: 80,
-                                        height: 80,
-                                        clipBehavior: Clip.antiAlias,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.blue,
-                                        ),
-                                        child: Align(
-                                          alignment: AlignmentDirectional(0, 0),
-                                          child: Image.network(
-                                              'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
-                                                  centrallocal.gps.longitude
-                                                      .toString() +
-                                                  ',' +
-                                                  centrallocal.gps.latitude
-                                                      .toString() +
-                                                  ')/' +
-                                                  centrallocal.gps.longitude
-                                                      .toString() +
-                                                  ',' +
-                                                  centrallocal.gps.latitude
-                                                      .toString() +
-                                                  ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
-                                        ),
-                                      ),
-                                    ))),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                      child: Text(
-                                    centrallocal.nome,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        color: Colors.white),
-                                  )),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(Icons.location_on,
-                                              color: Colors.white, size: 17),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child: Text(centrallocal.zona,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    wordSpacing: 2,
-                                                    fontSize: 10,
-                                                    letterSpacing: 4)),
-                                          )
-                                        ]),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Icon(Icons.phone_android_rounded,
-                                              color: Colors.white, size: 17),
-                                          Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8.0),
-                                              child: InkWell(
-                                                child: Text(
-                                                    centrallocal.telefone,
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        wordSpacing: 2,
-                                                        fontSize: 10,
-                                                        letterSpacing: 4)),
-                                                onTap: () {
-                                                  Utils.launchCaller(util_call,
-                                                      centrallocal.telefone);
-                                                },
-                                              ))
-                                        ]),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    )*/,
+
                   )),
             ),
             SliverToBoxAdapter(
@@ -707,52 +781,67 @@ class _PlantScreenWidgetState extends State<PlantScreen> {
                     ),
                   )),
             ),
-            if ((!postRequestLoading && !noResults) || !firstLoad) ...[
-              SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  switch (currentIndex) {
-                    case 1:
-                      if (pedidos.isNotEmpty) {
-                        return buildCardOrder(pedidos[index]);
-                      }
-                      break;
 
-                    case 2:
-                    case 3:
-                      if (guias.isNotEmpty) {
-                        return buildCardInvoice(guias[index]);
-                      }
-                      break;
-                  }
-                }, childCount: lengthsliver),
-              ),
-            ] else
-              ...[
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.transparent,
-                    ),
-                    child: Center(
-                      //     child: CircularProgressIndicator(
-                      //   color: Color(0xFF73AEF5),
-                      // )
-                        child: (!noResults)
-                            ? Lottie.asset('assets/images/lotties/search.json')
-                            : Opacity(
-                          opacity: 0.2,
-                          child: Lottie.asset(
-                              'assets/images/lotties/notfound.json',
-                              repeat: false),
-                        )),
-                  ),
-                )
-              ]
-          ]),
+          ])*/,
         ),
       ),
     );
+  }
+
+  Widget buildTabViews(tabIndex) {
+
+   if(tabIndex){
+
+     if ((!postRequestLoading && !noResults) || !firstLoad) {
+       return  CustomScrollView(slivers: [ SliverList(
+           delegate: SliverChildBuilderDelegate(
+                 (BuildContext context, int index) {
+               switch (currentIndex) {
+                 case 1:
+                   if (pedidos.isNotEmpty) {
+                     return buildCardOrder(pedidos[index]);
+                   }
+                   break;
+
+                 case 2:
+                 case 3:
+                   if (guias.isNotEmpty) {
+                     return buildCardInvoice(guias[index]);
+                   }
+                   break;
+               }
+               return Container();
+             },
+             // 40 list items
+             childCount: lengthsliver,
+           ))]);
+
+
+     }
+     else {
+       return   Container(
+         decoration: BoxDecoration(
+           color: AppColors.transparent,
+         ),
+         child: Center(
+           //     child: CircularProgressIndicator(
+           //   color: Color(0xFF73AEF5),
+           // )
+             child: (!noResults)
+                 ? Lottie.asset('assets/images/lotties/search.json')
+                 : Opacity(
+               opacity: 0.2,
+               child: Lottie.asset(
+                   'assets/images/lotties/notfound.json',
+                   repeat: false),
+             )),
+       );
+
+     }
+   }else{
+     return Container();
+   }
+
   }
 
   Widget buildCardInvoice(Invoice guia) {

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import './widgets/DialogExitPopup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import '../classes/plant.dart';
@@ -9,7 +12,6 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 import 'plants_list.dart';
 import 'profile_screen.dart';
-import 'timelineTest.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'coming_soon.dart';
@@ -85,104 +87,89 @@ class _MainScreenWidgetState extends State<MainScreen> {
     super.dispose();
   }
 
-  Widget _buildAppBar(BuildContext context) {
-    return SliverAppBar(
-      floating: false,
-      automaticallyImplyLeading: false,
-      snap: false,
-      expandedHeight: 80,
-      backgroundColor: Color(0x00000000),
-      flexibleSpace: FlexibleSpaceBar(
-          title: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Centrais',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ))
-        ],
-      )),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          border: Border.all(width: 0, color: AppColors.backgroundBlue /*Color(0xFF0f1925)*/),
-          gradient: RadialGradient(
-            center: Alignment(-1.4, -1.4),
-            colors: AppColors.backgroundGradientColors /*[
-              Color(0xFF1d4d73),
-              Color(0xFF0f1925),
-            ]*/,
-            radius: 1.2,
+    return WillPopScope(
+      onWillPop: () => showExitPopup(context,"Deseja sair da aplicação",
+              () {exit(0);}),
+      child: Scaffold(
+        body: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border: Border.all(width: 0, color: AppColors.backgroundBlue /*Color(0xFF0f1925)*/),
+            gradient: RadialGradient(
+              center: Alignment(-1.4, -1.4),
+              colors: AppColors.backgroundGradientColors /*[
+                Color(0xFF1d4d73),
+                Color(0xFF0f1925),
+              ]*/,
+              radius: 1.2,
+            ),
           ),
-        ),
-        child: PageView(
-          physics: BouncingScrollPhysics() /*NeverScrollableScrollPhysics()*/,
-          onPageChanged: (int pageIndex){
-            {
-              if(!navTapped){
-                setState(() {
-                  currentPageIndex = pageIndex;
-                });
-                controller.animateToPage(currentPageIndex,
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeOutQuad);
-              }
+          child: PageView(
+            physics: BouncingScrollPhysics() /*NeverScrollableScrollPhysics()*/,
+            onPageChanged: (int pageIndex){
+              {
+                if(!navTapped){
+                  setState(() {
+                    currentPageIndex = pageIndex;
+                  });
+                  controller.animateToPage(currentPageIndex,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeOutQuad);
+                }
 
-            }
-          },
-          controller: controller,
-          children: [
-            PlantsList(),
-            ComingSoon(),
-            // Container(
-            //   height: 100,
-            //   child: LineChart(
-            //     mainData(),
-            //   ),
-            // ),
-            ComingSoon(),
-            ComingSoon(),
-            ListView(
-              physics: BouncingScrollPhysics(),
-              children: [
-                ProfileScreen(username: widget.username)
-              ],
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: Theme(
-          data: ThemeData(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
+              }
+            },
+            controller: controller,
+            children: [
+              PlantsList(),
+              ComingSoon(),
+              // Container(
+              //   height: 100,
+              //   child: LineChart(
+              //     mainData(),
+              //   ),
+              // ),
+              ComingSoon(),
+              ComingSoon(),
+              ListView(
+                physics: BouncingScrollPhysics(),
+                children: [
+                  ProfileScreen(username: widget.username)
+                ],
+              )
+            ],
           ),
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(width: 0, color: AppColors.backgroundBlue)),
-            child: BottomNavigationBar(
-              currentIndex: currentPageIndex,
-              onTap: (int index) {
-                setState(() {
-                  currentPageIndex = index;
-                  navTapped = true;
-                });
-                controller.animateToPage(currentPageIndex,
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeOutQuad)
-                    .then((value)
-                      {
-                        navTapped = false;
-                      });
-              },
-              elevation: 0,
+        ),
+        bottomNavigationBar:
+        Theme(
+            data: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(width: 0, color: AppColors.backgroundBlue)),
+              child: BottomNavigationBar(
+                currentIndex: currentPageIndex,
+                onTap: (int index) {
+                  setState(() {
+                    currentPageIndex = index;
+                    navTapped = true;
+                  });
+                  controller.animateToPage(currentPageIndex,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeOutQuad)
+                      .then((value)
+                        {
+                          navTapped = false;
+                        });
+                },
+                elevation: 0,
 
               type: BottomNavigationBarType.shifting,
               unselectedItemColor: AppColors.navbarUnselectedItemColor /*Color(0xFF7b93af)*/,
@@ -222,6 +209,7 @@ class _MainScreenWidgetState extends State<MainScreen> {
               ],
             ),
           )),
+      ),
     );
   }
 

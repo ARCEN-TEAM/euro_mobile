@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:io' as io;
 import 'dart:typed_data';
 
+import 'package:euro_mobile/screens/widgets/DialogExitPopup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../classes/constants.dart';
+import '../classes/enterExitPage.dart';
 import '../classes/utils.dart';
 import '../utilities/constants.dart';
+import 'login_screen.dart';
 import 'widgets/my_arc.dart';
 //import 'AddEntryDialog.dart';
 
@@ -41,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         SizedBox(height: 30),
         Center(
-            child: Text("Profile",
+            child: Text(widget.username,
                 style: TextStyle(color: AppColors.textColorOnDarkBG, fontSize: 20))),
         SizedBox(height: 30),
         Stack(
@@ -69,9 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
         SizedBox(height: 30),
-        Center(
-            child: Text(widget.username,
-                style: TextStyle(color: AppColors.textColorOnDarkBG, fontSize: 20))),
+
         SizedBox(height: 15),
         Center(
           child: FractionallySizedBox(
@@ -102,6 +103,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         buildCard(Icon(Icons.phone_outlined,color: AppColors.textColorOnDarkBG), "Telemóvel", "91..", Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG.withOpacity(0.2))),
         buildCard(Icon(Icons.email_outlined,color: AppColors.textColorOnDarkBG),  "Email", "pe.prg@arcen.pt", Icon(Icons.edit_outlined, color: AppColors.textColorOnDarkBG.withOpacity(0.2))),
+
+        Row(children: [
+           
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+
+                onPressed: () {
+                  showExitPopup(context, "Deseja terminar sessão?",() {
+                      Navigator.pushReplacement(
+                          context,MaterialPageRoute(builder: (context) => LoginScreen()) );
+
+                });},
+                child: Text("Terminar sessão",style: TextStyle(color: AppColors.textColorOnDarkBG,),),
+                style: ElevatedButton.styleFrom(
+
+                    primary: AppColors.buttonPrimaryColor),
+              ),
+            ),
+          )
+        ],)
+
       ],
     );
   }

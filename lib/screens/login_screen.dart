@@ -32,7 +32,11 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     init();
 
+      isAuthenticating = false;
+
   }
+
+
   late var localizationDelegate = LocalizedApp.of(context).delegate;
   Future init() async {
     final https = await StorageService.readSecureData('https');
@@ -202,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-
+  bool isAuthenticating = false;
   final _tLogin = TextEditingController();
   final _tSenha = TextEditingController();
 
@@ -239,6 +243,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
   var response;
   Future<dynamic> postRequest() async {
+    setState(() {
+      isAuthenticating = true;
+    });
     final login = _tLogin.text;
     final senha = textToMd5(_tSenha.text);
     var url = ApiConstants.baseUrl +
@@ -259,14 +266,21 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (error) {
       ApiConstants.ApiKey = '';
+
     }
 
     if (ApiConstants.ApiKey != '') {
-      Navigator.push(
+      setState(() {
+        isAuthenticating = false;
+      });
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MainScreen(username: login)),
       );
     } else {
+      setState(() {
+        isAuthenticating=false;
+      });
       showDialog(
         context: context,
         builder: (context) {
@@ -296,7 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: TextButton(
         style:
-            TextButton.styleFrom(elevation: 10, backgroundColor: AppColors.buttonPrimaryColor),
+            TextButton.styleFrom(elevation: 10, backgroundColor: (isAuthenticating ? AppColors.buttonPrimaryColor.withOpacity(0.5): AppColors.buttonPrimaryColor)),
         onPressed: () async {
           String loginController = _tLogin.text;
           String senhaController = _tSenha.text;
@@ -321,8 +335,8 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(
-            translate('login'),
+          child: (isAuthenticating ? Container(height: 22,width: 22,child:CircularProgressIndicator( strokeWidth: 2.0,backgroundColor: AppColors.textColorOnDarkBG )) : Text(
+            translate('login') ,
             style: TextStyle(
               color: AppColors.textColorOnDarkBG,
               letterSpacing: 1.5,
@@ -330,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontWeight: FontWeight.bold,
               fontFamily: 'OpenSans',
             ),
-          ),
+          ) ),
         ),
       ),
     );
@@ -452,6 +466,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               TextButton(
                                 onPressed: () async {
+                                  //TODO testa ligaçao
                                   final urlController = _tUrl.text;
                                   final tokenController = _tToken.text;
                                   var url = 'http' +
@@ -642,6 +657,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+
   void showDemoActionSheet(
       {required BuildContext context, required Widget child}) {
     showCupertinoModalPopup<String>(
@@ -683,4 +699,5 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 }
