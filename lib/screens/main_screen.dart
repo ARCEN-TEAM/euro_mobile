@@ -94,14 +94,13 @@ class _MainScreenWidgetState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => showExitPopup(context,"Deseja sair da aplicação",
-              () {exit(0);}),
+      onWillPop: () => showExitPopup(context,"Deseja sair da aplicação",  () {exit(0);}),
       child: Scaffold(
         drawerEdgeDragWidth: (currentPageIndex==0 ? MediaQuery.of(context).size.width/3: 0 ),
 
     drawer:Drawer(
 
-      width:  MediaQuery.of(context).size.width/2,
+      width:  MediaQuery.of(context).size.width/1.5,
       backgroundColor: AppColors.transparent,
       child: SideDrawer(username: widget.username),
     ) ,

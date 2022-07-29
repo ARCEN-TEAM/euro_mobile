@@ -28,82 +28,79 @@ class _SideDrawerState extends State<SideDrawer> {
     return Container(
       decoration: BoxDecoration(color: AppColors.cardBackgroundColor),
       child:
-          ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
+          Column(
             children: [
-              SizedBox(height: 70),
-              Center(
-                  child: Text(widget.username,
-                      style: TextStyle(
-                          color: AppColors.textColorOnDarkBG, fontSize: 20))),
-              SizedBox(height: 10),
-              Stack(
-                children: [
-                  Center(
-                      child: CustomPaint(
-                    painter: MyPainter(),
-                    size: Size(50, 50),
-                  )),
-                  Center(
-                    child: buildProfileImage(),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: FractionallySizedBox(
-                  widthFactor: 0.9,
-                  child: Container(
-                    height: 1.0,
-                    decoration: BoxDecoration(
-                      color: AppColors.textColorOnDarkBG.withOpacity(0.3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.buttonSecondaryColor.withOpacity(0.2),
-                          blurRadius: 4,
-                          spreadRadius: 2,
+              Expanded(
+                child: ListView(
+                   physics:  NeverScrollableScrollPhysics(),
+
+                  padding: EdgeInsets.zero,
+                  children: [
+                    SizedBox(height: 70),
+                    Center(
+                        child: Text(widget.username,
+                            style: TextStyle(
+                                color: AppColors.textColorOnDarkBG, fontSize: 20))),
+                    SizedBox(height: 10),
+                    Stack(
+                      children: [
+                        Center(
+                            child: CustomPaint(
+                          painter: MyPainter(),
+                          size: Size(50, 50),
+                        )),
+                        Center(
+                          child: buildProfileImage(),
                         ),
                       ],
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              buildCard(Icon(Icons.person), translate('perfil')),
-              buildCard(Icon(Icons.settings), translate('definicoes')),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Row(children: [
-
-                    Expanded(
-
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-
-                          onPressed: () {
-                            showExitPopup(context, "Deseja terminar sessão?",() {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(builder: (context) => LoginScreen()),
-                                    (Route<dynamic> route) => false,
-                              );
-
-                            });},
-                          child: Text("Terminar sessão",style: TextStyle(color: AppColors.textColorOnDarkBG,),),
-                          style: ElevatedButton.styleFrom(
-
-                              primary: AppColors.buttonPrimaryColor),
+                    SizedBox(height: 20),
+                    Center(
+                      child: FractionallySizedBox(
+                        widthFactor: 0.9,
+                        child: Container(
+                          height: 1.0,
+                          decoration: BoxDecoration(
+                            color: AppColors.textColorOnDarkBG.withOpacity(0.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.buttonSecondaryColor.withOpacity(0.2),
+                                blurRadius: 4,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    )
-                  ],)
-                ],
-              )
+                    ),
+                    SizedBox(height: 10),
+                    buildCard(Icon(Icons.person), translate('perfil')),
+                    buildCard(Icon(Icons.settings), translate('definicoes')),
 
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child:  ElevatedButton(
+
+
+                    onPressed: () {
+                      showExitPopup(context, "Deseja terminar sessão?",() {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginScreen()),
+                              (Route<dynamic> route) => false,
+                        );
+
+                      });},
+                    child: Text("Terminar sessão",style: TextStyle(color: AppColors.textColorOnDarkBG,),),
+                    style: ElevatedButton.styleFrom(
+
+                        primary: AppColors.buttonPrimaryColor),
+                  ),
+
+              ),
             ],
           ),
 
@@ -172,6 +169,7 @@ class _SideDrawerState extends State<SideDrawer> {
       child: Container(
         child: ListTile(
           leading: leading,
+          horizontalTitleGap: 30,
           title: Text(
             titulo,
             style: TextStyle(

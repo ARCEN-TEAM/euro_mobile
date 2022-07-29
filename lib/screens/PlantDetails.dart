@@ -616,13 +616,8 @@ class _PlantScreenWidgetState extends State<PlantScreen>
             }, body: TabBarView(
 
             controller: _tabController,
-            children:  [
-              buildTabViews(0==currentIndex),
-              buildTabViews(1==currentIndex),
-              buildTabViews(2==currentIndex),
-              buildTabViews(3==currentIndex)
-            ]
-
+            children:
+            List<Widget>.generate(tabs.length, (index) =>  buildTabViews(index==currentIndex))
 
           ),)
 

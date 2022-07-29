@@ -434,6 +434,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               decoration: kBoxDecorationStyle,
                               padding: EdgeInsets.only(left: 10),
                               child: TextField(
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.only(top:0.0),
+                                ),
                                 controller: _tUrl,
                                 keyboardType: TextInputType.text,
                                 style: TextStyle(
@@ -451,6 +455,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               decoration: kBoxDecorationStyle,
                               padding: EdgeInsets.only(left: 10,top:0,bottom: 0),
                               child: TextField(
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.only(top:0.0),
+                                ),
                                 controller: _tToken,
                                 keyboardType: TextInputType.text,
                                 style: TextStyle(

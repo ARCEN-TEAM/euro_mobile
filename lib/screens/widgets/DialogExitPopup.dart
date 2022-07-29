@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 
 import '../../classes/constants.dart';
 
-Future<bool> showExitPopup(context,title,VoidCallback confirmAction) async{
+  showExitPopup(context,title,VoidCallback confirmAction) async{
   return await showDialog(
+    useSafeArea: true,
+
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+
           backgroundColor: AppColors.cardBackgroundColor,
           content: Container(
             height: 90,
