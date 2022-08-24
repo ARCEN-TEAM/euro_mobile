@@ -1,17 +1,4 @@
 {
-  "language": {
-    "name": {
-      "en": "English",
-      "es": "Spanish",
-      "pt": "Portuguese",
-      "fr": "French"
-    },
-    "selected_message": "Currently selected language is {language}",
-    "selection": {
-      "message": "Please select a language from the list",
-      "title": "Language Selection"
-    }
-  },
   "utilizador": "Username",
   "password": "Password",
   "login": "Sign-in",
@@ -50,5 +37,25 @@
   "saida_obra": "Workplace exit time",
   "contactos": "Contacts",
   "copiado": "copied",
-  "morada": "Address"
+  "morada": "Address",
+  "definicoes": "Settings",
+  "aplicar": "Apply",
+  "morada_cliente": "Customer address",
+  "resumo": "Summary",
+  "pedidos": "Orders",
+  "remessas": "Invoices",
+  "bombagens": "Pumps",
+  "linguagem": {
+    "fr": "French",
+    "es": "Spanish",
+    "pt": "Portuguese",
+    "en": "English"
+  },
+  "escolher_idioma": "Choose language",
+  "idioma": "Language",
+  "sim": "Yes",
+  "nao": "No",
+  "terminar_sessao": "Log out",
+  "deseja_terminar_sessao": "Do you want to log out?",
+  "deseja_sair_app": "Do you want to exit the application?"
 }

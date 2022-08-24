@@ -1,0 +1,61 @@
+{
+  "language": {
+    "name": {
+      "en": "Inglês",
+      "es": "Espanhol",
+      "pt": "Português",
+      "fr": "Francês"
+    },
+    "selected_message": "O idioma seleciona atualmente é {language}",
+    "selection": {
+      "message": "Selecione um idioma da lista",
+      "title": "Seleção de idioma"
+    }
+  },
+  "utilizador": "Utilizador",
+  "password": "Senha",
+  "login": "Iniciar sessão",
+  "lembrar": "Lembrar-me",
+  "testar_ligacao": "Testar ligação",
+  "gravar_definicoes": "Gravar",
+  "conexao": {
+    "sucesso": "Conexão com sucesso",
+    "falhada": "Sem ligação",
+    "recusada": "Conexão não autorizada"
+  },
+  "erro": "Erro",
+  "credenciais_erradas": "Username e/ou Senha inválido(s)",
+  "inserir_pass": "Coloque sua senha",
+  "inserir_utilizador": "Entre com seu nome de utilizador",
+  "ver_mais": "Ver mais",
+  "producao": "Produção",
+  "perfil": "Perfil",
+  "planeamento": "Planeamento",
+  "laboratorio": "Laboratório",
+  "manutencao": "Manutenção",
+  "em_breve": "Brevemente",
+  "cliente": "Cliente",
+  "obra": "Obra",
+  "composicao": "Composição",
+  "camiao": "Camião",
+  "pedido": "Pedido",
+  "guia_remessa": "Guia de Remessa",
+  "guia_bombagem": "Guia de Bombagem",
+  "inicio_carga": "Início de carga",
+  "saida_central": "Saída da central",
+  "chegada_obra": "Chegada à obra",
+  "inicio_descarga": "Início de Descarga",
+  "chegada_central": "Chegada à central",
+  "fim_descarga": "Fim de Descarga",
+  "saida_obra": "Saída da Obra",
+  "contactos": "Contactos",
+  "copiado": "copiado",
+  "morada": "Morada",
+  "definicoes": "Definições",
+  "aplicar": "Aplicar",
+  "morada_cliente": "Morada do cliente",
+  "resumo": "Resumo",
+  "pedidos": "Pedidos",
+  "remessas": "Remessas",
+  "bombagens": "Bombagens"
+}

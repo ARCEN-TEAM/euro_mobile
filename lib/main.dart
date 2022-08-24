@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
     final https = new StorageItem('https', 'true');
     StorageService.writeSecureData(https);
 
-    final url = new StorageItem('url', 'unibetaodev.secil.pt');
+    final url = new StorageItem('url', 'unibetao.secil.pt');
     StorageService.writeSecureData(url);
 
     final token = new StorageItem('token', 'a02ee9a04a5f28fcb043');

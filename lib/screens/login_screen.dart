@@ -36,8 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   }
 
-
-  late var localizationDelegate = LocalizedApp.of(context).delegate;
   Future init() async {
     final https = await StorageService.readSecureData('https');
     final url = await StorageService.readSecureData('url');
@@ -63,19 +61,6 @@ class _LoginScreenState extends State<LoginScreen> {
           '/api/androidAPI/' +
           token.toString();
     });
-  }
-
-  getCurrentLanguageLocalizationKey(String code)
-  {
-    switch(code)
-    {
-      case "en":
-      case "en_US": return Keys.Language_Name_En;
-      case "es": return Keys.Language_Name_Es;
-      case "fr": return Keys.Language_Name_Fr;
-      case "pt": return Keys.Language_Name_Pt;
-      default: return null;
-    }
   }
 
   Widget _buildEmailTF(BuildContext context) {
@@ -254,6 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
         login +
         '&psw=' +
         senha;
+
      response =
         await http.post(Uri.parse(url), headers: ApiConstants.headers);
     final res = json.decode(response.body);
@@ -621,14 +607,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: Column(
                               children: [
-                                Padding(
-                                    padding: EdgeInsets.only(top: 25, bottom: 160),
-                                    child: CupertinoButton.filled(
-                                      child: Text('trocar lingua'),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0, horizontal: 36.0),
-                                      onPressed: () => _onActionSheetPress(context),
-                                    )),
                                 SvgPicture.asset('assets/images/logo_arcen.svg',
                                     width: (MediaQuery.of(context).size.height -
                                             10) /
@@ -673,39 +651,6 @@ class _LoginScreenState extends State<LoginScreen> {
         builder: (BuildContext context) => child).then((String? value) {
       if (value != null) changeLocale(context, value);
     });
-  }
-
-  void _onActionSheetPress(BuildContext context) {
-    showDemoActionSheet(
-      context: context,
-      child: CupertinoActionSheet(
-        title: Text(translate('language.selection.title')),
-        message: Text(translate('language.selection.message')),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: Text(translate('language.name.en')),
-            onPressed: () => Navigator.pop(context, 'en_US'),
-          ),
-          CupertinoActionSheetAction(
-            child: Text(translate('language.name.es')),
-            onPressed: () => Navigator.pop(context, 'es'),
-          ),
-          CupertinoActionSheetAction(
-            child: Text(translate('language.name.fr')),
-            onPressed: () => Navigator.pop(context, 'fr'),
-          ),
-          CupertinoActionSheetAction(
-            child: Text(translate('language.name.pt')),
-            onPressed: () => Navigator.pop(context, 'pt'),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          child: Text('Cancelar'),
-          isDefaultAction: true,
-          onPressed: () => Navigator.pop(context, null),
-        ),
-      ),
-    );
   }
 
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 import '../../classes/constants.dart';
 
@@ -25,7 +26,7 @@ import '../../classes/constants.dart';
                       child: ElevatedButton(
                         onPressed:  confirmAction,
 
-                        child: Text("Sim",style: TextStyle(color: AppColors.textColorOnDarkBG),),
+                        child: Text(translate('sim'),style: TextStyle(color: AppColors.textColorOnDarkBG),),
                         style: ElevatedButton.styleFrom(
                             primary: AppColors.buttonPrimaryColor),
                       ),
@@ -36,7 +37,7 @@ import '../../classes/constants.dart';
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text("Não", style: TextStyle(color: Colors.black)),
+                          child: Text(translate('nao'), style: TextStyle(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
                             primary: Colors.white,
                           ),

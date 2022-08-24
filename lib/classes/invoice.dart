@@ -19,8 +19,10 @@ class Invoice {
   String ord_code;
   String operador;
   String inv_type;
+  String fimcarga;
   String saidacentral;
   String chegadaobra;
+  String iniciodescarga;
   String saidaobra;
   String chegadacentral;
 
@@ -40,8 +42,10 @@ class Invoice {
     required this.ord_code,
     required this.operador,
     required this.inv_type,
+    required this.fimcarga,
     required this.saidacentral,
     required this.chegadaobra,
+    required this.iniciodescarga,
     required this.saidaobra,
     required this.chegadacentral,
   });
@@ -63,8 +67,10 @@ class Invoice {
     final ord_code = data['ORD_Code'] as String;
     final operador = data['OTR_Operator'] as String;
     final inv_type = data['otr_inv_type'].toString();
+    final fimcarga = data['BAT_Time'].toString();
     final saidacentral = data['OTR_plantDeparture'].toString();
     final chegadaobra = data['OTR_WorkplaceArrival'].toString();
+    final iniciodescarga = data['OTR_DechargeBegining'].toString();
     final saidaobra = data['OTR_WorkplaceDeparture'].toString();
     final chegadacentral = data['OTR_PlantArrival'].toString();
 
@@ -84,8 +90,10 @@ class Invoice {
         ord_code: ord_code,
         operador:operador,
         inv_type: inv_type,
+        fimcarga: fimcarga,
         saidacentral: saidacentral,
         chegadaobra: chegadaobra,
+        iniciodescarga: iniciodescarga,
         saidaobra: saidaobra,
         chegadacentral: chegadacentral,
 

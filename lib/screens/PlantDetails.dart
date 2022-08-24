@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:lottie/lottie.dart';
 import '../classes/plant.dart';
 import '../classes/invoice.dart';
@@ -37,12 +38,11 @@ class PlantScreen extends StatefulWidget {
 
 List<Invoice> guias = [];
 List<Order> pedidos = [];
-List<String> categories = ['Resumo', 'Pedidos', 'Guias', 'Bombagens'];
 List<Tab> tabs = [
-  Tab(text: 'Resumo'),
-  Tab(text: 'Pedidos'),
-  Tab(text: 'Guias'),
-  Tab(text: 'Bombagens'),
+  Tab(text: translate('resumo')),
+  Tab(text: translate('pedidos')),
+  Tab(text: translate('remessas')),
+  Tab(text: translate('bombagens')),
 ];
 var currentIndex = 0;
 var pageIndex = 1;
@@ -245,7 +245,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
 
   String datainicio = '01/05/2022';
   String datafim = '31/05/2022';
-  String exemplo = '01/05/2022 - 31/05/2022';
+  String datarange = '01/05/2022 - 31/05/2022';
   var _scrollController;
       late TabController _tabController;
 
@@ -256,7 +256,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
     super.initState();
     datainicio = DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.data));
     datafim = DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.data));
-    exemplo = datainicio + ' - ' + datafim;
+    datarange = datainicio + ' - ' + datafim;
 
     _valuesDate = PickerDateRange(
         DateTime.parse(widget.data), DateTime.parse(widget.data));
@@ -323,6 +323,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                   onPressed: () {
                     showModalBottomSheet(
                       isScrollControlled: true,
+                      backgroundColor: AppColors.cardBackgroundColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(20),
@@ -332,7 +333,8 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                       builder: (context) {
                         // Using Wrap makes the bottom sheet height the height of the content.
                         // Otherwise, the height will be half the height of the screen.
-                        return Wrap(children: [
+                        return Wrap(
+                            children: [
                           Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -356,25 +358,29 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                                 child: Column(
                                   children: [
                                     Text(
-                                      '$exemplo',
-                                      style: TextStyle(
+                                      '$datarange',
+                                      style: TextStyle(color: Colors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     //SizedBox(height: 40),
                                     SfDateRangePicker(
                                       view: DateRangePickerView.month,
+                                      monthCellStyle: DateRangePickerMonthCellStyle(
+                                        todayTextStyle: TextStyle(color: AppColors.selectedItemTextColor),
+                                        todayCellDecoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color:AppColors.selectedItemTextColor)
+                                        ),
+                                      ),
                                       monthViewSettings:
                                       DateRangePickerMonthViewSettings(
                                           showTrailingAndLeadingDates:
                                           true),
+                                      selectionTextStyle: TextStyle(color:Colors.white, fontWeight: FontWeight.bold),
                                       selectionColor: ApiConstants.mainColor,
-                                      startRangeSelectionColor:
-                                      ApiConstants.mainColor,
-                                      endRangeSelectionColor:
-                                      ApiConstants.mainColor,
-                                      rangeSelectionColor: ApiConstants
-                                          .mainColor
-                                          .withOpacity(0.4),
+                                      startRangeSelectionColor:ApiConstants.mainColor,
+                                      endRangeSelectionColor:ApiConstants.mainColor,
+                                      rangeSelectionColor: ApiConstants.mainColor.withOpacity(0.4),
                                       rangeTextStyle: const TextStyle(
                                           color: Colors.white, fontSize: 15),
                                       onSelectionChanged:
@@ -382,7 +388,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                                       args) {
                                         if (args.value is PickerDateRange) {
                                           setStateSB(() {
-                                            exemplo = DateFormat('dd/MM/yyyy')
+                                            datarange = DateFormat('dd/MM/yyyy')
                                                 .format(
                                                 args.value.startDate)
                                                 .toString() +
@@ -394,10 +400,10 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                                                     .toString();
                                           });
 
-                                          datainicio = exemplo
+                                          datainicio = datarange
                                               .split(' - ')[0]
                                               .replaceAll('/', '-');
-                                          datafim = exemplo
+                                          datafim = datarange
                                               .split(' - ')[1]
                                               .replaceAll('/', '-');
 
@@ -414,11 +420,10 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                                                       .toString()));
                                         }
                                       },
-                                      selectionMode:
-                                      DateRangePickerSelectionMode.range,
+                                      selectionMode:DateRangePickerSelectionMode.range,
                                       initialSelectedRange: _valuesDate,
                                     ),
-                                    TextButton(
+                                    ElevatedButton(
                                       onPressed: () {
                                         setState(() {
                                           pageIndex = 1;
@@ -433,10 +438,10 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                                         });
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text("Apply"),
-                                      style: TextButton.styleFrom(
-                                        elevation: 10,
-                                      ),
+                                      child: Text(translate('aplicar'), style: TextStyle(color: AppColors.textColorOnDarkBG),),
+                                      style: ElevatedButton.styleFrom(
+  elevation: 5,
+                                          primary: AppColors.buttonPrimaryColor),
                                     )
                                   ],
                                 ));
@@ -621,163 +626,6 @@ class _PlantScreenWidgetState extends State<PlantScreen>
 
           ),)
 
-          /*CustomScrollView(slivers: <Widget>[
-            SliverAppBar(
-              forceElevated: true,
-              floating: false,
-              automaticallyImplyLeading: false,
-              snap: false,
-              pinned: false,
-
-              backgroundColor: Color(0x00000000),
-              flexibleSpace: FlexibleSpaceBar(
-                  titlePadding: EdgeInsetsDirectional.only(start: 20, bottom: 16),
-                  title: SingleChildScrollView(
-                    child: ListTile(
-                            leading: Padding(
-                        padding: const EdgeInsets.only(left: 7.0),
-                        child: new GestureDetector(
-                            onTap: () {
-                              MapUtils.openMap(
-                                  centrallocal.gps.latitude,
-                                  centrallocal.gps.longitude);
-                            },
-                            child: Hero(
-                              tag: 'plant-' + centrallocal.codigo,
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blue,
-                                ),
-                                child: Align(
-                                  alignment: AlignmentDirectional(0, 0),
-                                  child: Image.network(
-                                      'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
-                                          centrallocal.gps.longitude
-                                              .toString() +
-                                          ',' +
-                                          centrallocal.gps.latitude
-                                              .toString() +
-                                          ')/' +
-                                          centrallocal.gps.longitude
-                                              .toString() +
-                                          ',' +
-                                          centrallocal.gps.latitude
-                                              .toString() +
-                                          ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
-                                ),
-                              ),
-                            ))),
-                            title: Container(
-                                  child: Text(
-                            centrallocal.nome,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white,),
-                          )),
-                            subtitle:Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Row(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(Icons.phone_android_rounded,
-                                      color: Colors.white, size: 17),
-                                  Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 8.0),
-                                      child: InkWell(
-                                        child: Text(
-                                            centrallocal.telefone,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                wordSpacing: 2,
-                                                fontSize: 12,
-                                                letterSpacing: 4)),
-                                        onTap: () {
-                                          Utils.launchCaller(util_call,
-                                              centrallocal.telefone);
-                                        },
-                                      ))
-                                ]),
-                          )
-                        ],
-                      ))
-
-                  )),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                  width: double.infinity,
-                  child: Container(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      height: 40,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: (categories == null ? 0 : categories.length),
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                              child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 12),
-                                  decoration: BoxDecoration(
-                                      color: currentIndex == index
-                                          ? Colors.grey.withOpacity(0.1)
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.transparent, width: 2)),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        if (currentIndex != index) {
-                                          pageIndex = 1;
-                                          hasMore = true;
-                                          currentIndex = index;
-                                          firstLoad = true;
-                                          lengthsliver = 0;
-                                          postRequest(
-                                              currentIndex,
-                                              centrallocal.codigo,
-                                              datainicio,
-                                              datafim,
-                                              pageIndex);
-                                        }
-                                      });
-                                    },
-                                    child: new Text(categories[index],
-                                        style: TextStyle(
-                                            shadows: <Shadow>[
-                                              index == currentIndex
-                                                  ? Shadow(
-                                                color: Color(0xFF3ab1ff)
-                                                    .withOpacity(0.5),
-                                                //spreadRadius: 3,
-                                                blurRadius: 8,
-                                              )
-                                                  : Shadow()
-                                            ],
-                                            color: index == currentIndex
-                                                ? Color(0xFF73AEF5)
-                                                : Colors.grey.withOpacity(0.9),
-                                            fontSize: 14)),
-                                  )));
-                        },
-                      ),
-                    ),
-                  )),
-            ),
-
-          ])*/,
         ),
       ),
     );
@@ -894,6 +742,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
+
                     guia.prod_delivered.toString() + ' m³',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -990,7 +839,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                   pageBuilder: (BuildContext context,
                       Animation<double> animation,
                       Animation<double> secondaryAnimation) {
-                    return OrderDetails(pedido: pedido);
+                    return OrderDetails(pedido: pedido, central: widget.central);
                   },
                   transitionDuration: Duration(milliseconds: 300),
                   transitionsBuilder: (BuildContext context,

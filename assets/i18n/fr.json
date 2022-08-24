@@ -1,17 +1,4 @@
 {
-  "language": {
-    "name": {
-      "en": "Anglais",
-      "es": "Espagnol",
-      "pt": "Portugais",
-      "fr": "Français"
-    },
-    "selected_message": "La langue actuellement sélectionnée est {language}",
-    "selection": {
-      "message": "Veuillez sélectionner une langue dans la liste",
-      "title": "Sélection de la langue"
-    }
-  },
   "utilizador": "Utilisateur",
   "password": "Mot de passe",
   "login": "Identifiez-vous",
@@ -25,15 +12,15 @@
   },
   "erro": "Erreur",
   "credenciais_erradas": "Nom d'utilisateur et/ou mot de passe invalide(s)",
-  "inserir_pass": "Tapez votre mot de passe",
-  "inserir_utilizador": "Entrez votre nom d'utilisateur",
+  "inserir_pass": "Entrer votre mot de passe",
+  "inserir_utilizador": "Entrer votre nom d'utilisateur",
   "ver_mais": "Voir plus",
   "producao": "Production",
   "perfil": "Profil",
   "planeamento": "Planification",
   "laboratorio": "Laboratoire",
-  "manutencao": "Entretien",
-  "em_breve": "Brièvement",
+  "manutencao": "Maintenance",
+  "em_breve": "bientôt",
   "cliente": "Client",
   "obra": "Chantier",
   "composicao": "Formule",
@@ -42,13 +29,33 @@
   "guia_remessa": "Bon de livraison",
   "guia_bombagem": "Bon de pompage",
   "inicio_carga": "Début de chargement",
-  "saida_central": "Sortie de la central",
+  "saida_central": "Sortie de la centrale",
   "chegada_obra": "Arrivée au chantier",
   "inicio_descarga": "Début de vindange",
-  "chegada_central": "Arrivée a la Centrale",
+  "chegada_central": "Arrivée à la Centrale",
   "fim_descarga": "Fin vidange",
   "saida_obra": "Sortie du chantier",
   "contactos": "Contacts",
   "copiado": "copié",
-  "morada": "Adresse"
+  "morada": "Adresse",
+  "definicoes": "Réglages",
+  "aplicar": "appliquer",
+  "morada_cliente": "Adresse du client",
+  "resumo": "résumé",
+  "pedidos": "Demandes",
+  "remessas": "Factures",
+  "bombagens": "Pompes",
+  "linguagem": {
+    "fr": "Français",
+    "es": "Espagnol",
+    "pt": "Portugais",
+    "en": "Anglais"
+  },
+  "escolher_idioma": "Choisissez la langue",
+  "idioma": "Langue",
+  "sim": "Oui",
+  "nao": "Non",
+  "terminar_sessao": "Se déconnecter",
+  "deseja_terminar_sessao": "Voulez-vous vous déconnecter?",
+  "deseja_sair_app": "Voulez-vous quitter l'application?"
 }

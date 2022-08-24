@@ -307,16 +307,7 @@ class _PlantsListState extends State<PlantsList> {
   }
 
   Widget buildCard(Plant central) {
-    return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    PlantScreen(central, dayList[selected].toString())),
-          );
-        },
-        child: Container(
+    return Container(
             width: MediaQuery.of(context).size.width,
             constraints: BoxConstraints(minHeight: 50),
             decoration: BoxDecoration(
@@ -406,7 +397,7 @@ class _PlantsListState extends State<PlantsList> {
                                                   padding:
                                                       EdgeInsets.only(left: 20),
                                                   child: LineChart(
-                                                    mainData(),
+                                                    mainData(central.minXgraph, central.maxXgraph, central.maxYprod,central.producao, true),
                                                   ),
                                                 ),
                                               ),
@@ -430,28 +421,75 @@ class _PlantsListState extends State<PlantsList> {
                                 //padding: EdgeInsets.only(left: 20,top:20,bottom:20),
                                 margin: EdgeInsets.only(left: 30),
                                 child: LineChart(
-                                  mainData(),
+                                  mainData(central.minXgraph, central.maxXgraph, central.maxYpump, central.bombagem, false),
                                 ),
                               ),
                             ),
                           ),
-                          Text(translate('ver_mais'),
-                              style: TextStyle(color: AppColors.textColorOnDarkBG))
+                          SizedBox(height:15),
+                          Center(
+                            child: FractionallySizedBox(
+                              widthFactor: 1,
+                              child: Container(
+                                height: 1.0,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.4),
+
+                                ),
+                              ),
+                            ),
+                          ),
+                          ListTile(
+                              visualDensity: VisualDensity(
+                                vertical: -4,
+                              ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PlantScreen(central, dayList[selected].toString())),
+                              );
+                            },
+                            title:  Center(
+                              child: Text(
+                                  translate('ver_mais'),
+                                  style: TextStyle(color: AppColors.textColorOnDarkBG)),
+                            ),
+                            trailing: Icon(Icons.chevron_right),
+                          ),
+
                         ],
                       )),
                 ),
               ],
-            )));
+            ));
   }
 
-  LineChartData mainData() {
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      color: Colors.white,
+      fontSize: 16,
+    );
+    Widget text = Text(value.toInt().toString(), style: style);
+
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 8.0,
+      child: text,
+    );
+  }
+
+  LineChartData mainData(double minX, double maxX, double maxY, List<FlSpot> data, bool showAxisX) {
     return LineChartData(
+
       gridData: FlGridData(show: false),
-      minX: 0,
-      maxX: 10,
+      minX: minX,
+      maxX: maxX,
       minY: 0,
-      maxY: 60,
+      maxY: maxY,
       titlesData: FlTitlesData(
+
         show: true,
         rightTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false),
@@ -460,8 +498,12 @@ class _PlantsListState extends State<PlantsList> {
           sideTitles: SideTitles(showTitles: false),
         ),
         bottomTitles: AxisTitles(
+
           sideTitles: SideTitles(
-            showTitles: false,
+            getTitlesWidget: bottomTitleWidgets,
+            reservedSize: 27,
+            showTitles: showAxisX,
+            interval: maxX,
           ),
         ),
         leftTitles: AxisTitles(
@@ -472,11 +514,11 @@ class _PlantsListState extends State<PlantsList> {
       ),
       extraLinesData: ExtraLinesData(horizontalLines: [
         HorizontalLine(
-            y: 10,
+            y: 0,
             color: Colors.white.withOpacity(0.8),
             strokeWidth: 1,
             label: HorizontalLineLabel(
-                show: true,
+                show: false,
                 alignment: Alignment.centerRight,
                 padding: EdgeInsets.only(right: -30)))
       ]),
@@ -490,14 +532,7 @@ class _PlantsListState extends State<PlantsList> {
             //spreadRadius: 3,
             blurRadius: 8,
           ),
-          spots: const [
-            FlSpot(0, 20),
-            FlSpot(2, 32),
-            FlSpot(4, 8),
-            FlSpot(6, 27),
-            FlSpot(8, 10),
-            FlSpot(10, 4),
-          ],
+          spots: data,
           isCurved: true,
           barWidth: 3,
           isStrokeCapRound: true,

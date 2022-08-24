@@ -376,7 +376,7 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                           buildCard(
                               1,
                               0,
-                              "Sede cliente",
+                              translate('morada_cliente'),
                               [
                                 obralocal.cliente.morada
                               ],

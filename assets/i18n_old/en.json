@@ -1,0 +1,61 @@
+{
+  "language": {
+    "name": {
+      "en": "English",
+      "es": "Spanish",
+      "pt": "Portuguese",
+      "fr": "French"
+    },
+    "selected_message": "Currently selected language is {language}",
+    "selection": {
+      "message": "Please select a language from the list",
+      "title": "Language Selection"
+    }
+  },
+  "utilizador": "Username",
+  "password": "Password",
+  "login": "Sign-in",
+  "lembrar": "Remember me",
+  "testar_ligacao": "Test connection",
+  "gravar_definicoes": "Save",
+  "conexao": {
+    "sucesso": "Successful connection",
+    "falhada": "No connection",
+    "recusada": "Unauthorized connection"
+  },
+  "erro": "Error",
+  "credenciais_erradas": "Invalid username and/or password",
+  "inserir_pass": "Enter your password",
+  "inserir_utilizador": "Enter your Username",
+  "ver_mais": "View more",
+  "producao": "Production",
+  "perfil": "Profile",
+  "planeamento": "Planning",
+  "laboratorio": "Laboratory",
+  "manutencao": "Maintenance",
+  "em_breve": "Coming soon",
+  "cliente": "Customer",
+  "obra": "Workplace",
+  "composicao": "Mix design",
+  "camiao": "Truck",
+  "pedido": "Order",
+  "guia_remessa": "Invoice",
+  "guia_bombagem": "Pump Invoice",
+  "inicio_carga": "Start of load",
+  "saida_central": "Plant exit time",
+  "chegada_obra": "Workplace arrival",
+  "inicio_descarga": "Discharge Beginning",
+  "chegada_central": "Plant arrival",
+  "fim_descarga": "End discharge",
+  "saida_obra": "Workplace exit time",
+  "contactos": "Contacts",
+  "copiado": "copied",
+  "morada": "Address",
+  "definicoes": "Settings",
+  "aplicar": "Apply",
+  "morada_cliente": "Customer address",
+  "resumo": "Summary",
+  "pedidos": "Orders",
+  "remessas": "Invoices",
+  "bombagens": "Pumps"
+}

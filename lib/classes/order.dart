@@ -6,6 +6,7 @@ import 'customer.dart';
 class Order {
   String totalrows;
   String rownr;
+  String id;
   String cod;
   String codref;
   Workplace obra;
@@ -19,6 +20,7 @@ class Order {
   Order({
     required this.totalrows,
     required this.rownr,
+    required this.id,
     required this.cod,
     required this.codref,
     required this.obra,
@@ -33,6 +35,7 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> data) {
     final totalrows = data['total'].toString() as String;
     final rownr = data['rownr'] as String;
+    final id = data['ORD_ID'].toString() as String;
     final cod = data['ORD_Code'] as String;
     final codref = data['ORD_CodeRef'] as String;
     final cliente = Customer(codigo: data['CUS_Code'], nome: data['CUS_Name'], morada:data['CUS_Address'], cidade: data['CUS_City'], telefone: data['CUS_Phone'], email: data['CUS_Email']);
@@ -47,6 +50,7 @@ class Order {
     return Order(
         totalrows: totalrows,
         rownr: rownr,
+        id: id,
         cod: cod,
         codref: codref,
         obra: obra,

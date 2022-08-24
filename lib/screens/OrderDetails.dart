@@ -1,20 +1,25 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import '../classes/constants.dart';
 import '../classes/order.dart';
 import '../classes/enterExitPage.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 
+import '../classes/plant.dart';
 import 'WorkplaceDetails.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class OrderDetails extends StatefulWidget {
-  const OrderDetails({required this.pedido});
+  const OrderDetails({required this.pedido, required this.central});
 
   final Order pedido;
+  final Plant central;
 
   @override
   _OrderDetailsState createState() => _OrderDetailsState();
@@ -24,14 +29,46 @@ class _OrderDetailsState extends State<OrderDetails> {
   late CarouselSliderController _sliderController;
   List<String> clipboard = [];
 
+  late Order pedidolocal = widget.pedido;
+
   @override
   void initState() {
     super.initState();
     _sliderController = CarouselSliderController();
 
-    clipboard.add(widget.pedido.obra.cliente.nome);
-    clipboard.add(widget.pedido.obra.nome);
-    clipboard.add(widget.pedido.receita);
+    clipboard.add(pedidolocal.obra.cliente.nome);
+    clipboard.add(pedidolocal.obra.nome);
+    clipboard.add(pedidolocal.receita);
+  }
+
+  Future postRequest(String ord_id, String plantCode, String dataInicio,
+      String DataFim) async {
+
+    var url = '${ApiConstants.baseUrl}'
+        '${ApiConstants.plantEndpoint}'
+        '/orders/?plant='
+        '$plantCode'
+        '&user='
+        '${ApiConstants.UserLogged}'
+        '&token='
+        '${ApiConstants.ApiKey}'
+        '&codigo='
+        '$ord_id'
+        '&dateBegin='
+        '${dataInicio.replaceAll("/", "-")}'
+        '&dateEnd='
+        '${DataFim.replaceAll("/", "-")}';
+
+    response = await http.post(Uri.parse(url), headers: ApiConstants.headers);
+    var tempResp = await json.decode(response.body);
+
+    if (tempResp != false && tempResp != null) {
+      final List parsedJson = await json.decode(response.body);
+
+      setState(() {
+        pedidolocal = Order.fromJson(parsedJson[0]);
+      });
+    }
   }
 
   @override
@@ -59,189 +96,214 @@ class _OrderDetailsState extends State<OrderDetails> {
                 style: TextStyle(color: AppColors.textColorOnDarkBG),
               ),
             ),
-            body: SingleChildScrollView(
-                child: Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 110,
-                          child: Padding(
-                              padding: const EdgeInsets.only(left: 35),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+            body: RefreshIndicator(
+              onRefresh: () async {
+                await Future.delayed(Duration(seconds: 2));
+                postRequest(pedidolocal.id, widget.central.codigo, pedidolocal.date, pedidolocal.date);
+              },
+              child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 110,
+                              child: Padding(
+                                  padding: const EdgeInsets.only(left: 35),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        widget.pedido.cod,
-                                        style: TextStyle(
-                                            color: AppColors.textColorOnDarkBG,
-                                            fontSize: 20),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            pedidolocal.cod,
+                                            style: TextStyle(
+                                                color:
+                                                    AppColors.textColorOnDarkBG,
+                                                fontSize: 20),
+                                          ),
+                                          Text(
+                                            pedidolocal.date,
+                                            style: TextStyle(
+                                                color:
+                                                    AppColors.textColorOnDarkBG,
+                                                fontSize: 15),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            pedidolocal.codref,
+                                            style: TextStyle(
+                                                color:
+                                                    AppColors.textColorOnDarkBG,
+                                                fontSize: 15),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        widget.pedido.date,
-                                        style: TextStyle(
-                                            color: AppColors.textColorOnDarkBG,
-                                            fontSize: 15),
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Text(
-                                        widget.pedido.codref,
-                                        style: TextStyle(
-                                            color: AppColors.textColorOnDarkBG,
-                                            fontSize: 15),
+                                      Flexible(
+                                        child: Stack(
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(top: 55),
+                                              child: SfRadialGauge(
+                                                  enableLoadingAnimation: true,
+                                                  animationDuration: 2000,
+                                                  axes: <RadialAxis>[
+                                                    RadialAxis(
+                                                      canScaleToFit: true,
+                                                      showLastLabel: true,
+                                                      maximumLabels: pedidolocal
+                                                          .prod_desired
+                                                          .toInt(),
+                                                      showLabels: true,
+                                                      showTicks: true,
+                                                      startAngle: 180,
+                                                      endAngle: 0,
+                                                      interval: pedidolocal
+                                                              .prod_desired /
+                                                          5,
+                                                      radiusFactor: 2.5,
+                                                      maximum: pedidolocal
+                                                          .prod_desired,
+                                                      canRotateLabels: true,
+                                                      pointers: <GaugePointer>[
+                                                        RangePointer(
+                                                            gradient:
+                                                                SweepGradient(
+                                                                    colors: [
+                                                                      const Color(
+                                                                          0xFF3a9bea),
+                                                                      const Color(
+                                                                          0xFF2E4E7C),
+                                                                      const Color(
+                                                                          0xFF132642),
+                                                                    ]
+                                                                        .reversed
+                                                                        .toList(),
+                                                                    stops: <double>[
+                                                                  0.2,
+                                                                  0.5,
+                                                                  0.8
+                                                                ]),
+                                                            value: pedidolocal
+                                                                .prod_delivered,
+                                                            width: 0.1,
+                                                            color: AppColors
+                                                                .buttonPrimaryColor,
+                                                            sizeUnit:
+                                                                GaugeSizeUnit
+                                                                    .factor,
+                                                            cornerStyle:
+                                                                CornerStyle
+                                                                    .bothCurve),
+                                                        if (pedidolocal
+                                                                    .prod_delivered >
+                                                                0 &&
+                                                            pedidolocal
+                                                                    .prod_delivered <
+                                                                pedidolocal
+                                                                    .prod_desired) ...[
+                                                          MarkerPointer(
+                                                              value: pedidolocal
+                                                                  .prod_delivered,
+                                                              markerOffset: -5,
+                                                              color:
+                                                                  Colors.white),
+                                                          WidgetPointer(
+                                                            offset: -20,
+                                                            value: pedidolocal
+                                                                .prod_delivered,
+                                                            child: Text(
+                                                              pedidolocal
+                                                                  .prod_delivered
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          ),
+                                                        ]
+                                                      ],
+                                                    )
+                                                  ]),
+                                            ),
+                                            Center(
+                                                child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 70),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    (pedidolocal.prod_delivered /
+                                                                pedidolocal
+                                                                    .prod_desired *
+                                                                100)
+                                                            .round()
+                                                            .toString() +
+                                                        '%',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                            ))
+                                          ],
+                                        ),
                                       ),
                                     ],
-                                  ),
-                                  Flexible(
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(top: 55),
-                                          child:
-                                              SfRadialGauge(
-                                                enableLoadingAnimation: true,
-                                                  animationDuration: 2000,
-
-                                                  axes: <RadialAxis>[
-                                            RadialAxis(
-
-                                              canScaleToFit: true,
-                                              showLastLabel: true,
-                                              maximumLabels: widget
-                                                  .pedido.prod_desired
-                                                  .toInt(),
-                                              showLabels: true,
-                                              showTicks: true,
-                                              startAngle: 180,
-                                              endAngle: 0,
-                                              interval:
-                                                  widget.pedido.prod_desired /
-                                                      5,
-                                              radiusFactor: 2.5,
-                                              maximum:
-                                                  widget.pedido.prod_desired,
-                                              canRotateLabels: true,
-                                              pointers: <GaugePointer>[
-
-                                                RangePointer(
-                                                    gradient: SweepGradient(
-                                                        colors: [
-                                                          const Color(
-                                                              0xFF3a9bea),
-                                                          const Color(
-                                                              0xFF2E4E7C),
-                                                          const Color(
-                                                              0xFF132642),
-                                                        ].reversed.toList(),
-                                                        stops: <double>[
-                                                          0.2,
-                                                          0.5,
-                                                          0.8
-                                                        ]),
-                                                    value: widget
-                                                        .pedido.prod_delivered,
-                                                    width: 0.1,
-                                                    color: AppColors
-                                                        .buttonPrimaryColor,
-                                                    sizeUnit:
-                                                        GaugeSizeUnit.factor,
-                                                    cornerStyle:
-                                                        CornerStyle.bothCurve),
-                                                 if(widget
-                                                     .pedido.prod_delivered>0 && widget
-                                                     .pedido.prod_delivered<widget
-                                                     .pedido.prod_desired)...[
-                                                   MarkerPointer(
-                                                       value: widget
-                                                           .pedido.prod_delivered,
-                                                       markerOffset: -5,
-                                                       color: Colors.white),
-                                                   WidgetPointer(
-                                                     offset: -25,
-                                                     value: widget
-                                                         .pedido.prod_delivered,
-                                                     child: Text(
-                                                       widget.pedido.prod_delivered
-                                                           .toString(),
-                                                       style: TextStyle(
-                                                           color: Colors.white,
-                                                           fontSize: 12,
-                                                           fontWeight:
-                                                           FontWeight.bold),
-                                                     ),
-                                                   ),
-                                                 ]
-
-                                              ],
-                                            )
-                                          ]),
-                                        ),
-                                        Center(
-                                            child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 70),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                (widget.pedido.prod_delivered /
-                                                            widget.pedido
-                                                                .prod_desired *
-                                                            100)
-                                                        .round()
-                                                        .toString() +
-                                                    '%',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 18,fontWeight: FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
-                                        ))
-                                      ],
-                                    ),
-                                  ),
+                                  )),
+                            ),
+                            SizedBox(
+                              height: 25,
+                            ),
+                            buildCard(
+                                0,
+                                translate('cliente'),
+                                [
+                                  pedidolocal.obra.cliente.codigo,
+                                  pedidolocal.obra.cliente.nome
                                 ],
-                              )),
-                        ),
-                        SizedBox(height: 25,),
-                        buildCard(
-                            0,
-                            translate('cliente'),
-                            [
-                              widget.pedido.obra.cliente.codigo,
-                              widget.pedido.obra.cliente.nome
-                            ],
-                            null,
-                            null),
-                        buildCard(
-                            1,
-                            translate('obra'),
-                            [
-                              widget.pedido.obra.codigo,
-                              widget.pedido.obra.nome
-                            ],
-                            Icon(Icons.chevron_right, color: Colors.white),
-                            WorkplaceScreen(widget.pedido.obra)),
-                        buildCard(
-                            2,
-                            translate('composicao'),
-                            [widget.pedido.cod_receita, widget.pedido.receita],
-                            null,
-                            null),
-                      ],
-                    )))));
+                                null,
+                                null),
+                            buildCard(
+                                1,
+                                translate('obra'),
+                                [
+                                  pedidolocal.obra.codigo,
+                                  pedidolocal.obra.nome
+                                ],
+                                Icon(Icons.chevron_right, color: Colors.white),
+                                WorkplaceScreen(pedidolocal.obra)),
+                            buildCard(
+                                2,
+                                translate('composicao'),
+                                [pedidolocal.cod_receita, pedidolocal.receita],
+                                null,
+                                null),
+                          ],
+                        )),
+                  )),
+            )));
   }
 
   Widget buildCard(int indexCard, String titulo, List<String> subtitulo,
@@ -330,8 +392,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                       Clipboard.setData(
                               ClipboardData(text: clipboard[indexCard]))
                           .then((_) {
-                        GlobalFunctions.showToast(context,
-                            " '" + clipboard[indexCard] + "' " + translate('copiado') + "!");
+                        GlobalFunctions.showToast(
+                            context,
+                            " '" +
+                                clipboard[indexCard] +
+                                "' " +
+                                translate('copiado') +
+                                "!");
                       });
                     },
                   ),

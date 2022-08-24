@@ -1,17 +1,4 @@
 {
-  "language": {
-    "name": {
-      "en": "Inglês",
-      "es": "Espanhol",
-      "pt": "Português",
-      "fr": "Francês"
-    },
-    "selected_message": "O idioma seleciona atualmente é {language}",
-    "selection": {
-      "message": "Selecione um idioma da lista",
-      "title": "Seleção de idioma"
-    }
-  },
   "utilizador": "Utilizador",
   "password": "Senha",
   "login": "Iniciar sessão",
@@ -50,5 +37,25 @@
   "saida_obra": "Saída da Obra",
   "contactos": "Contactos",
   "copiado": "copiado",
-  "morada": "Morada"
+  "morada": "Morada",
+  "definicoes": "Definições",
+  "aplicar": "Aplicar",
+  "morada_cliente": "Morada do cliente",
+  "resumo": "Resumo",
+  "pedidos": "Pedidos",
+  "remessas": "Remessas",
+  "bombagens": "Bombagens",
+  "linguagem": {
+    "fr": "Francês",
+    "es": "Espanhol",
+    "pt": "Português",
+    "en": "Inglês"
+  },
+  "escolher_idioma": "Escolher idioma",
+  "idioma": "Idioma",
+  "sim": "Sim",
+  "nao": "Não",
+  "terminar_sessao": "Terminar sessão",
+  "deseja_terminar_sessao": "Deseja terminar sessão?",
+  "deseja_sair_app": "Deseja sair da aplicação?"
 }

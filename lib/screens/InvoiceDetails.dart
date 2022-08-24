@@ -274,15 +274,30 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                     [widget.guia.cod_receita, widget.guia.receita], null, null),
                 buildCard(3, translate('camiao'),
                     [widget.guia.camiao, widget.guia.motorista], null, null),
-                DeliveryTimeline(timeList: [
-                  '10:30',
-                  "10:45",
-                  "11:30",
-                  '10:30',
-                  "10:45",
-                  "11:30",
-                  "11:30"
-                ], lastTimestmp: 5, inv_type: widget.guia.inv_type,)
+                DeliveryTimeline(
+                  timeList: [
+                    widget.guia.data_hora.substring(11), //inicio carga
+                    widget.guia.fimcarga, //fim carga
+                    widget.guia.saidacentral, //saida central
+                    widget.guia.chegadaobra, //chegada obra
+                    widget.guia.iniciodescarga, //inicio descarga
+                    widget.guia.saidaobra, //saida obra
+                    widget.guia.chegadacentral //chegada central
+                  ], 
+                  lastTimestmp: (widget.guia.chegadacentral != "")
+                      ? 7
+                      : (widget.guia.saidaobra != "")
+                        ? 6
+                        : (widget.guia.iniciodescarga != "")
+                          ? 5
+                          :  (widget.guia.chegadaobra != "")
+                            ? 4
+                            :  (widget.guia.saidacentral != "")
+                              ? 3
+                              :  (widget.guia.fimcarga != "")
+                                ? 2
+                                : 1,
+                  inv_type: widget.guia.inv_type,)
               ],
             ),
           ),

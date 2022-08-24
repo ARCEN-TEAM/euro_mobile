@@ -1,17 +1,4 @@
 {
-  "language": {
-    "name": {
-      "en": "Inglés",
-      "es": "Español",
-      "pt": "Portugués",
-      "fr": "Francés"
-    },
-    "selected_message": "El idioma seleccionado actualmente es {language}",
-    "selection": {
-      "message": "Por favor seleccione un idioma de la lista",
-      "title": "Selección de idioma"
-    }
-  },
   "utilizador": "Usuario",
   "password": "Contrasêna",
   "login": "Iniciar sesión",
@@ -50,5 +37,25 @@
   "saida_obra": "Salida de obra",
   "contactos": "Contactos",
   "copiado": "copiado",
-  "morada": "Dirección"
+  "morada": "Dirección",
+  "definicoes": "Ajustes",
+  "aplicar": "Aplicar",
+  "morada_cliente": "Morada del cliente",
+  "resumo": "resumen",
+  "pedidos": "Pedidos",
+  "remessas": "Facturas ",
+  "bombagens": "Bombeos",
+  "linguagem": {
+    "fr": "Francés",
+    "es": "Español",
+    "pt": "Portugués",
+    "en": "Inglés"
+  },
+  "escolher_idioma": "Elige lengua",
+  "idioma": "Idioma",
+  "sim": "Sí",
+  "nao": "No",
+  "terminar_sessao": "Cerrar sesión",
+  "deseja_terminar_sessao": "Quieres cerrar sesión?",
+  "deseja_sair_app": "Quieres salir de la aplicación?"
 }

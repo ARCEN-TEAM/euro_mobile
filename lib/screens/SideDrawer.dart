@@ -1,5 +1,6 @@
 import 'package:euro_mobile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io' as io;
@@ -25,6 +26,7 @@ class _SideDrawerState extends State<SideDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    var localizationDelegate = LocalizedApp.of(context).delegate;
     return Container(
       decoration: BoxDecoration(color: AppColors.cardBackgroundColor),
       child:
@@ -74,8 +76,34 @@ class _SideDrawerState extends State<SideDrawer> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    buildCard(Icon(Icons.person), translate('perfil')),
-                    buildCard(Icon(Icons.settings), translate('definicoes')),
+                    buildCard(
+                      Icon(Icons.person), translate('perfil'), () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return ProfileScreen(username: widget.username);
+                        }));
+                      },
+                    ),
+                    buildCard(Icon(Icons.translate), translate('idioma'), () {
+                      showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SimpleDialog(
+                              backgroundColor:AppColors.cardBackgroundColor /*Color(0xFF172b49)*/,
+
+                              title: Text('Escolher idioma', style: TextStyle(color: AppColors.textColorOnDarkBG)),
+                              children: <Widget>[
+                                buildLanguageOption(context, 'pt', 'pt'),
+                                buildLanguageOption(context, 'en', 'gb'),
+                                buildLanguageOption(context, 'fr', 'fr'),
+                                buildLanguageOption(context, 'es', 'es'),
+
+                              ],
+                            );
+                          }
+                      );
+                    }
+                    ),
+                    buildCard(Icon(Icons.settings), translate('definicoes'), () {}),
 
                   ],
                 ),
@@ -86,7 +114,7 @@ class _SideDrawerState extends State<SideDrawer> {
 
 
                     onPressed: () {
-                      showExitPopup(context, "Deseja terminar sessão?",() {
+                      showExitPopup(context, translate('deseja_terminar_sessao'),() {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -94,7 +122,7 @@ class _SideDrawerState extends State<SideDrawer> {
                         );
 
                       });},
-                    child: Text("Terminar sessão",style: TextStyle(color: AppColors.textColorOnDarkBG,),),
+                    child: Text(translate('terminar_sessao'),style: TextStyle(color: AppColors.textColorOnDarkBG,),),
                     style: ElevatedButton.styleFrom(
 
                         primary: AppColors.buttonPrimaryColor),
@@ -108,6 +136,8 @@ class _SideDrawerState extends State<SideDrawer> {
 
     );
   }
+
+
 
   Widget buildProfileImage() {
     ImageProvider image =
@@ -156,16 +186,35 @@ class _SideDrawerState extends State<SideDrawer> {
             color: AppColors.textColorOnDarkBG, size: 20));
   }
 
-  Widget buildCard(
-    Icon leading,
-    String titulo,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return ProfileScreen(username: widget.username);
-        }));
+  Widget buildLanguageOption(BuildContext context, String lingua, String bandeira) {
+    return SimpleDialogOption(
+      onPressed: () {
+        changeLocale(context, lingua);
+        Navigator.pop(context, lingua);
       },
+      child: Row(
+        children: [
+          Container(
+            width:40,
+            height:30,
+            child: SvgPicture.asset(
+                'assets/flag/' + bandeira + '.svg',
+            ),
+          ),
+          SizedBox(width:10),
+          Text(translate('linguagem.' + lingua), style: TextStyle(color: AppColors.textColorOnDarkBG)),
+        ],
+      ),
+    );
+  }
+  Widget buildCard(Icon leading, String titulo, VoidCallback acao ) {
+    return GestureDetector(
+      onTap: acao,
+      //     () {
+      //   Navigator.push(context, MaterialPageRoute(builder: (context) {
+      //     return ProfileScreen(username: widget.username);
+      //   }));
+      // },
       child: Container(
         child: ListTile(
           leading: leading,
