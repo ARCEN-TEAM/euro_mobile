@@ -3,8 +3,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
+import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:lottie/lottie.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart' as gauges;
+import '../classes/enterExitPage.dart';
 import '../classes/plant.dart';
 import '../classes/invoice.dart';
 import '../classes/order.dart';
@@ -17,7 +22,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -25,6 +30,7 @@ import '../utilities/constants.dart';
 import 'package:open_file/open_file.dart';
 import 'InvoiceDetails.dart';
 import 'OrderDetails.dart';
+import 'WorkplaceDetails.dart';
 
 class PlantScreen extends StatefulWidget {
   const PlantScreen(this.central, this.data);
@@ -53,6 +59,7 @@ bool postRequestLoading = false;
 bool firstLoad = true;
 bool noResults = false;
 var lengthsliver = 0;
+bool selectedorder = false;
 
 class _PlantScreenWidgetState extends State<PlantScreen>
     with SingleTickerProviderStateMixin {
@@ -105,6 +112,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
     });
   }
 
+  late Order orderselected;
   Future postRequest(int index, String plantCode, String dataInicio,
       String DataFim, int page) async {
     if(!postRequestLoading)
@@ -247,11 +255,19 @@ class _PlantScreenWidgetState extends State<PlantScreen>
   String datafim = '31/05/2022';
   String datarange = '01/05/2022 - 31/05/2022';
   var _scrollController;
+  var _scrollController2;
       late TabController _tabController;
+
+  late CarouselSliderController _sliderController;
+  List<String> clipboard = [];
 
   @override
   void initState() {
+    _sliderController = CarouselSliderController();
+
+    selectedorder = false;
     _scrollController = ScrollController();
+    _scrollController2 = ScrollController();
     _tabController = TabController(vsync: this, length: tabs.length);
     super.initState();
     datainicio = DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.data));
@@ -618,13 +634,38 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                   ),
                 ),
               ];
-            }, body: TabBarView(
+            }, body: Align(
+              alignment: Alignment.topLeft,
+          child: OrientationBuilder(
+              builder: (_, orientation) {
 
-            controller: _tabController,
-            children:
-            List<Widget>.generate(tabs.length, (index) =>  buildTabViews(index==currentIndex))
+                if (orientation == Orientation.portrait)
+                  return TabBarView(
+                      controller: _tabController,
+                      children:
+                      List<Widget>.generate(tabs.length, (index) =>  buildTabViews(index==currentIndex))
+                  ); // if orientation is portrait, show your portrait layout
+                else
+                  return Row(
+                    children: [
+                      Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          child: TabBarView(
+                                controller: _tabController,
+                                children:
+                                List<Widget>.generate(tabs.length, (index) =>  buildTabViews(index==currentIndex))
 
-          ),)
+                        ),
+                      ),
+                      Expanded(
+                        child: (selectedorder) ? OrderDetailsLandScape(orderselected) : Container()
+                      )
+                    ],
+                  ); // else show the landscape one
+              }
+          )
+            ),
+            )
 
         ),
       ),
@@ -636,29 +677,31 @@ class _PlantScreenWidgetState extends State<PlantScreen>
    if(tabIndex){
 
      if ((!postRequestLoading && !noResults) || !firstLoad) {
-       return  CustomScrollView(slivers: [ SliverList(
-           delegate: SliverChildBuilderDelegate(
-                 (BuildContext context, int index) {
-               switch (currentIndex) {
-                 case 1:
-                   if (pedidos.isNotEmpty) {
-                     return buildCardOrder(pedidos[index]);
-                   }
-                   break;
+       return  CustomScrollView(
 
-                 case 2:
-                 case 3:
-                   if (guias.isNotEmpty) {
-                     return buildCardInvoice(guias[index]);
-                   }
-                   break;
-               }
-               return Container();
-             },
-             // 40 list items
-             childCount: lengthsliver,
-           ))]);
+           slivers: [
+             SliverList(
+                 delegate: SliverChildBuilderDelegate(
+                       (BuildContext context, int index) {
+                     switch (currentIndex) {
+                       case 1:
+                         if (pedidos.isNotEmpty) {
+                           return buildCardOrder(pedidos[index]);
+                         }
+                         break;
 
+                       case 2:
+                       case 3:
+                         if (guias.isNotEmpty) {
+                           return buildCardInvoice(guias[index]);
+                         }
+                         break;
+                     }
+                     return Container();
+                   },
+                   // 40 list items
+                   childCount: lengthsliver,
+                 ))]);
 
      }
      else {
@@ -831,204 +874,228 @@ class _PlantScreenWidgetState extends State<PlantScreen>
   }
 
   Widget buildCardOrder(Order pedido) {
-    return GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-              PageRouteBuilder(
-                  fullscreenDialog: true,
-                  pageBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation) {
-                    return OrderDetails(pedido: pedido, central: widget.central);
-                  },
-                  transitionDuration: Duration(milliseconds: 300),
-                  transitionsBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation,
-                      Widget child,) {
-                    return SlideTransition(
+        if (MediaQuery.of(context).orientation == Orientation.portrait){
 
-                      position: Tween<Offset>(
-                        begin: const Offset(0.0, 1.0),
-                        end: Offset.zero,
-                      ).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.fastOutSlowIn,
-                          )),
-                      child: child, // child is the value returned by pageBuilder
-                    );
-                  }
-              )
-          );
-        },
-        child: Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
-          decoration: BoxDecoration(
-            color: Color(0x00000000),
-            border: Border.all(width: 0, color: Color(0x00000000)),
-          ),
-          child: Card(
-            color: Color(0xFF172842),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // if you need this
+          return GestureDetector(
+            onTap: () {
+
+              Navigator.of(context).push(
+                  PageRouteBuilder(
+                      fullscreenDialog: true,
+                      pageBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation) {
+                        return OrderDetails(pedido: pedido, central: widget.central);
+                      },
+                      transitionDuration: Duration(milliseconds: 300),
+                      transitionsBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation,
+                          Widget child,) {
+                        return SlideTransition(
+
+                          position: Tween<Offset>(
+                            begin: const Offset(0.0, 1.0),
+                            end: Offset.zero,
+                          ).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.fastOutSlowIn,
+                              )),
+                          child: child, // child is the value returned by pageBuilder
+                        );
+                      }
+                  )
+              );
+            },
+            child: OrderCard(pedido));
+        }// if orientation is portrait, show your portrait layout
+        else
+          return GestureDetector(
+              onTap: () {
+                print('pressed');
+
+                setState(() {
+
+                  clipboard.add(pedido.obra.cliente.nome);
+                  clipboard.add(pedido.obra.nome);
+                  clipboard.add(pedido.receita);
+
+                  selectedorder = true;
+                  orderselected = pedido;
+                });
+              },
+              child: OrderCard(pedido)); // else show the landscape one
+  }
+
+  Widget OrderCard(Order pedido){
+    return Container(
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      decoration: BoxDecoration(
+        color: Color(0x00000000),
+        border: Border.all(width: 0, color: Color(0x00000000)),
+      ),
+      child: Card(
+        color: Color(0xFF172842),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10), // if you need this
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        child: ClipPath(
+          clipper: ShapeBorderClipper(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10))),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                  left: BorderSide(
+                      color: Color(int.parse(pedido.statusColor)),
+                      width: 10
+                  )
+              ),
             ),
-            margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            child: ClipPath(
-              clipper: ShapeBorderClipper(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10))),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                      left: BorderSide(
-                          color: Color(int.parse(pedido.statusColor)),
-                          width: 10
-                      )
-                  ),
-                ),
-                alignment: Alignment.centerLeft,
-                child: ListTile(
-                  dense: true,
-                  visualDensity: VisualDensity(vertical: 4),
-                  contentPadding:
-                  EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  leading: Container(
-                    //decoration: BoxDecoration(border: Border.all(color: Colors.red)),
-                    constraints: BoxConstraints(maxWidth: 60),
-                    child: Column(
-                      //mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Flexible(
-                            flex: 1,
-                            fit: FlexFit.tight,
-                            child: Text(
-                                pedido.prod_delivered.toString() +
-                                    '/' +
-                                    pedido.prod_desired.toString(),
-                                style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white))),
-                        Flexible(
-                          flex: 4,
-                          fit: FlexFit.loose,
-                          child: SfCircularChart(
-                              annotations: <CircularChartAnnotation>[
-                                CircularChartAnnotation(
-                                  widget: Container(
-                                      child: Text(
-                                          (pedido.prod_delivered /
-                                              pedido.prod_desired *
-                                              100)
-                                              .toStringAsFixed(0) +
-                                              '%',
-                                          style: TextStyle(fontSize: 11,
-                                              color: Colors.white))),
-                                )
+            alignment: Alignment.centerLeft,
+            child: ListTile(
+              dense: true,
+              visualDensity: VisualDensity(vertical: 4),
+              contentPadding:
+              EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              leading: Container(
+                //decoration: BoxDecoration(border: Border.all(color: Colors.red)),
+                constraints: BoxConstraints(maxWidth: 60),
+                child: Column(
+                  //mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Flexible(
+                        flex: 1,
+                        fit: FlexFit.tight,
+                        child: Text(
+                            pedido.prod_delivered.toString() +
+                                '/' +
+                                pedido.prod_desired.toString(),
+                            style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white))),
+                    Flexible(
+                      flex: 4,
+                      fit: FlexFit.loose,
+                      child: charts.SfCircularChart(
+                          annotations: <charts.CircularChartAnnotation>[
+                            charts.CircularChartAnnotation(
+                              widget: Container(
+                                  child: Text(
+                                      (pedido.prod_delivered /
+                                          pedido.prod_desired *
+                                          100)
+                                          .toStringAsFixed(0) +
+                                          '%',
+                                      style: TextStyle(fontSize: 11,
+                                          color: Colors.white))),
+                            )
+                          ],
+                          margin: EdgeInsets.all(5),
+                          series: <charts.CircularSeries>[
+                            // Render pie chart
+                            charts.RadialBarSeries<ChartData, String>(
+                              dataSource: <ChartData>[
+                                ChartData('m3', pedido.prod_delivered)
                               ],
-                              margin: EdgeInsets.all(5),
-                              series: <CircularSeries>[
-                                // Render pie chart
-                                RadialBarSeries<ChartData, String>(
-                                  dataSource: <ChartData>[
-                                    ChartData('m3', pedido.prod_delivered)
-                                  ],
-                                  xValueMapper: (ChartData data, _) => data.x,
-                                  yValueMapper: (ChartData data, _) => data.y,
-                                  pointColorMapper: (ChartData data, _) =>
-                                  (pedido.statusColor == "0x00ffffff"
-                                      ? AppColors.buttonPrimaryColor
-                                      : Color(int.parse(pedido.statusColor))),
-                                  cornerStyle: (pedido.prod_delivered ==
-                                      pedido.prod_desired
-                                      ? CornerStyle.bothFlat
-                                      : CornerStyle.bothCurve),
-                                  maximumValue: pedido.prod_desired,
-                                  radius: '100%',
-                                  innerRadius: '80%',
-                                )
-                              ]),
+                              xValueMapper: (ChartData data, _) => data.x,
+                              yValueMapper: (ChartData data, _) => data.y,
+                              pointColorMapper: (ChartData data, _) =>
+                              (pedido.statusColor == "0x00ffffff"
+                                  ? AppColors.buttonPrimaryColor
+                                  : Color(int.parse(pedido.statusColor))),
+                              cornerStyle: (pedido.prod_delivered ==
+                                  pedido.prod_desired
+                                  ? charts.CornerStyle.bothFlat
+                                  : charts.CornerStyle.bothCurve),
+                              maximumValue: pedido.prod_desired,
+                              radius: '100%',
+                              innerRadius: '80%',
+                            )
+                          ]),
+                    )
+                  ],
+                ),
+              ),
+
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    pedido.cod,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF40a1f0),
+                      shadows: <Shadow>[
+                        Shadow(
+                          color: Color(0xFF3ab1ff).withOpacity(0.5),
+                          //spreadRadius: 3,
+                          blurRadius: 3,
                         )
                       ],
                     ),
                   ),
+                  Text(pedido.date,
+                      style: TextStyle(fontSize: 12, color: Colors.white)),
+                ],
+              ),
 
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        pedido.cod,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF40a1f0),
-                          shadows: <Shadow>[
-                            Shadow(
-                              color: Color(0xFF3ab1ff).withOpacity(0.5),
-                              //spreadRadius: 3,
-                              blurRadius: 3,
-                            )
-                          ],
-                        ),
-                      ),
-                      Text(pedido.date,
-                          style: TextStyle(fontSize: 12, color: Colors.white)),
-                    ],
-                  ),
+              subtitle: Column(
+                children: <Widget>[
+                  Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                                child: Text(
+                                    pedido.obra.cliente.nome,
+                                    overflow: TextOverflow.fade,
+                                    maxLines: 1,
+                                    softWrap: false,
+                                    style: TextStyle(color: Colors.white)
+                                )),
+                          ])),
+                  Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                              child: Text(
+                                  pedido.obra.nome,
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  style: TextStyle(color: Colors.white)
+                              )),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, right: 10, top: 3, bottom: 3),
+                                decoration: BoxDecoration(
+                                    color: AppColors.backgroundBlue,
+                                    borderRadius: BorderRadius.circular(
+                                        10)),
+                                child: Text(
+                                  pedido.rownr + '/' + pedido.totalrows,
+                                  style: TextStyle(color: Colors.white),
+                                )),
+                          )
 
-                  subtitle: Column(
-                    children: <Widget>[
-                      Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                    child: Text(
-                                        pedido.obra.cliente.nome,
-                                        overflow: TextOverflow.fade,
-                                        maxLines: 1,
-                                        softWrap: false,
-                                        style: TextStyle(color: Colors.white)
-                                    )),
-                              ])),
-                      Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                  child: Text(
-                                      pedido.obra.nome,
-                                      overflow: TextOverflow.fade,
-                                      maxLines: 1,
-                                      softWrap: false,
-                                      style: TextStyle(color: Colors.white)
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 15),
-                                child: Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10, right: 10, top: 3, bottom: 3),
-                                    decoration: BoxDecoration(
-                                        color: AppColors.backgroundBlue,
-                                        borderRadius: BorderRadius.circular(
-                                            10)),
-                                    child: Text(
-                                      pedido.rownr + '/' + pedido.totalrows,
-                                      style: TextStyle(color: Colors.white),
-                                    )),
-                              )
-
-                            ],
-                          )),
-                    ],
-                  ),
-                  /*trailing: Column(
+                        ],
+                      )),
+                ],
+              ),
+              /*trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(guia.data_hora),
@@ -1038,13 +1105,359 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                       )
                     ],
                   ),*/
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget OrderDetailsLandScape(Order pedidolocal){
+
+    return Container(
+        height: double.infinity,
+        width: double.infinity,
+        child: Card(
+          color: Color(0xFF172842),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10), // if you need this
+          ),
+          margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(10),
+                  controller: _scrollController2,
+                  physics: BouncingScrollPhysics(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 110,
+                              child: Padding(
+                                  padding: const EdgeInsets.only(left: 35),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            pedidolocal.cod,
+                                            style: TextStyle(
+                                                color:
+                                                AppColors.textColorOnDarkBG,
+                                                fontSize: 20),
+                                          ),
+                                          Text(
+                                            pedidolocal.date,
+                                            style: TextStyle(
+                                                color:
+                                                AppColors.textColorOnDarkBG,
+                                                fontSize: 15),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            pedidolocal.codref,
+                                            style: TextStyle(
+                                                color:
+                                                AppColors.textColorOnDarkBG,
+                                                fontSize: 15),
+                                          ),
+                                        ],
+                                      ),
+                                      Flexible(
+                                        child: Stack(
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(top: 55),
+                                              child: gauges.SfRadialGauge(
+                                                  enableLoadingAnimation: false,
+                                                  animationDuration: 2000,
+                                                  axes: <gauges.RadialAxis>[
+                                                    gauges.RadialAxis(
+                                                      canScaleToFit: true,
+                                                      showLastLabel: true,
+                                                      maximumLabels: pedidolocal
+                                                          .prod_desired
+                                                          .toInt(),
+                                                      showLabels: true,
+                                                      showTicks: true,
+                                                      startAngle: 180,
+                                                      endAngle: 0,
+                                                      interval: pedidolocal
+                                                          .prod_desired /
+                                                          5,
+                                                      radiusFactor: 2.5,
+                                                      maximum: pedidolocal
+                                                          .prod_desired,
+                                                      canRotateLabels: true,
+                                                      pointers: <gauges.GaugePointer>[
+                                                        gauges.RangePointer(
+                                                            gradient:
+                                                            SweepGradient(
+                                                                colors: [
+                                                                  const Color(
+                                                                      0xFF3a9bea),
+                                                                  const Color(
+                                                                      0xFF2E4E7C),
+                                                                  const Color(
+                                                                      0xFF132642),
+                                                                ]
+                                                                    .reversed
+                                                                    .toList(),
+                                                                stops: <double>[
+                                                                  0.2,
+                                                                  0.5,
+                                                                  0.8
+                                                                ]),
+                                                            value: pedidolocal
+                                                                .prod_delivered,
+                                                            width: 0.1,
+                                                            color: AppColors
+                                                                .buttonPrimaryColor,
+                                                            sizeUnit:
+                                                            gauges.GaugeSizeUnit
+                                                                .factor,
+                                                            cornerStyle:
+                                                            gauges.CornerStyle
+                                                                .bothCurve),
+                                                        if (pedidolocal
+                                                            .prod_delivered >
+                                                            0 &&
+                                                            pedidolocal
+                                                                .prod_delivered <
+                                                                pedidolocal
+                                                                    .prod_desired) ...[
+                                                          gauges.MarkerPointer(
+                                                              value: pedidolocal
+                                                                  .prod_delivered,
+                                                              markerOffset: -5,
+                                                              color:
+                                                              Colors.white),
+                                                          gauges.WidgetPointer(
+                                                            offset: -20,
+                                                            value: pedidolocal
+                                                                .prod_delivered,
+                                                            child: Text(
+                                                              pedidolocal
+                                                                  .prod_delivered
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                            ),
+                                                          ),
+                                                        ]
+                                                      ],
+                                                    )
+                                                  ]),
+                                            ),
+                                            Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 70),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        (pedidolocal.prod_delivered /
+                                                            pedidolocal
+                                                                .prod_desired *
+                                                            100)
+                                                            .round()
+                                                            .toString() +
+                                                            '%',
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ))
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            SizedBox(
+                              height: 25,
+                            ),
+                            buildCard(
+                                0,
+                                translate('cliente'),
+                                [
+                                  pedidolocal.obra.cliente.codigo,
+                                  pedidolocal.obra.cliente.nome
+                                ],
+                                null,
+                                null),
+                            buildCard(
+                                1,
+                                translate('obra'),
+                                [
+                                  pedidolocal.obra.codigo,
+                                  pedidolocal.obra.nome
+                                ],
+                                Icon(Icons.chevron_right, color: Colors.white),
+                                WorkplaceScreen(pedidolocal.obra)),
+                            buildCard(
+                                2,
+                                translate('composicao'),
+                                [pedidolocal.cod_receita, pedidolocal.receita],
+                                null,
+                                null),
+                          ],
+                        )),
+                  )),
+            ));
+  }
+
+  Widget buildCard(int indexCard, String titulo, List<String> subtitulo,
+      Icon? trailing, dynamic? screenRoute) {
+    return Container(
+      height: 90,
+      padding: EdgeInsets.only(left: 20),
+      child: ListTile(
+          title: Flex(direction: Axis.horizontal, children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  titulo,
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-          ),
-        ));
+          ]),
+          subtitle: new LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                if (subtitulo.length == 1) {
+                  return Flex(direction: Axis.horizontal, children: [
+                    Flexible(
+                      child: Text(
+                        overflow: TextOverflow.ellipsis,
+                        subtitulo[0],
+                        style: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ]);
+                } else {
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 55),
+                    child: CarouselSlider.builder(
+                      onSlideChanged: (index) {
+                        setState(() {
+                          clipboard[indexCard] = subtitulo[index];
+                        });
+                      },
+                      controller: _sliderController,
+                      slideBuilder: (index) {
+                        return Flex(direction: Axis.horizontal, children: [
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                overflow: TextOverflow.ellipsis,
+                                subtitulo[index],
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ]);
+                      },
+                      slideIndicator: CircularSlideIndicator(
+                          itemSpacing: 10,
+                          indicatorRadius: 4,
+                          alignment: AlignmentDirectional.bottomStart,
+                          indicatorBorderColor: Color(0x5D494a4b),
+                          indicatorBackgroundColor: Color(0x5D494a4b),
+                          currentIndicatorColor: AppColors.buttonPrimaryColor),
+                      itemCount: subtitulo.length,
+                      initialPage: 1,
+                    ),
+                  );
+                }
+              }),
+          trailing: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: IntrinsicHeight(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    splashColor: Colors.white, // inkwell color
+                    child: Icon(Icons.content_copy,
+                        color: Colors.white.withOpacity(0.2)),
+                    onTap: () {
+                      GlobalFunctions.removeToast(context);
+                      Clipboard.setData(
+                          ClipboardData(text: clipboard[indexCard]))
+                          .then((_) {
+                        GlobalFunctions.showToast(
+                            context,
+                            " '" +
+                                clipboard[indexCard] +
+                                "' " +
+                                translate('copiado') +
+                                "!");
+                      });
+                    },
+                  ),
+                  (trailing == null
+                      ? Container()
+                      : Row(children: [
+                    SizedBox(width: 10),
+                    VerticalDivider(
+                      color: Colors.white.withOpacity(0.2),
+                      thickness: 2,
+                    ),
+                    SizedBox(width: 10),
+                    InkWell(
+                      splashColor: Colors.white, // inkwell color
+                      child: trailing,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          SlideInPageRoute(
+                              exitPage: widget, enterPage: screenRoute),
+                        );
+                      },
+                    ),
+                  ])),
+                ],
+              ),
+            ),
+          )),
+    );
   }
+
+
 }
+
+
 
 List<InvoiceChart> getChartInvoices() {
   return <InvoiceChart>[
