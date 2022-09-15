@@ -96,7 +96,7 @@ class _MainScreenWidgetState extends State<MainScreen> {
     return WillPopScope(
       onWillPop: () => showExitPopup(context,translate('deseja_sair_app'),  () {exit(0);}),
       child: Scaffold(
-        drawerEdgeDragWidth: (currentPageIndex==0 ? MediaQuery.of(context).size.width/3: 0 ),
+        drawerEdgeDragWidth: (currentPageIndex==0 ? MediaQuery.of(context).size.width/9: 0 ),
 
     drawer:Drawer(
 

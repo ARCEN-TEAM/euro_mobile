@@ -90,9 +90,14 @@ class AppColors{
                                         const Color(0xFF1d4d73),
                                         const Color(0xFF0f1925),
                                       ];
+  static List<Color> chartGradientColorsSecondary = [
+                                        const Color(0xff1d7321),
+                                        const Color(0xFF0f1925),
+                                      ];
   static Color selectedItemBackground = Colors.grey.withOpacity(0.1);
   static Color selectedItemTextShadowColor= Color(0xFF3ab1ff).withOpacity(0.5);
-  static Color chartLineColorPrimary= Color(0xFF3ab1ff).withOpacity(0.5);
+  static Color chartLineColorPrimary=  Color(0xFF3ab1ff) ;
+  static Color chartLineColorSecondary= Color(0xFF31B03F);
   static Color buttonSecondaryColor= Color(0xFF3ab1ff);
   static Color selectedItemTextColor= Color(0xFF40a1f0);
   static Color cardBackgroundColor= Color(0xFF172842);

@@ -80,9 +80,8 @@ class _PlantsListState extends State<PlantsList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: CustomScrollView(
-          physics: BouncingScrollPhysics(),
-          slivers: <Widget>[
+      child:
+          CustomScrollView(physics: BouncingScrollPhysics(), slivers: <Widget>[
         _buildAppBar(context),
         SliverToBoxAdapter(
           child: Container(
@@ -98,7 +97,7 @@ class _PlantsListState extends State<PlantsList> {
                         height: 80,
                         child: Center(
                           child: ScrollablePositionedList.builder(
-                            physics: BouncingScrollPhysics(),
+                              physics: BouncingScrollPhysics(),
                               itemScrollController: _controller,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) => GestureDetector(
@@ -126,14 +125,16 @@ class _PlantsListState extends State<PlantsList> {
                                                   shadows: <Shadow>[
                                                     selected == index
                                                         ? Shadow(
-                                                            color: AppColors.selectedItemTextShadowColor/*Color(0xFF3ab1ff).withOpacity(0.5)*/,
+                                                            color: AppColors
+                                                                .selectedItemTextShadowColor /*Color(0xFF3ab1ff).withOpacity(0.5)*/,
                                                             //spreadRadius: 3,
                                                             blurRadius: 8,
                                                           )
                                                         : Shadow()
                                                   ],
                                                   color: selected == index
-                                                      ? AppColors.selectedItemTextColor /*Color(0xFF40a1f0)*/
+                                                      ? AppColors
+                                                          .selectedItemTextColor /*Color(0xFF40a1f0)*/
                                                       : Colors.grey),
                                             ),
                                             SizedBox(height: 5),
@@ -144,7 +145,8 @@ class _PlantsListState extends State<PlantsList> {
                                                     shadows: <Shadow>[
                                                       selected == index
                                                           ? Shadow(
-                                                              color:AppColors.selectedItemTextShadowColor /*Color(0xFF3ab1ff).withOpacity(0.5)*/,
+                                                              color: AppColors
+                                                                  .selectedItemTextShadowColor /*Color(0xFF3ab1ff).withOpacity(0.5)*/,
                                                               //spreadRadius: 3,
                                                               blurRadius: 8,
                                                             )
@@ -153,7 +155,8 @@ class _PlantsListState extends State<PlantsList> {
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
                                                     color: selected == index
-                                                        ? AppColors.selectedItemTextColor /*Color(0xFF40a1f0)*/
+                                                        ? AppColors
+                                                            .selectedItemTextColor /*Color(0xFF40a1f0)*/
                                                         : Colors.grey))
                                           ],
                                         )),
@@ -180,7 +183,7 @@ class _PlantsListState extends State<PlantsList> {
                                   }
                                 } else {
                                   selectedZone!.removeWhere(
-                                          (element) => element == zone);
+                                      (element) => element == zone);
                                   setState(() {});
                                 }
                               },
@@ -192,11 +195,9 @@ class _PlantsListState extends State<PlantsList> {
                                         vertical: 1, horizontal: 12),
                                     decoration: BoxDecoration(
                                         color: isSelected
-                                            ? Colors.grey
-                                            .withOpacity(0.1)
+                                            ? Colors.grey.withOpacity(0.1)
                                             : Colors.transparent,
-                                        borderRadius:
-                                        BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                             color: Colors.transparent,
                                             width: 2)),
@@ -206,14 +207,11 @@ class _PlantsListState extends State<PlantsList> {
                                           shadows: <Shadow>[
                                             isSelected
                                                 ? Shadow(
-                                              color: Color(
-                                                  0xFF3ab1ff)
-                                                  .withOpacity(
-                                                  0.5),
-                                              //spreadRadius: 3,
-                                              blurRadius:
-                                              8,
-                                            )
+                                                    color: Color(0xFF3ab1ff)
+                                                        .withOpacity(0.5),
+                                                    //spreadRadius: 3,
+                                                    blurRadius: 8,
+                                                  )
                                                 : Shadow()
                                           ],
                                           color: isSelected
@@ -308,188 +306,281 @@ class _PlantsListState extends State<PlantsList> {
 
   Widget buildCard(Plant central) {
     return Container(
-            width: MediaQuery.of(context).size.width,
-            constraints: BoxConstraints(minHeight: 50),
-            decoration: BoxDecoration(
-              color: AppColors.transparent,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Card(
+        width: MediaQuery.of(context).size.width,
+        constraints: BoxConstraints(minHeight: 50),
+        decoration: BoxDecoration(
+          color: AppColors.transparent,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Card(
+                  color: AppColors.cardBackgroundColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    side: BorderSide(
                       color: AppColors.cardBackgroundColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        side: BorderSide(
-                          color: AppColors.cardBackgroundColor,
-                          width: 1,
-                        ),
-                      ),
-                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      child: ExpansionTile(
-                        collapsedIconColor: AppColors.textColorOnDarkBG,
-                        iconColor: AppColors.selectedItemTextColor,
-                        title: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Align(
-                                alignment: AlignmentDirectional(0.3, 0.05),
-                                child: Column(
+                      width: 1,
+                    ),
+                  ),
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  child: ExpansionTile(
+                    collapsedIconColor: AppColors.textColorOnDarkBG,
+                    iconColor: AppColors.selectedItemTextColor,
+                    title: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional(0.3, 0.05),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  //crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      //crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      children: [
-                                        Text(
-                                          central.codigo + ' - ' + central.nome,
-                                          style:   TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.textColorOnDarkBG),
-                                        ),
-                                      ],
+                                    Text(
+                                      central.codigo + ' - ' + central.nome,
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.textColorOnDarkBG),
                                     ),
-                                    SizedBox(height: 10),
-                                    Row(children: [
-                                      Hero(
-                                          tag: 'plant-' + central.codigo,
-                                          child: Container(
-                                            width: 50,
-                                            height: 50,
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Align(
-                                              alignment:
-                                                  AlignmentDirectional(0, 0),
-                                              child: Image.network(
-                                                  'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
-                                                      central.gps.longitude
-                                                          .toString() +
-                                                      ',' +
-                                                      central.gps.latitude
-                                                          .toString() +
-                                                      ')/' +
-                                                      central.gps.longitude
-                                                          .toString() +
-                                                      ',' +
-                                                      central.gps.latitude
-                                                          .toString() +
-                                                      ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
-                                            ),
-                                          )),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.stretch,
-                                            children: [
-                                              AspectRatio(
-                                                aspectRatio: 5,
-                                                child: Container(
-                                                  padding:
-                                                      EdgeInsets.only(left: 20),
-                                                  child: LineChart(
-                                                    mainData(central.minXgraph, central.maxXgraph, central.maxYprod,central.producao, true),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ])
                                   ],
                                 ),
-                              ),
-                            ],
+                                SizedBox(height: 10),
+                                Row(children: [
+                                  Hero(
+                                      tag: 'plant-' + central.codigo,
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Align(
+                                          alignment: AlignmentDirectional(0, 0),
+                                          child: Image.network(
+                                              'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
+                                                  central.gps.longitude
+                                                      .toString() +
+                                                  ',' +
+                                                  central.gps.latitude
+                                                      .toString() +
+                                                  ')/' +
+                                                  central.gps.longitude
+                                                      .toString() +
+                                                  ',' +
+                                                  central.gps.latitude
+                                                      .toString() +
+                                                  ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
+                                        ),
+                                      )),
+                                  Flexible(
+                                    flex: 1,
+                                    child: Container(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          AspectRatio(
+                                            aspectRatio: 4,
+                                            child: Container(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: BarChart(
+                                                mainData(
+                                                    central.minXgraph,
+                                                    central.maxXgraph,
+                                                    central.maxYprod,
+                                                    central.producao,
+                                                    true,
+                                                    AppColors
+                                                        .chartLineColorPrimary,
+                                                    AppColors
+                                                        .chartGradientColors),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ])
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    children: [
+                      SizedBox(height: 25),
+                      FractionallySizedBox(
+                        widthFactor: 0.65,
+                        child: AspectRatio(
+                          aspectRatio: 4,
+                          child: Container(
+                            //padding: EdgeInsets.only(left: 20,top:20,bottom:20),
+                            margin: EdgeInsets.only(left: 30),
+                            child: BarChart(
+
+                              mainData(
+                                  central.minXgraph,
+                                  central.maxXgraph,
+                                  central.maxYpump,
+                                  central.bombagem,
+                                  true,
+                                  AppColors.chartLineColorSecondary,
+                                  AppColors.chartGradientColorsSecondary),
+                            ),
                           ),
                         ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          FractionallySizedBox(
-                            widthFactor: 0.65,
-                            child: AspectRatio(
-                              aspectRatio: 5,
-                              child: Container(
-                                //padding: EdgeInsets.only(left: 20,top:20,bottom:20),
-                                margin: EdgeInsets.only(left: 30),
-                                child: LineChart(
-                                  mainData(central.minXgraph, central.maxXgraph, central.maxYpump, central.bombagem, false),
+                          Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: TextButton.icon(
+                                icon: Icon(
+                                  Icons.radio_button_checked_rounded,
+                                  color: Colors.lightBlueAccent,
+                                    shadows: [ Shadow(
+                                      color: Colors.lightBlueAccent,/*AppColors.chartLineColorPrimary*/ /*Color(0xFF3ab1ff).withOpacity(0.5)*/
+                                      //spreadRadius: 3,
+                                      blurRadius: 8,
+                                    )]
                                 ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height:15),
-                          Center(
-                            child: FractionallySizedBox(
-                              widthFactor: 1,
-                              child: Container(
-                                height: 1.0,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.4),
-
+                                label: Text(
+                                  translate('producao'),
+                                  style: TextStyle(
+                                      color: AppColors.textColorOnDarkBG),
                                 ),
-                              ),
-                            ),
+                                onPressed: () {}),
                           ),
-                          ListTile(
+                          Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: TextButton.icon(
+                                icon: Icon(Icons.radio_button_checked_rounded,
+                                    color: AppColors.chartLineColorSecondary,
+                                    shadows: [ Shadow(
+                                      color: AppColors.chartLineColorSecondary,/*AppColors.chartLineColorPrimary*/ /*Color(0xFF3ab1ff).withOpacity(0.5)*/
+                                      //spreadRadius: 3,
+                                      blurRadius: 8,
+                                    )]),
+                                label: Text(
+                                  translate('bombagens'),
+                                  style: TextStyle(
+                                      color: AppColors.textColorOnDarkBG),
+                                ),
+                                onPressed: () {}),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColors.transparent, width: 0),
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(25),
+                                bottomRight: Radius.circular(25)),
+                            color: AppColors.backgroundBlue.withOpacity(0.4)),
+                        child: Column(
+                          children: [
+                            ListTile(
                               visualDensity: VisualDensity(
                                 vertical: -4,
                               ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        PlantScreen(central, dayList[selected].toString())),
-                              );
-                            },
-                            title:  Center(
-                              child: Text(
-                                  translate('ver_mais'),
-                                  style: TextStyle(color: AppColors.textColorOnDarkBG)),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PlantScreen(central,
+                                          dayList[selected].toString())),
+                                );
+                              },
+                              title: Center(
+                                child: Text(translate('ver_mais'),
+                                    style: TextStyle(
+                                        color: AppColors.textColorOnDarkBG)),
+                              ),
+                              trailing: Icon(Icons.chevron_right),
                             ),
-                            trailing: Icon(Icons.chevron_right),
-                          ),
-
-                        ],
-                      )),
-                ),
-              ],
-            ));
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
+            ),
+          ],
+        ));
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+  Widget bottomTitleWidgets(double value, TitleMeta meta,double min, double max) {
+
     const style = TextStyle(
       color: Colors.white,
-      fontSize: 16,
+      fontSize: 13,
     );
-    Widget text = Text(value.toInt().toString(), style: style);
+    if (value % meta.appliedInterval == 0 ) {
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 8.0,
-      child: text,
-    );
+      String txt =   value == ((value != max) ? (max-meta.appliedInterval+1) : max) ? ('${value.toInt()} h') : ('${value.toInt()}');
+      Widget text = Text(txt, style: style);
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        space: 8.0,
+        child: text,
+      );
+    } else
+      return SizedBox();
+
+
+
+
   }
+  BarTouchData get barTouchData => BarTouchData(
+    enabled: true,
+    touchTooltipData: BarTouchTooltipData(
+      tooltipBgColor: Colors.transparent,
+      tooltipPadding: const EdgeInsets.all(0),
+      tooltipMargin: -4,
+      getTooltipItem: (
+          BarChartGroupData group,
+          int groupIndex,
+          BarChartRodData rod,
+          int rodIndex,
+          ) {
+        return BarTooltipItem(
+          rod.toY.round().toString(),
+          const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      },
+    ),
+  );
 
-  LineChartData mainData(double minX, double maxX, double maxY, List<FlSpot> data, bool showAxisX) {
-    return LineChartData(
+  BarChartData mainData(
+      double minX,
+      double maxX,
+      double maxY,
+      List<BarChartGroupData> data,
+      bool showAxisX,
+      Color chartLineColor,
+      List<Color> chartBelowGradient) {
 
+    return BarChartData(
       gridData: FlGridData(show: false),
-      minX: minX,
-      maxX: maxX,
+      barTouchData: barTouchData,
       minY: 0,
       maxY: maxY,
       titlesData: FlTitlesData(
-
         show: true,
         rightTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false),
@@ -500,10 +591,10 @@ class _PlantsListState extends State<PlantsList> {
         bottomTitles: AxisTitles(
 
           sideTitles: SideTitles(
-            getTitlesWidget: bottomTitleWidgets,
-            reservedSize: 27,
+            getTitlesWidget: (value, meta) => bottomTitleWidgets(value,meta,minX,maxX),
+            reservedSize: 22,
             showTitles: showAxisX,
-            interval: maxX,
+            interval:   (data.length/15).ceilToDouble()+1
           ),
         ),
         leftTitles: AxisTitles(
@@ -512,46 +603,10 @@ class _PlantsListState extends State<PlantsList> {
           ),
         ),
       ),
-      extraLinesData: ExtraLinesData(horizontalLines: [
-        HorizontalLine(
-            y: 0,
-            color: Colors.white.withOpacity(0.8),
-            strokeWidth: 1,
-            label: HorizontalLineLabel(
-                show: false,
-                alignment: Alignment.centerRight,
-                padding: EdgeInsets.only(right: -30)))
-      ]),
       borderData: FlBorderData(
           show: false,
           border: Border.all(color: const Color(0xff37434d), width: 1)),
-      lineBarsData: [
-        LineChartBarData(
-          shadow: Shadow(
-            color: AppColors.chartLineColorPrimary /*Color(0xFF3ab1ff).withOpacity(0.5)*/,
-            //spreadRadius: 3,
-            blurRadius: 8,
-          ),
-          spots: data,
-          isCurved: true,
-          barWidth: 3,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: AppColors.chartGradientColors
-                  .map((color) => color.withOpacity(0.2))
-                  .toList(),
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
-      ],
+      barGroups: data,
     );
   }
-
 }

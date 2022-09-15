@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           scrollbarTheme: ScrollbarThemeData(thumbColor: MaterialStateProperty.all(AppColors.buttonPrimaryColor.withOpacity(0.4))),
           scaffoldBackgroundColor: Colors.transparent,
+          dividerColor: Colors.transparent,
           primaryColor: Colors.transparent,
           highlightColor: Colors.transparent,
           hoverColor: Colors.transparent,
