@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:euro_mobile/screens/SideDrawer.dart';
 
@@ -13,7 +13,6 @@ import 'dart:async';
 //import 'package:login_test/screens/PlantDetails.dart';
 import 'package:intl/intl.dart';
 import 'plants_list.dart';
-import 'profile_screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'coming_soon.dart';
@@ -94,9 +93,10 @@ class _MainScreenWidgetState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => showExitPopup(context,translate('deseja_sair_app'),  () {exit(0);}),
+      onWillPop: () => showExitPopup(context,translate('deseja_sair_app'),  () {io.exit(0);}),
       child: Scaffold(
         drawerEdgeDragWidth: (currentPageIndex==0 ? MediaQuery.of(context).size.width/9: 0 ),
+
 
     drawer:Drawer(
 
@@ -215,3 +215,4 @@ class _MainScreenWidgetState extends State<MainScreen> {
 
 
 }
+

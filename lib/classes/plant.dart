@@ -1,3 +1,5 @@
+
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,26 +31,19 @@ class Plant {
   String zona;
   String telefone;
   String email;
-  double minXgraph;
-  double maxXgraph;
-  double maxYprod;
-  double maxYpump;
-  List<BarChartGroupData> producao;
-  List<BarChartGroupData> bombagem;
-
+  double minXgraph = 0;
+  double maxXgraph = 0;
+  double maxYprod = 0;
+  double maxYpump = 0;
+  List<BarChartGroupData> producao = <BarChartGroupData>[];
+  List<BarChartGroupData> bombagem = <BarChartGroupData>[];
   Plant(
       {required this.codigo,
       required this.nome,
       required this.gps,
       required this.zona,
       required this.telefone,
-      required this.email,
-      required this.minXgraph,
-      required this.maxXgraph,
-      required this.maxYprod,
-      required this.maxYpump,
-      required this.producao,
-      required this.bombagem});
+      required this.email });
 
   factory Plant.fromJson(Map<String, dynamic> data) {
     final codigo = data['PLN_Code'] as String;
@@ -59,12 +54,31 @@ class Plant {
     final zona = data['PLN_Zone'] as String;
     final telefone = data['PLN_Phone'] as String;
     final email = data['PLN_Email'] as String;
-    late List<BarChartGroupData> producao = [];
+
+
+    return Plant(
+        codigo: codigo,
+        nome: nome,
+        gps: gps,
+        zona: zona,
+        telefone: telefone,
+        email: email);
+  }
+
+  void set setChartData(dynamic data){
+
+
+     producao = [];
 
     final parsedJson = data['production'];
-    final mingraph = double.parse(data['production'][0]['x'].toString());
-    final maxgraph = double.parse(
-        data['production'][data['production'].length - 1]['x'].toString());
+    if(data['production'].length>0){
+      minXgraph =   double.parse(data['production'][0]['x'].toString()) ;
+      maxXgraph =  double.parse( data['production'][data['production'].length - 1]['x'].toString());
+    }else{
+      minXgraph =  0.0;
+      maxXgraph = 0.0;
+    }
+
     late double maxYgraphProd = 0;
 
     parsedJson.forEach((dynamic data) {
@@ -73,19 +87,19 @@ class Plant {
       }
       producao.add(
           BarChartGroupData(
-                x: int.parse(data['x'].toString()),
-                barRods: [
-                        BarChartRodData(
-                            gradient: _barsGradient,
-                            toY: double.parse(data['y'].toString())
+            x: int.parse(data['x'].toString()),
+            barRods: [
+              BarChartRodData(
+                  gradient: _barsGradient,
+                  toY: double.parse(data['y'].toString())
               )
             ],
-      ));
+          ));
     });
 
-    maxYgraphProd = maxYgraphProd + 5;
+    maxYprod = maxYgraphProd + 5;
 
-    List<BarChartGroupData> bombagem = [];
+      bombagem = [];
 
     final parsedJson2 = data['pumping'];
 
@@ -94,13 +108,13 @@ class Plant {
     parsedJson2.forEach((dynamic data) {
       bombagem.add(
           BarChartGroupData(
-              x: int.parse(data['x'].toString()),
-              barRods: [
-                BarChartRodData(
-                    gradient: _barsGradientPump,
-                    toY: double.parse(data['y'].toString())
-                )
-              ],
+            x: int.parse(data['x'].toString()),
+            barRods: [
+              BarChartRodData(
+                  gradient: _barsGradientPump,
+                  toY: double.parse(data['y'].toString())
+              )
+            ],
 
           ));
 
@@ -109,20 +123,7 @@ class Plant {
       }
     });
 
-    maxYgraphPump = maxYgraphPump + 5;
-
-    return Plant(
-        codigo: codigo,
-        nome: nome,
-        gps: gps,
-        zona: zona,
-        telefone: telefone,
-        email: email,
-        minXgraph: mingraph,
-        maxXgraph: maxgraph,
-        maxYprod: maxYgraphProd,
-        maxYpump: maxYgraphPump,
-        producao: producao,
-        bombagem: bombagem);
+    maxYpump = maxYgraphPump + 5;
   }
+
 }

@@ -1,6 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
-
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
+import 'package:euro_mobile/screens/timelineTest.dart';
+import 'package:euro_mobile/screens/widgets/my_arc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,75 +52,46 @@ List<Tab> tabs = [
   Tab(text: translate('remessas')),
   Tab(text: translate('bombagens')),
 ];
-var currentIndex = 0;
+var currentIndex = 1;
 var pageIndex = 1;
 var response;
-var limit = 10;
+var limit = 20;
 bool hasMore = true;
 bool postRequestLoading = false;
 bool firstLoad = true;
 bool noResults = false;
 var lengthsliver = 0;
 bool selectedorder = false;
+bool selectedInvoice = false;
+int downloadState = 0;
+
+String dir = "";
+var fileName = "";
+
+
+var dio = Dio(BaseOptions(
+    connectTimeout: 20000,
+    receiveTimeout: 20000,
+    baseUrl: ApiConstants.baseUrl,
+    contentType: 'application/json',
+    responseType: ResponseType.plain,
+    headers: ApiConstants.headers));
+
 
 class _PlantScreenWidgetState extends State<PlantScreen>
     with SingleTickerProviderStateMixin {
   TextEditingController textController = TextEditingController();
 
-  GetInvoice(String plantCode, String invoice, String tipoguia) async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
 
-    var url = ApiConstants.baseUrl +
-        ApiConstants.invoiceEndpoint +
-        '/file/?user=' +
-        ApiConstants.UserLogged +
-        '&token=' +
-        ApiConstants.ApiKey +
-        '&plant=' +
-        plantCode +
-        '&inv=' +
-        invoice +
-        '&type=' +
-        tipoguia;
-
-    var httpClient = http.Client();
-    var request = new http.Request('GET', Uri.parse(url));
-    var response = httpClient.send(request);
-
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    var fileName = invoice.replaceAll('/', '-') + '.pdf';
-    List<List<int>> chunks = [];
-
-    response.asStream().listen((http.StreamedResponse r) {
-      r.stream.listen((List<int> chunk) {
-        chunks.add(chunk);
-      }, onDone: () async {
-        // Save the file
-        File file = new File('$dir/$fileName');
-        int tamanho = int.parse(r.contentLength.toString());
-        final Uint8List bytes = Uint8List(tamanho);
-        int offset = 0;
-        for (List<int> chunk in chunks) {
-          bytes.setRange(offset, offset + chunk.length, chunk);
-          offset += chunk.length;
-        }
-        await file.writeAsBytes(bytes);
-        OpenFile.open("$dir/$fileName");
-        return;
-      });
-    });
-  }
-
-  late Order orderselected;
+  Order? orderselected;
+  Invoice? invoiceSelected;
   Future postRequest(int index, String plantCode, String dataInicio,
       String DataFim, int page) async {
+
     if(!postRequestLoading)
     {
 
-      var tempResp;
+
       bool localNoResults = false;
       bool localFirstLoad = false;
       setState(() {
@@ -129,7 +102,6 @@ class _PlantScreenWidgetState extends State<PlantScreen>
         guias = [];
         pedidos = [];
       }
-     // print(index);
       switch (index) {
         case 0:
           //TODO resumo
@@ -154,24 +126,25 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                 '${DataFim.replaceAll("/", "-")}';
 
             response =
-                await http.post(Uri.parse(url), headers: ApiConstants.headers);
-            var tempResp = await json.decode(response.body);
+                await await dio.post(url,  options: Options(headers: ApiConstants.headers));
+            var tempResp = await json.decode(response.data);
+
             if (tempResp != false && tempResp != null) {
 
 
-              final List parsedJson = await json.decode(response.body);
+              final List parsedJson = await json.decode(response.data);
 
               if (page == 1) {
                 pedidos = [];
               }
 
-              parsedJson.forEach((dynamic data) {
+              for (var data in parsedJson) {
                 pedidos.add(Order.fromJson(data));
                 if (Order.fromJson(data).totalrows ==
                     Order.fromJson(data).rownr) {
                   hasMore = false;
                 }
-              });
+              }
 
               setState(() {
                 lengthsliver = pedidos.length;
@@ -219,13 +192,13 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                 guias = [];
               }
 
-              parsedJson.forEach((dynamic data) {
+              for (var data in parsedJson) {
                 guias.add(Invoice.fromJson(data));
                 if (Invoice.fromJson(data).totalrows ==
                     Invoice.fromJson(data).rownr) {
                   hasMore = false;
                 }
-              });
+              }
               setState(() {
                 lengthsliver = guias.length;
                 pageIndex += 1;
@@ -256,6 +229,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
   String datarange = '01/05/2022 - 31/05/2022';
   var _scrollController;
   var _scrollController2;
+  var _scrollController3;
       late TabController _tabController;
 
   late CarouselSliderController _sliderController;
@@ -266,13 +240,15 @@ class _PlantScreenWidgetState extends State<PlantScreen>
     _sliderController = CarouselSliderController();
 
     selectedorder = false;
+    selectedInvoice = false;
     _scrollController = ScrollController();
     _scrollController2 = ScrollController();
-    _tabController = TabController(vsync: this, length: tabs.length);
+    _scrollController3 = ScrollController();
+    _tabController = TabController(vsync: this, length: tabs.length,initialIndex: currentIndex);
     super.initState();
     datainicio = DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.data));
     datafim = DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.data));
-    datarange = datainicio + ' - ' + datafim;
+    datarange = '$datainicio - $datafim';
 
     _valuesDate = PickerDateRange(
         DateTime.parse(widget.data), DateTime.parse(widget.data));
@@ -303,7 +279,8 @@ class _PlantScreenWidgetState extends State<PlantScreen>
       if(  !_tabController.indexIsChanging){
         setState(() {
           //print(_tabController.index);
-
+          selectedorder = false;
+          selectedInvoice = false;
           currentIndex = _tabController.index;
           pageIndex = 1;
           hasMore = true;
@@ -323,19 +300,21 @@ class _PlantScreenWidgetState extends State<PlantScreen>
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+
+          backgroundColor: AppColors.transparent,
+          bottomOpacity: 0.0,
           leading: IconButton(
-            icon: new Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon:   Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () {
               Navigator.pop(context, true);
             },
           ),
           elevation: 0,
-          backgroundColor: Color(0x00000000),
           actions: <Widget>[
             Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: IconButton(
-                  icon: new Icon(Icons.more_vert, color: Colors.white),
+                  icon:   Icon(Icons.more_vert, color: Colors.white),
                   onPressed: () {
                     showModalBottomSheet(
                       isScrollControlled: true,
@@ -456,8 +435,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                                       },
                                       child: Text(translate('aplicar'), style: TextStyle(color: AppColors.textColorOnDarkBG),),
                                       style: ElevatedButton.styleFrom(
-  elevation: 5,
-                                          primary: AppColors.buttonPrimaryColor),
+  elevation: 5, backgroundColor: AppColors.buttonPrimaryColor),
                                     )
                                   ],
                                 ));
@@ -507,11 +485,13 @@ class _PlantScreenWidgetState extends State<PlantScreen>
               return <Widget>[
                 SliverAppBar(
 
-                  forceElevated: true,
-                  floating: false,
+
                   automaticallyImplyLeading: false,
                   snap: false,
+
                   pinned: false,
+                  floating: false,
+                  forceElevated: innerBoxIsScrolled,
 
                   backgroundColor: Color(0x00000000),
                   flexibleSpace: FlexibleSpaceBar(
@@ -540,20 +520,22 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                                           child: Align(
                                             alignment: AlignmentDirectional(
                                                 0, 0),
-                                            child: Image.network(
-                                                'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
-                                                    centrallocal.gps.longitude
-                                                        .toString() +
-                                                    ',' +
-                                                    centrallocal.gps.latitude
-                                                        .toString() +
-                                                    ')/' +
-                                                    centrallocal.gps.longitude
-                                                        .toString() +
-                                                    ',' +
-                                                    centrallocal.gps.latitude
-                                                        .toString() +
-                                                    ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
+                                            child: CachedNetworkImage(
+                                              placeholder: (context, url) => const CircularProgressIndicator(),
+                                              imageUrl: 'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
+                                                  centrallocal.gps.longitude
+                                                      .toString() +
+                                                  ',' +
+                                                  centrallocal.gps.latitude
+                                                      .toString() +
+                                                  ')/' +
+                                                  centrallocal.gps.longitude
+                                                      .toString() +
+                                                  ',' +
+                                                  centrallocal.gps.latitude
+                                                      .toString() +
+                                                  ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw',
+                                            ),
                                           ),
                                         ),
                                       ))),
@@ -602,6 +584,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                   bottom: TabBar(
 
                     indicator: BoxDecoration(
+
                         color:   Colors.grey.withOpacity(0.1),
 
                         borderRadius: BorderRadius.circular(12),
@@ -609,6 +592,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                             color: Colors.transparent, width: 2)
                     ),
                      labelStyle: TextStyle(
+
                          shadows: <Shadow>[
                            Shadow(
                              color: Color(0xFF3ab1ff)
@@ -629,6 +613,7 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                     physics: BouncingScrollPhysics(),
                     enableFeedback: true,
 
+                    padding: EdgeInsets.only(bottom: 10),
                     tabs: tabs,
                     controller: _tabController,
                   ),
@@ -639,13 +624,14 @@ class _PlantScreenWidgetState extends State<PlantScreen>
           child: OrientationBuilder(
               builder: (_, orientation) {
 
-                if (orientation == Orientation.portrait)
+                if (orientation == Orientation.portrait) {
                   return TabBarView(
+
                       controller: _tabController,
                       children:
                       List<Widget>.generate(tabs.length, (index) =>  buildTabViews(index==currentIndex))
-                  ); // if orientation is portrait, show your portrait layout
-                else
+                  );
+                } else {
                   return Row(
                     children: [
                       Container(
@@ -658,10 +644,12 @@ class _PlantScreenWidgetState extends State<PlantScreen>
                         ),
                       ),
                       Expanded(
-                        child: (selectedorder) ? OrderDetailsLandScape(orderselected) : Container()
+                        child: sideViewDetails()
+
                       )
                     ],
-                  ); // else show the landscape one
+                  );
+                } // else show the landscape one
               }
           )
             ),
@@ -671,37 +659,57 @@ class _PlantScreenWidgetState extends State<PlantScreen>
       ),
     );
   }
+  sideViewDetails(){
+    switch(currentIndex) {
+      case 1:
+        return (selectedorder) ? OrderDetailsLandScape(orderselected!) : Container();
+       case 2:
+      case 3:
+      return (selectedInvoice) ? InvoiceDetailsLandScape(invoiceSelected!) : Container();
 
+    }
+    return Container();
+  }
   Widget buildTabViews(tabIndex) {
 
    if(tabIndex){
 
      if ((!postRequestLoading && !noResults) || !firstLoad) {
-       return  CustomScrollView(
+       return  MediaQuery.removePadding(
+         context: context,
+         removeTop: true,
+         child:
+         CupertinoScrollbar(
 
-           slivers: [
-             SliverList(
-                 delegate: SliverChildBuilderDelegate(
-                       (BuildContext context, int index) {
-                     switch (currentIndex) {
-                       case 1:
-                         if (pedidos.isNotEmpty) {
-                           return buildCardOrder(pedidos[index]);
-                         }
-                         break;
+           controller: _scrollController3,
+           child: CustomScrollView(
+      controller: _scrollController3,
 
-                       case 2:
-                       case 3:
-                         if (guias.isNotEmpty) {
-                           return buildCardInvoice(guias[index]);
+               slivers: [
+                 SliverList(
+                     delegate: SliverChildBuilderDelegate(
+                           (BuildContext context, int index) {
+                         switch (currentIndex) {
+                           case 1:
+                             if (pedidos.isNotEmpty) {
+                               return buildCardOrder(pedidos[index]);
+                             }
+                             break;
+
+                           case 2:
+                           case 3:
+                             if (guias.isNotEmpty) {
+                               return buildCardInvoice(guias[index]);
+                             }
+                             break;
                          }
-                         break;
-                     }
-                     return Container();
-                   },
-                   // 40 list items
-                   childCount: lengthsliver,
-                 ))]);
+                         return Container();
+                       },
+                       // 40 list items
+                       childCount: lengthsliver,
+                     ))]),
+         ),
+       );
 
      }
      else {
@@ -731,146 +739,176 @@ class _PlantScreenWidgetState extends State<PlantScreen>
   }
 
   Widget buildCardInvoice(Invoice guia) {
-    return GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-              PageRouteBuilder(
-                  fullscreenDialog: true,
-                  pageBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation) {
-                    return InvoiceDetail(central: widget.central, guia: guia);
-                  },
-                  transitionDuration: Duration(milliseconds: 300),
-                  transitionsBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation,
-                      Widget child,) {
-                    return SlideTransition(
 
-                      position: Tween<Offset>(
-                        begin: const Offset(0.0, 1.0),
-                        end: Offset.zero,
-                      ).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.fastOutSlowIn,
+
+    if (MediaQuery.of(context).orientation == Orientation.portrait){
+
+      return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+                PageRouteBuilder(
+                    fullscreenDialog: true,
+                    pageBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation) {
+                      return InvoiceDetail(central: widget.central, guia: guia);
+                    },
+                    transitionDuration: Duration(milliseconds: 300),
+                    transitionsBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child,) {
+                      return SlideTransition(
+
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, 1.0),
+                          end: Offset.zero,
+                        ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.fastOutSlowIn,
+                            )),
+                        child: child, // child is the value returned by pageBuilder
+                      );
+                    }
+                )
+            );
+          },
+          child: invoiceCard(guia));
+    }// if orientation is portrait, show your portrait layout
+    else {
+      return GestureDetector(
+          onTap: () {
+
+            setState(() {
+
+              clipboard.add(guia.obra.cliente.nome);
+              clipboard.add(guia.obra.nome);
+              clipboard.add(guia.receita);
+              if(guia.codigo != invoiceSelected?.codigo){
+                selectedInvoice = true;
+                invoiceSelected = guia;
+              }else{
+                selectedInvoice = !selectedInvoice;
+
+              }
+
+            });
+          },
+          child: invoiceCard(guia));
+    }
+  }
+
+  Widget invoiceCard(Invoice guia){
+    return Container(
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      decoration: BoxDecoration(
+        color: Color(0x00000000),
+        border: Border.all(width: 0, color: Color(0x00000000)),
+      ),
+      child: Card(
+        color: Color(0xFF172842),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10), // if you need this
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        child: ListTile(
+          dense: true,
+          contentPadding:
+          EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+
+                guia.prod_delivered.toString() + ' m³',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white),
+              ),
+            ],
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                guia.codigo,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF40a1f0),
+                  shadows: <Shadow>[
+                    Shadow(
+                      color: Color(0xFF3ab1ff).withOpacity(0.5),
+                      //spreadRadius: 3,
+                      blurRadius: 3,
+                    )
+                  ],
+                ),
+              ),
+              Text(guia.data_hora,
+                  style: TextStyle(fontSize: 12, color: Colors.white)),
+            ],
+          ),
+
+          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+          subtitle: Column(
+            children: <Widget>[
+              Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                            child: Text(
+                              guia.obra.cliente.nome,
+                              overflow: TextOverflow.fade,
+                              maxLines: 1,
+                              softWrap: false,
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8)),
+                            )),
+                      ])),
+              Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: Text(
+                            guia.obra.nome,
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            softWrap: false,
+                            style:
+                            TextStyle(color: Colors.white.withOpacity(0.8)),
                           )),
-                      child: child, // child is the value returned by pageBuilder
-                    );
-                  }
-              )
-          );
-        },
-        child: Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
-          decoration: BoxDecoration(
-            color: Color(0x00000000),
-            border: Border.all(width: 0, color: Color(0x00000000)),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Container(
+                            padding: EdgeInsets.only(left: 10,
+                                right: 10,
+                                top: 3,
+                                bottom: 3),
+                            decoration: BoxDecoration(color: AppColors
+                                .backgroundBlue,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Text(
+                              guia.rownr + '/' + guia.totalrows,
+                              style: TextStyle(color: Colors.white),
+                            )),
+                      )
+                    ],
+                  )),
+            ],
           ),
-          child: Card(
-            color: Color(0xFF172842),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // if you need this
-            ),
-            margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            child: ListTile(
-              dense: true,
-              contentPadding:
-              EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              leading: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-
-                    guia.prod_delivered.toString() + ' m³',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.white),
-                  ),
-                ],
-              ),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    guia.codigo,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF40a1f0),
-                      shadows: <Shadow>[
-                        Shadow(
-                          color: Color(0xFF3ab1ff).withOpacity(0.5),
-                          //spreadRadius: 3,
-                          blurRadius: 3,
-                        )
-                      ],
-                    ),
-                  ),
-                  Text(guia.data_hora,
-                      style: TextStyle(fontSize: 12, color: Colors.white)),
-                ],
-              ),
-
-              // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-              subtitle: Column(
-                children: <Widget>[
-                  Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                                child: Text(
-                                  guia.obra.cliente.nome,
-                                  overflow: TextOverflow.fade,
-                                  maxLines: 1,
-                                  softWrap: false,
-                                  style: TextStyle(
-                                      color: Colors.white.withOpacity(0.8)),
-                                )),
-                          ])),
-                  Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                              child: Text(
-                                guia.obra.nome,
-                                overflow: TextOverflow.fade,
-                                maxLines: 1,
-                                softWrap: false,
-                                style:
-                                TextStyle(color: Colors.white.withOpacity(0.8)),
-                              )),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15),
-                            child: Container(
-                                padding: EdgeInsets.only(left: 10,
-                                    right: 10,
-                                    top: 3,
-                                    bottom: 3),
-                                decoration: BoxDecoration(color: AppColors
-                                    .backgroundBlue,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Text(
-                                  guia.rownr + '/' + guia.totalrows,
-                                  style: TextStyle(color: Colors.white),
-                                )),
-                          )
-                        ],
-                      )),
-                ],
-              ),
-            ),
-          ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget buildCardOrder(Order pedido) {
@@ -910,22 +948,33 @@ class _PlantScreenWidgetState extends State<PlantScreen>
             },
             child: OrderCard(pedido));
         }// if orientation is portrait, show your portrait layout
-        else
+        else {
           return GestureDetector(
               onTap: () {
-                print('pressed');
 
                 setState(() {
 
                   clipboard.add(pedido.obra.cliente.nome);
                   clipboard.add(pedido.obra.nome);
                   clipboard.add(pedido.receita);
+                  if(orderselected != null){
+                    if(pedido.codref != orderselected?.codref){
+                      selectedorder = true;
+                      orderselected = pedido;
+                    }else{
+                      selectedorder = !selectedorder;
 
-                  selectedorder = true;
-                  orderselected = pedido;
+                    }
+                  }else{
+                    selectedorder = true;
+                    orderselected = pedido;
+                  }
+
+
                 });
               },
-              child: OrderCard(pedido)); // else show the landscape one
+              child: OrderCard(pedido));
+        } // else show the landscape one
   }
 
   Widget OrderCard(Order pedido){
@@ -1123,211 +1172,497 @@ class _PlantScreenWidgetState extends State<PlantScreen>
             borderRadius: BorderRadius.circular(10), // if you need this
           ),
           margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(10),
-                  controller: _scrollController2,
-                  physics: BouncingScrollPhysics(),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height,
-                    child: Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 110,
-                              child: Padding(
-                                  padding: const EdgeInsets.only(left: 35),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
+            child: MediaQuery.removePadding(
+
+              context: context,
+              removeTop: true,
+
+              child: CupertinoScrollbar(
+                controller: _scrollController2,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(10),
+                      controller: _scrollController2,
+                      physics: BouncingScrollPhysics(),
+                      child:   Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 110,
+                                  child: Padding(
+                                      padding: const EdgeInsets.only(left: 35),
+                                      child: Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            pedidolocal.cod,
-                                            style: TextStyle(
-                                                color:
-                                                AppColors.textColorOnDarkBG,
-                                                fontSize: 20),
+                                          Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                pedidolocal.cod,
+                                                style: TextStyle(
+                                                    color:
+                                                    AppColors.textColorOnDarkBG,
+                                                    fontSize: 20),
+                                              ),
+                                              Text(
+                                                pedidolocal.date,
+                                                style: TextStyle(
+                                                    color:
+                                                    AppColors.textColorOnDarkBG,
+                                                    fontSize: 15),
+                                              ),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              Text(
+                                                pedidolocal.codref,
+                                                style: TextStyle(
+                                                    color:
+                                                    AppColors.textColorOnDarkBG,
+                                                    fontSize: 15),
+                                              ),
+                                            ],
                                           ),
-                                          Text(
-                                            pedidolocal.date,
-                                            style: TextStyle(
-                                                color:
-                                                AppColors.textColorOnDarkBG,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          Text(
-                                            pedidolocal.codref,
-                                            style: TextStyle(
-                                                color:
-                                                AppColors.textColorOnDarkBG,
-                                                fontSize: 15),
+                                          Flexible(
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.only(top: 55),
+                                                  child: gauges.SfRadialGauge(
+                                                      enableLoadingAnimation: false,
+                                                      animationDuration: 2000,
+                                                      axes: <gauges.RadialAxis>[
+                                                        gauges.RadialAxis(
+                                                          canScaleToFit: true,
+                                                          showLastLabel: true,
+                                                          maximumLabels: pedidolocal
+                                                              .prod_desired
+                                                              .toInt(),
+                                                          showLabels: true,
+                                                          showTicks: true,
+                                                          startAngle: 180,
+                                                          endAngle: 0,
+                                                          interval: pedidolocal
+                                                              .prod_desired /
+                                                              5,
+                                                          radiusFactor: 2.5,
+                                                          maximum: pedidolocal
+                                                              .prod_desired,
+                                                          canRotateLabels: true,
+                                                          pointers: <gauges.GaugePointer>[
+                                                            gauges.RangePointer(
+                                                                gradient:
+                                                                SweepGradient(
+                                                                    colors: [
+                                                                      const Color(
+                                                                          0xFF3a9bea),
+                                                                      const Color(
+                                                                          0xFF2E4E7C),
+                                                                      const Color(
+                                                                          0xFF132642),
+                                                                    ]
+                                                                        .reversed
+                                                                        .toList(),
+                                                                    stops: <double>[
+                                                                      0.2,
+                                                                      0.5,
+                                                                      0.8
+                                                                    ]),
+                                                                value: pedidolocal
+                                                                    .prod_delivered,
+                                                                width: 0.1,
+                                                                color: AppColors
+                                                                    .buttonPrimaryColor,
+                                                                sizeUnit:
+                                                                gauges.GaugeSizeUnit
+                                                                    .factor,
+                                                                cornerStyle:
+                                                                gauges.CornerStyle
+                                                                    .bothCurve),
+                                                            if (pedidolocal
+                                                                .prod_delivered >
+                                                                0 &&
+                                                                pedidolocal
+                                                                    .prod_delivered <
+                                                                    pedidolocal
+                                                                        .prod_desired) ...[
+                                                              gauges.MarkerPointer(
+                                                                  value: pedidolocal
+                                                                      .prod_delivered,
+                                                                  markerOffset: -5,
+                                                                  color:
+                                                                  Colors.white),
+                                                              gauges.WidgetPointer(
+                                                                offset: -20,
+                                                                value: pedidolocal
+                                                                    .prod_delivered,
+                                                                child: Text(
+                                                                  pedidolocal
+                                                                      .prod_delivered
+                                                                      .toString(),
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize: 12,
+                                                                      fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                                ),
+                                                              ),
+                                                            ]
+                                                          ],
+                                                        )
+                                                      ]),
+                                                ),
+                                                Center(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(
+                                                          top: 70),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            (pedidolocal.prod_delivered /
+                                                                pedidolocal
+                                                                    .prod_desired *
+                                                                100)
+                                                                .round()
+                                                                .toString() +
+                                                                '%',
+                                                            style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                FontWeight.bold),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ))
+                                              ],
+                                            ),
                                           ),
                                         ],
+                                      )),
+                                ),
+                                SizedBox(
+                                  height: 25,
+                                ),
+                                buildCard(
+                                    0,
+                                    translate('cliente'),
+                                    [
+                                      pedidolocal.obra.cliente.codigo,
+                                      pedidolocal.obra.cliente.nome
+                                    ],
+                                    null,
+                                    null),
+                                buildCard(
+                                    1,
+                                    translate('obra'),
+                                    [
+                                      pedidolocal.obra.codigo,
+                                      pedidolocal.obra.nome
+                                    ],
+                                    Icon(Icons.chevron_right, color: Colors.white),
+                                    WorkplaceScreen(pedidolocal.obra)),
+                                buildCard(
+                                    2,
+                                    translate('composicao'),
+                                    [pedidolocal.cod_receita, pedidolocal.receita],
+                                    null,
+                                    null),
+                              ],
+                            )),
+                ),
+              ),
+            ),
+            ));
+  }
+
+
+  Widget downloadProgress(int state) {
+    switch (state) {
+      case 0: //idle
+        return Icon(
+          Icons.file_download,
+          color: AppColors.textColorOnDarkBG,
+        );
+
+      case 1: //loading
+        return SizedBox(
+          height: 20,
+          width: 20,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: Colors.white,
+            backgroundColor: Colors.transparent,
+          ),
+        );
+
+      case 2: //sucess
+        return Icon(
+          Icons.file_download_done,
+          color: AppColors.textColorOnDarkBG,
+        );
+
+      default:
+        return Container();
+    }
+  }
+  getDir(String inv) async{
+    String localdir = (await getApplicationDocumentsDirectory()).path;
+    var fileNamedir = inv.replaceAll('/', '-') + '.pdf';
+
+    bool exists = await File("$localdir/$fileNamedir").exists();
+
+    setState(() {
+      dir = localdir;
+      fileName = fileNamedir;
+
+      if(exists){
+        downloadState = 2;
+      }
+
+    });
+  }
+  Future<void> GetInvoice(
+      String plantCode, String invoice, String tipoguia) async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+
+    String localdir = (await getApplicationDocumentsDirectory()).path;
+    var fileNamedir = invoice.replaceAll('/', '-') + '.pdf';
+
+    var url = ApiConstants.baseUrl +
+        ApiConstants.invoiceEndpoint +
+        '/file/?user=' +
+        ApiConstants.UserLogged +
+        '&token=' +
+        ApiConstants.ApiKey +
+        '&plant=' +
+        plantCode +
+        '&inv=' +
+        invoice +
+        '&type=' +
+        tipoguia;
+
+    var httpClient = http.Client();
+    var request = new http.Request('GET', Uri.parse(url));
+    response = httpClient.send(request);
+
+    List<List<int>> chunks = [];
+    response.asStream().listen((http.StreamedResponse r) {
+      r.stream.listen((List<int> chunk) {
+        chunks.add(chunk);
+      }, onDone: () async {
+        // Save the file
+
+        File file = new File('$localdir/$fileNamedir');
+        int tamanho = int.parse(r.contentLength.toString());
+        final Uint8List bytes = Uint8List(tamanho);
+        int offset = 0;
+        for (List<int> chunk in chunks) {
+          bytes.setRange(offset, offset + chunk.length, chunk);
+          offset += chunk.length;
+        }
+        await file.writeAsBytes(bytes);
+
+        setState(() {
+          dir = localdir;
+          fileName = fileNamedir;
+          downloadState = 2;
+        });
+        return;
+      });
+    });
+  }
+  Widget InvoiceDetailsLandScape(Invoice guialocal){
+
+
+
+
+
+    return Card(
+      color: Color(0xFF172842),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10), // if you need this
+      ),
+      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      child: MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        child: CupertinoScrollbar(
+          controller: _scrollController2,
+          child: SingleChildScrollView(
+            controller: _scrollController2,
+            physics: BouncingScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.only(top: 25),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0, right: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  switch (downloadState) {
+                                    case 0: //idle
+                                      GetInvoice(widget.central.codigo, guialocal.codigo,
+                                          guialocal.inv_type);
+                                      downloadState = 1;
+                                      break;
+
+                                    case 1:
+                                      break;
+
+                                    case 2:
+                                      OpenFile.open("$dir/$fileName");
+                                      break;
+                                  }
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 20.0),
+                                child: downloadProgress(downloadState),
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 70.0, left: 35),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                guialocal.codigo,
+                                style: TextStyle(
+                                    color: AppColors.textColorOnDarkBG,
+                                    fontSize: 20),
+                              ),
+                              Text(
+                                guialocal.data_hora.substring(0, 10),
+                                style: TextStyle(
+                                    color: AppColors.textColorOnDarkBG,
+                                    fontSize: 15),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                guialocal.ord_code,
+                                style: TextStyle(
+                                    color: AppColors.textColorOnDarkBG,
+                                    fontSize: 15),
+                              ),
+                            ],
+                          ),
+                          Stack(
+                            children: [
+                              Center(
+                                  child: CustomPaint(
+                                    painter: MyPainter(),
+                                    size: Size(80, 80),
+                                  )),
+                              Container(
+                                  width: 80,
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        guialocal.prod_delivered.toString(),
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 28, height:1.5),
                                       ),
-                                      Flexible(
-                                        child: Stack(
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.only(top: 55),
-                                              child: gauges.SfRadialGauge(
-                                                  enableLoadingAnimation: false,
-                                                  animationDuration: 2000,
-                                                  axes: <gauges.RadialAxis>[
-                                                    gauges.RadialAxis(
-                                                      canScaleToFit: true,
-                                                      showLastLabel: true,
-                                                      maximumLabels: pedidolocal
-                                                          .prod_desired
-                                                          .toInt(),
-                                                      showLabels: true,
-                                                      showTicks: true,
-                                                      startAngle: 180,
-                                                      endAngle: 0,
-                                                      interval: pedidolocal
-                                                          .prod_desired /
-                                                          5,
-                                                      radiusFactor: 2.5,
-                                                      maximum: pedidolocal
-                                                          .prod_desired,
-                                                      canRotateLabels: true,
-                                                      pointers: <gauges.GaugePointer>[
-                                                        gauges.RangePointer(
-                                                            gradient:
-                                                            SweepGradient(
-                                                                colors: [
-                                                                  const Color(
-                                                                      0xFF3a9bea),
-                                                                  const Color(
-                                                                      0xFF2E4E7C),
-                                                                  const Color(
-                                                                      0xFF132642),
-                                                                ]
-                                                                    .reversed
-                                                                    .toList(),
-                                                                stops: <double>[
-                                                                  0.2,
-                                                                  0.5,
-                                                                  0.8
-                                                                ]),
-                                                            value: pedidolocal
-                                                                .prod_delivered,
-                                                            width: 0.1,
-                                                            color: AppColors
-                                                                .buttonPrimaryColor,
-                                                            sizeUnit:
-                                                            gauges.GaugeSizeUnit
-                                                                .factor,
-                                                            cornerStyle:
-                                                            gauges.CornerStyle
-                                                                .bothCurve),
-                                                        if (pedidolocal
-                                                            .prod_delivered >
-                                                            0 &&
-                                                            pedidolocal
-                                                                .prod_delivered <
-                                                                pedidolocal
-                                                                    .prod_desired) ...[
-                                                          gauges.MarkerPointer(
-                                                              value: pedidolocal
-                                                                  .prod_delivered,
-                                                              markerOffset: -5,
-                                                              color:
-                                                              Colors.white),
-                                                          gauges.WidgetPointer(
-                                                            offset: -20,
-                                                            value: pedidolocal
-                                                                .prod_delivered,
-                                                            child: Text(
-                                                              pedidolocal
-                                                                  .prod_delivered
-                                                                  .toString(),
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                            ),
-                                                          ),
-                                                        ]
-                                                      ],
-                                                    )
-                                                  ]),
-                                            ),
-                                            Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      top: 70),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        (pedidolocal.prod_delivered /
-                                                            pedidolocal
-                                                                .prod_desired *
-                                                            100)
-                                                            .round()
-                                                            .toString() +
-                                                            '%',
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ))
-                                          ],
-                                        ),
+
+                                      Text(
+
+                                        'm³',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20, height:0.8),
                                       ),
+
                                     ],
                                   )),
-                            ),
-                            SizedBox(
-                              height: 25,
-                            ),
-                            buildCard(
-                                0,
-                                translate('cliente'),
-                                [
-                                  pedidolocal.obra.cliente.codigo,
-                                  pedidolocal.obra.cliente.nome
-                                ],
-                                null,
-                                null),
-                            buildCard(
-                                1,
-                                translate('obra'),
-                                [
-                                  pedidolocal.obra.codigo,
-                                  pedidolocal.obra.nome
-                                ],
-                                Icon(Icons.chevron_right, color: Colors.white),
-                                WorkplaceScreen(pedidolocal.obra)),
-                            buildCard(
-                                2,
-                                translate('composicao'),
-                                [pedidolocal.cod_receita, pedidolocal.receita],
-                                null,
-                                null),
-                          ],
-                        )),
-                  )),
-            ));
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    buildCard(
+                        0,
+                        translate('cliente'),
+                        [
+                          guialocal.obra.cliente.codigo,
+                          guialocal.obra.cliente.nome
+                        ],
+                        null,
+                        null),
+                    buildCard(
+                        1,
+                        translate('obra'),
+                        [guialocal.obra.codigo, guialocal.obra.nome],
+                        Icon(Icons.chevron_right, color: Colors.white),
+                        WorkplaceScreen(guialocal.obra)),
+                    buildCard(2, translate('composicao'),
+                        [guialocal.cod_receita, guialocal.receita], null, null),
+                    buildCard(3, translate('camiao'),
+                        [guialocal.camiao, guialocal.motorista], null, null),
+                    DeliveryTimeline(
+                        timeList: [
+                          guialocal.data_hora.substring(11), //inicio carga
+                          //guialocal.fimcarga, //fim carga
+                          guialocal.saidacentral, //saida central
+                          guialocal.chegadaobra, //chegada obra
+                          guialocal.iniciodescarga, //inicio descarga
+                          guialocal.saidaobra, //saida obra
+                          guialocal.chegadacentral //chegada central
+                        ],
+                        lastTimestmp: (guialocal.chegadacentral != "")
+                            ? 6
+                            : (guialocal.saidaobra != "")
+                            ? 5
+                            : (guialocal.iniciodescarga != "")
+                            ? 4
+                            :  (guialocal.chegadaobra != "")
+                            ? 3
+                            :  (guialocal.saidacentral != "")
+                            ? 2
+                            : 1,
+                        inv_type: guialocal.inv_type)
+                  ],
+                ),
+              ),
+            ),
+        ),
+      ),
+
+    );
   }
 
   Widget buildCard(int indexCard, String titulo, List<String> subtitulo,

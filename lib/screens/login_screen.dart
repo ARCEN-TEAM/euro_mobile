@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -13,7 +14,6 @@ import 'main_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
-import '../localization/keys.dart';
 
 
 
@@ -27,6 +27,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _https = false;
   bool _rememberMe = false;
   bool _passwordVisible = false;
+  var dio = Dio(BaseOptions(
+      connectTimeout: 20000,
+      receiveTimeout: 20000,
+      baseUrl: ApiConstants.baseUrl,
+      contentType: 'application/json',
+      responseType: ResponseType.plain,
+      headers: ApiConstants.headers));
 
   @override
   void initState() {
@@ -148,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildForgotPasswordBtn() {
+ /* Widget _buildForgotPasswordBtn() {
     return Container(
       alignment: Alignment.centerRight,
       child: TextButton(
@@ -162,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _buildRememberMeCheckbox() {
     return Container(
@@ -240,49 +247,78 @@ class _LoginScreenState extends State<LoginScreen> {
         '&psw=' +
         senha;
 
-     response =
-        await http.post(Uri.parse(url), headers: ApiConstants.headers);
-    final res = json.decode(response.body);
+     try {
+       response =
+          await dio.get(url,
+              options: Options(
+                headers:  ApiConstants.headers
+              ));
+           final res = json.decode(response.data);
 
-    try {
-      if (res.containsKey('token')) {
-        ApiConstants.ApiKey = res['token'];
-        ApiConstants.UserLogged = login;
-        ApiConstants.UserPlants = (res['plantGroups']).cast<String>();
-      }
-    } catch (error) {
-      ApiConstants.ApiKey = '';
 
-    }
+       try {
+         if (res.containsKey('token')) {
+           ApiConstants.ApiKey = res['token'];
+           ApiConstants.UserLogged = login;
+           ApiConstants.UserPlants = (res['plantGroups']).cast<String>();
+         }
+       } catch (error) {
+         ApiConstants.ApiKey = '';
 
-    if (ApiConstants.ApiKey != '') {
-      setState(() {
-        isAuthenticating = false;
-      });
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainScreen(username: login)),
-      );
-    } else {
-      setState(() {
-        isAuthenticating=false;
-      });
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text(translate('erro')),
-              content: Text(translate('credenciais_erradas')),
-              actions: <Widget>[
-                TextButton(
-                    child: Text("OK"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    })
-              ]);
-        },
-      );
-    }
+       }
+
+       if (ApiConstants.ApiKey != '') {
+         setState(() {
+           isAuthenticating = false;
+         });
+         Navigator.pushReplacement(
+           context,
+           MaterialPageRoute(builder: (context) => MainScreen(username: login)),
+         );
+       } else {
+         setState(() {
+           isAuthenticating=false;
+         });
+         showDialog(
+           context: context,
+           builder: (context) {
+             return AlertDialog(
+                 title: Text(translate('erro')),
+                 content: Text(translate('credenciais_erradas')),
+                 actions: <Widget>[
+                   TextButton(
+                       child: Text("OK"),
+                       onPressed: () {
+                         Navigator.pop(context);
+                       })
+                 ]);
+           },
+         );
+       }
+     }  catch (e) {
+       print(e);
+       setState(() {
+         isAuthenticating = false;
+       });
+       showDialog(
+         context: context,
+         builder: (context) {
+           return AlertDialog(
+             backgroundColor:   AppColors.cardBackgroundColor,
+               title: Text(translate('erro'),style: TextStyle(color: AppColors.textColorOnDarkBG),),
+               content: Text(translate('Conexão expirou'),style: TextStyle(color: AppColors.textColorOnDarkBG),),
+               actions: <Widget>[
+                 TextButton(
+                     child: Text("OK"),
+                     onPressed: () {
+                       Navigator.pop(context);
+                     })
+               ]);
+         },
+       );
+      print(e);
+     }
+
     return response;
   }
 

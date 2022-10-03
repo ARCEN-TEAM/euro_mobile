@@ -277,7 +277,7 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                 DeliveryTimeline(
                   timeList: [
                     widget.guia.data_hora.substring(11), //inicio carga
-                    widget.guia.fimcarga, //fim carga
+                    //widget.guia.fimcarga, //fim carga
                     widget.guia.saidacentral, //saida central
                     widget.guia.chegadaobra, //chegada obra
                     widget.guia.iniciodescarga, //inicio descarga
@@ -285,19 +285,17 @@ class InvoiceDetailState extends State<InvoiceDetail> {
                     widget.guia.chegadacentral //chegada central
                   ], 
                   lastTimestmp: (widget.guia.chegadacentral != "")
-                      ? 7
+                      ? 6
                       : (widget.guia.saidaobra != "")
-                        ? 6
+                        ? 5
                         : (widget.guia.iniciodescarga != "")
-                          ? 5
+                          ? 4
                           :  (widget.guia.chegadaobra != "")
-                            ? 4
+                            ? 3
                             :  (widget.guia.saidacentral != "")
-                              ? 3
-                              :  (widget.guia.fimcarga != "")
-                                ? 2
-                                : 1,
-                  inv_type: widget.guia.inv_type,)
+                              ? 2
+                              : 1,
+                  inv_type: widget.guia.inv_type)
               ],
             ),
           ),

@@ -65,7 +65,7 @@ class ApiConstants {
   static String plantEndpoint = '/plant';
   static String testEndpoint = '/test';
   static String invoiceEndpoint = '/invoice';
-  static Map<String, String> headers = {"Content-Type": "application/json", "Location": "https://unibetaodev.secil.pt"};
+  static Map<String, String> headers = {"Content-Type": "application/json", "Location": "https://unibetao.secil.pt"};
   //static Color mainColor = Color(0xFF73AEF5);
   static Color mainColor = Color(0xFF1d4d73);
   static String UserLogged = '';

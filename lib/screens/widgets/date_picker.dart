@@ -48,7 +48,7 @@ class _DatePickerState extends State<DatePicker> {
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) => GestureDetector(
                   onTap: () => setState(() {
-                    print('mudou' + index.toString());
+
                     selected = index;
 
                   }),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,6 @@ import '../classes/workplace.dart';
 import '../classes/utils.dart';
 import '../classes/MapUtils.dart';
 import '../utilities/constants.dart';
-import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 
 class WorkplaceScreen extends StatefulWidget {
   const WorkplaceScreen(this.obra);
@@ -114,16 +114,18 @@ class _WorkplaceScreenWidgetState extends State<WorkplaceScreen> {
                                       ),
                                       child: Align(
                                         alignment: AlignmentDirectional(0, 0),
-                                        child: Image.network(
-                                            'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
-                                                obralocal.gps.longitude.toString() +
-                                                ',' +
-                                                obralocal.gps.latitude.toString() +
-                                                ')/' +
-                                                obralocal.gps.longitude.toString() +
-                                                ',' +
-                                                obralocal.gps.latitude.toString() +
-                                                ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw'),
+                                        child: CachedNetworkImage(
+                                          placeholder: (context, url) => const CircularProgressIndicator(),
+                                          imageUrl: 'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-l+aa001a(' +
+                                            obralocal.gps.longitude.toString() +
+                                            ',' +
+                                            obralocal.gps.latitude.toString() +
+                                            ')/' +
+                                            obralocal.gps.longitude.toString() +
+                                            ',' +
+                                            obralocal.gps.latitude.toString() +
+                                            ',17.00,0/400x400?access_token=sk.eyJ1IjoiYXJjZW4tZW5nZW5oYXJpYSIsImEiOiJjbDNsbHFibjIwMWY4M2pwajBscDNhMm9vIn0.bGRvEk1qIOvE2tMlriJwTw',
+                                        ),
                                       ),
                                     ),
                                   )),

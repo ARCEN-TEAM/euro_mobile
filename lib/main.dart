@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/login_screen.dart';
@@ -14,6 +16,10 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent, // transparent status bar
   ));
+  ByteData data = await PlatformAssetBundle().load('assets/ca/secil-pt.pem');
+  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
+    data = await PlatformAssetBundle().load('assets/ca/api-mapbox-com.pem');
+  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
 
   var delegate = await LocalizationDelegate.create(
       fallbackLocale: 'pt',
@@ -48,7 +54,7 @@ class MyApp extends StatelessWidget {
     StorageService.writeSecureData(token);
 
     var localizationDelegate = LocalizedApp.of(context).delegate;
-
+    sleep(Duration(seconds: 1));
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
       child: MaterialApp(
@@ -76,6 +82,8 @@ class MyApp extends StatelessWidget {
           splashFactory: NoSplash.splashFactory,
           appBarTheme: AppBarTheme(
             color: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0.0,
           ),
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.blue,
@@ -99,7 +107,9 @@ class MyApp extends StatelessWidget {
 
           appBarTheme: AppBarTheme(
             color: Colors.transparent,
-            iconTheme: IconThemeData(
+              elevation: 0,
+              scrolledUnderElevation: 0.0,
+              iconTheme: IconThemeData(
               color: AppColors.textColorOnDarkBG
             )
           ),

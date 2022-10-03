@@ -62,4 +62,12 @@ class Order {
         statusColor:statusColor,
     );
   }
+    remove(){
+      id= "";
+      cod= "";
+      codref= "";
+      cod_receita= "";
+    }
+
+
 }

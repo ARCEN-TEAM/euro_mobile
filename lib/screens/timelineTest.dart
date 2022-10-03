@@ -1,20 +1,10 @@
 import 'package:euro_mobile/classes/constants.dart';
-import 'package:euro_mobile/screens/PlantDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 
-var deliverySteps = [
-  translate('inicio_carga'),
-  translate('saida_central'),
-  translate('chegada_obra'),
-  translate('inicio_descarga'),
-  translate('fim_descarga'),
-  translate('saida_obra'),
-  translate('chegada_central'),
-];
 
 class DeliveryTimeline extends StatelessWidget {
   late final List<String> timeList;
@@ -22,11 +12,12 @@ class DeliveryTimeline extends StatelessWidget {
   late int lastTimestmp;
   late int currentStep;
   late ScrollController _scrollController;
-
+  var deliverySteps;
 
     DeliveryTimeline ( {required this.timeList,required this.lastTimestmp, required this.inv_type})  {
          _scrollController = ScrollController();
           currentStep = lastTimestmp;
+
 
          if(inv_type!="1"){
            deliverySteps = [
@@ -35,6 +26,15 @@ class DeliveryTimeline extends StatelessWidget {
              translate('fim_descarga'),
              translate('saida_obra'),
            ];
+         }else{
+      deliverySteps = [
+      translate('inicio_carga'),
+      translate('saida_central'),
+      translate('chegada_obra'),
+      translate('inicio_descarga'),
+      translate('saida_obra'),
+      translate('chegada_central'),
+      ];
          }
        }
 
@@ -96,11 +96,6 @@ class DeliveryTimeline extends StatelessWidget {
 
 }
 
-class _DeliveryTimelineState  {
-
-
-
-}
 
 enum _DeliveryStatus { done, doing, todo }
 
@@ -207,6 +202,5 @@ class _IndicatorDelivery extends StatelessWidget {
           ),
         );
     }
-    return Container();
   }
 }

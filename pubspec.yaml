@@ -34,6 +34,9 @@ dependencies:
   flutter_carousel_slider: ^1.0.9
   flutter_animation_progress_bar: ^2.2.1
   timeline_tile: ^2.0.0
+  cached_network_image: ^3.2.2
+  dio: ^4.0.6
+  flutter_native_splash: ^2.2.9
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +49,7 @@ flutter:
   assets:
     - assets/images/arcen.png
     - assets/images/logo_arcen.svg
+    - assets/images/launch_image.png
     - assets/images/truck.png
     - assets/images/pump.png
     - assets/images/pile-concrete.png
@@ -57,3 +61,4 @@ flutter:
     - assets/flag/gb.svg
     - assets/flag/fr.svg
     - assets/flag/es.svg
+    - assets/ca/
